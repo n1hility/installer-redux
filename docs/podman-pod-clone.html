@@ -1,0 +1,722 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>podman-pod-clone(1)</title>
+  <style>
+    html {
+      line-height: 1.5;
+      font-family: Georgia, serif;
+      font-size: 20px;
+      color: #1a1a1a;
+      background-color: #fdfdfd;
+    }
+    body {
+      margin: 0 auto;
+      max-width: 36em;
+      padding-left: 50px;
+      padding-right: 50px;
+      padding-top: 50px;
+      padding-bottom: 50px;
+      hyphens: auto;
+      overflow-wrap: break-word;
+      text-rendering: optimizeLegibility;
+      font-kerning: normal;
+    }
+    @media (max-width: 600px) {
+      body {
+        font-size: 0.9em;
+        padding: 1em;
+      }
+      h1 {
+        font-size: 1.8em;
+      }
+    }
+    @media print {
+      body {
+        background-color: transparent;
+        color: black;
+        font-size: 12pt;
+      }
+      p, h2, h3 {
+        orphans: 3;
+        widows: 3;
+      }
+      h2, h3, h4 {
+        page-break-after: avoid;
+      }
+    }
+    p {
+      margin: 1em 0;
+    }
+    a {
+      color: #1a1a1a;
+    }
+    a:visited {
+      color: #1a1a1a;
+    }
+    img {
+      max-width: 100%;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      margin-top: 1.4em;
+    }
+    h5, h6 {
+      font-size: 1em;
+      font-style: italic;
+    }
+    h6 {
+      font-weight: normal;
+    }
+    ol, ul {
+      padding-left: 1.7em;
+      margin-top: 1em;
+    }
+    li > ol, li > ul {
+      margin-top: 0;
+    }
+    blockquote {
+      margin: 1em 0 1em 1.7em;
+      padding-left: 1em;
+      border-left: 2px solid #e6e6e6;
+      color: #606060;
+    }
+    code {
+      font-family: Menlo, Monaco, 'Lucida Console', Consolas, monospace;
+      font-size: 85%;
+      margin: 0;
+    }
+    pre {
+      margin: 1em 0;
+      overflow: auto;
+    }
+    pre code {
+      padding: 0;
+      overflow: visible;
+      overflow-wrap: normal;
+    }
+    .sourceCode {
+     background-color: transparent;
+     overflow: visible;
+    }
+    hr {
+      background-color: #1a1a1a;
+      border: none;
+      height: 1px;
+      margin: 1em 0;
+    }
+    table {
+      margin: 1em 0;
+      border-collapse: collapse;
+      width: 100%;
+      overflow-x: auto;
+      display: block;
+      font-variant-numeric: lining-nums tabular-nums;
+    }
+    table caption {
+      margin-bottom: 0.75em;
+    }
+    tbody {
+      margin-top: 0.5em;
+      border-top: 1px solid #1a1a1a;
+      border-bottom: 1px solid #1a1a1a;
+    }
+    th {
+      border-top: 1px solid #1a1a1a;
+      padding: 0.25em 0.5em 0.25em 0.5em;
+    }
+    td {
+      padding: 0.125em 0.5em 0.25em 0.5em;
+    }
+    header {
+      margin-bottom: 4em;
+      text-align: center;
+    }
+    #TOC li {
+      list-style: none;
+    }
+    #TOC ul {
+      padding-left: 1.3em;
+    }
+    #TOC > ul {
+      padding-left: 0;
+    }
+    #TOC a:not(:hover) {
+      text-decoration: none;
+    }
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    span.underline{text-decoration: underline;}
+    div.column{display: inline-block; vertical-align: top; width: 50%;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    ul.task-list{list-style: none;}
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+  </style>
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<h2 id="name">NAME</h2>
+<p>podman-pod-clone - Creates a copy of an existing pod</p>
+<h2 id="synopsis">SYNOPSIS</h2>
+<p><strong>podman pod clone</strong> [<em>options</em>] <em>pod</em>
+<em>name</em></p>
+<h2 id="description">DESCRIPTION</h2>
+<p><strong>podman pod clone</strong> creates a copy of a pod, recreating
+the identical config for the pod and for all of its containers. Users
+can modify the pods new name and select pod details within the infra
+container</p>
+<h2 id="options">OPTIONS</h2>
+<h4
+id="blkio-weightweight"><strong>--blkio-weight</strong>=<em>weight</em></h4>
+<p>Block IO relative weight. The <em>weight</em> is a value between
+<strong>10</strong> and <strong>1000</strong>.</p>
+<h4
+id="blkio-weight-devicedeviceweight"><strong>--blkio-weight-device</strong>=<em>device:weight</em></h4>
+<p>Block IO relative device weight.</p>
+<h4
+id="cgroup-parentpath"><strong>--cgroup-parent</strong>=<em>path</em></h4>
+<p>Path to cgroups under which the cgroup for the pod will be created.
+If the path is not absolute, the path is considered to be relative to
+the cgroups path of the init process. Cgroups will be created if they do
+not already exist.</p>
+<h4 id="cpu-shares--cshares"><strong>--cpu-shares</strong>,
+<strong>-c</strong>=<em>shares</em></h4>
+<p>CPU shares (relative weight).</p>
+<p>By default, all containers get the same proportion of CPU cycles.
+This proportion can be modified by changing the container's CPU share
+weighting relative to the combined weight of all the running containers.
+Default weight is <strong>1024</strong>.</p>
+<p>The proportion will only apply when CPU-intensive processes are
+running. When tasks in one container are idle, other containers can use
+the left-over CPU time. The actual amount of CPU time will vary
+depending on the number of containers running on the system.</p>
+<p>For example, consider three containers, one has a cpu-share of 1024
+and two others have a cpu-share setting of 512. When processes in all
+three containers attempt to use 100% of CPU, the first container would
+receive 50% of the total CPU time. If a fourth container is added with a
+cpu-share of 1024, the first container only gets 33% of the CPU. The
+remaining containers receive 16.5%, 16.5% and 33% of the CPU.</p>
+<p>On a multi-core system, the shares of CPU time are distributed over
+all CPU cores. Even if a container is limited to less than 100% of CPU
+time, it can use 100% of each individual CPU core.</p>
+<p>For example, consider a system with more than three cores. If the
+container <em>C0</em> is started with <strong>--cpu-shares=512</strong>
+running one process, and another container <em>C1</em> with
+<strong>--cpu-shares=1024</strong> running two processes, this can
+result in the following division of CPU shares:</p>
+<table>
+<thead>
+<tr class="header">
+<th>PID</th>
+<th>container</th>
+<th>CPU</th>
+<th>CPU share</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>100</td>
+<td>C0</td>
+<td>0</td>
+<td>100% of CPU0</td>
+</tr>
+<tr class="even">
+<td>101</td>
+<td>C1</td>
+<td>1</td>
+<td>100% of CPU1</td>
+</tr>
+<tr class="odd">
+<td>102</td>
+<td>C1</td>
+<td>2</td>
+<td>100% of CPU2</td>
+</tr>
+</tbody>
+</table>
+<h4 id="cpus"><strong>--cpus</strong></h4>
+<p>Set a number of CPUs for the pod that overrides the original pods CPU
+limits. If none are specified, the original pod's Nano CPUs are
+used.</p>
+<h4
+id="cpuset-cpusnumber"><strong>--cpuset-cpus</strong>=<em>number</em></h4>
+<p>CPUs in which to allow execution. Can be specified as a
+comma-separated list (e.g. <strong>0,1</strong>), as a range (e.g.
+<strong>0-3</strong>), or any combination thereof (e.g.
+<strong>0-3,7,11-15</strong>).</p>
+<p>If none are specified, the original pod's CPUset is used.</p>
+<h4
+id="cpuset-memsnodes"><strong>--cpuset-mems</strong>=<em>nodes</em></h4>
+<p>Memory nodes (MEMs) in which to allow execution (0-3, 0,1). Only
+effective on NUMA systems.</p>
+<p>If there are four memory nodes on the system (0-3), use
+<strong>--cpuset-mems=0,1</strong> then processes in the container will
+only use memory from the first two memory nodes.</p>
+<h4 id="destroy"><strong>--destroy</strong></h4>
+<p>Remove the original pod that we are cloning once used to mimic the
+configuration.</p>
+<h4
+id="devicehost-devicecontainer-devicepermissions"><strong>--device</strong>=<em>host-device[:container-device][:permissions]</em></h4>
+<p>Add a host device to the pod. Optional <em>permissions</em> parameter
+can be used to specify device permissions. It is a combination of
+<strong>r</strong> for read, <strong>w</strong> for write, and
+<strong>m</strong> for <strong>mknod</strong>(2).</p>
+<p>Example: <strong>--device=/dev/sdc:/dev/xvdc:rwm</strong>.</p>
+<p>Note: if <em>host_device</em> is a symbolic link then it will be
+resolved first. The pod will only store the major and minor numbers of
+the host device.</p>
+<p>Note: the pod implements devices by storing the initial configuration
+passed by the user and recreating the device on each container added to
+the pod.</p>
+<p>Podman may load kernel modules required for using the specified
+device. The devices that Podman will load modules for when necessary
+are: /dev/fuse.</p>
+<h4
+id="device-read-bpspath"><strong>--device-read-bps</strong>=<em>path</em></h4>
+<p>Limit read rate (bytes per second) from a device (e.g.
+--device-read-bps=/dev/sda:1mb).</p>
+<h4
+id="device-write-bpspath"><strong>--device-write-bps</strong>=<em>path</em></h4>
+<p>Limit write rate (bytes per second) to a device (e.g.
+--device-write-bps=/dev/sda:1mb)</p>
+<h4
+id="gidmappod_gidhost_gidamount"><strong>--gidmap</strong>=<em>pod_gid:host_gid:amount</em></h4>
+<p>GID map for the user namespace. Using this flag will run all
+containers in the pod with user namespace enabled. It conflicts with the
+<code>--userns</code> and <code>--subgidname</code> flags.</p>
+<h4 id="help--h"><strong>--help</strong>, <strong>-h</strong></h4>
+<p>Print usage statement.</p>
+<h4 id="hostnamename"><strong>--hostname</strong>=<em>name</em></h4>
+<p>Set a hostname to the pod.</p>
+<h4
+id="infra-commandcommand"><strong>--infra-command</strong>=<em>command</em></h4>
+<p>The command that will be run to start the infra container. Default:
+"/pause".</p>
+<h4
+id="infra-conmon-pidfilefile"><strong>--infra-conmon-pidfile</strong>=<em>file</em></h4>
+<p>Write the pid of the infra container's <strong>conmon</strong>
+process to a file. As <strong>conmon</strong> runs in a separate process
+than Podman, this is necessary when using systemd to manage Podman
+containers and pods.</p>
+<h4 id="infra-namename"><strong>--infra-name</strong>=<em>name</em></h4>
+<p>The name that will be used for the pod's infra container.</p>
+<h4 id="label--llabel"><strong>--label</strong>,
+<strong>-l</strong>=<em>label</em></h4>
+<p>Add metadata to a pod (e.g., --label com.example.key=value).</p>
+<h4 id="label-filefile"><strong>--label-file</strong>=<em>file</em></h4>
+<p>Read in a line-delimited file of labels.</p>
+<h4 id="memory--mlimit"><strong>--memory</strong>,
+<strong>-m</strong>=<em>limit</em></h4>
+<p>Memory limit (format: <code>&lt;number&gt;[&lt;unit&gt;]</code>,
+where unit = b (bytes), k (kibibytes), m (mebibytes), or g
+(gibibytes))</p>
+<p>Constrains the memory available to a container. If the host supports
+swap memory, then the <strong>-m</strong> memory setting can be larger
+than physical RAM. If a limit of 0 is specified (not using
+<strong>-m</strong>), the container's memory is not limited. The actual
+limit may be rounded up to a multiple of the operating system's page
+size (the value would be very large, that's millions of trillions).</p>
+<h4
+id="memory-swaplimit"><strong>--memory-swap</strong>=<em>limit</em></h4>
+<p>A limit value equal to memory plus swap. Must be used with the
+<strong>-m</strong> (<strong>--memory</strong>) flag. The swap
+<code>LIMIT</code> should always be larger than <strong>-m</strong>
+(<strong>--memory</strong>) value. By default, the swap
+<code>LIMIT</code> will be set to double the value of --memory.</p>
+<p>The format of <code>LIMIT</code> is
+<code>&lt;number&gt;[&lt;unit&gt;]</code>. Unit can be <code>b</code>
+(bytes), <code>k</code> (kibibytes), <code>m</code> (mebibytes), or
+<code>g</code> (gibibytes). If you don't specify a unit, <code>b</code>
+is used. Set LIMIT to <code>-1</code> to enable unlimited swap.</p>
+<h4 id="name--n"><strong>--name</strong>, <strong>-n</strong></h4>
+<p>Set a custom name for the cloned pod. The default if not specified is
+of the syntax: <strong><ORIGINAL_NAME>-clone</strong></p>
+<h4 id="pidpid"><strong>--pid</strong>=<em>pid</em></h4>
+<p>Set the PID mode for the pod. The default is to create a private PID
+namespace for the pod. Requires the PID namespace to be shared via
+--share.</p>
+<pre><code>host: use the host&#x2019;s PID namespace for the pod
+ns: join the specified PID namespace
+private: create a new namespace for the pod (default)</code></pre>
+<h4
+id="security-optoption"><strong>--security-opt</strong>=<em>option</em></h4>
+<p>Security Options</p>
+<ul>
+<li><p><code>apparmor=unconfined</code> : Turn off apparmor confinement
+for the pod</p></li>
+<li><p><code>apparmor=your-profile</code> : Set the apparmor confinement
+profile for the pod</p></li>
+<li><p><code>label=user:USER</code> : Set the label user for the pod
+processes</p></li>
+<li><p><code>label=role:ROLE</code> : Set the label role for the pod
+processes</p></li>
+<li><p><code>label=type:TYPE</code> : Set the label process type for the
+pod processes</p></li>
+<li><p><code>label=level:LEVEL</code> : Set the label level for the pod
+processes</p></li>
+<li><p><code>label=filetype:TYPE</code> : Set the label file type for
+the pod files</p></li>
+<li><p><code>label=disable</code> : Turn off label separation for the
+pod</p></li>
+</ul>
+<p>Note: Labeling can be disabled for all pods/containers by setting
+label=false in the <strong>containers.conf</strong>
+(<code>/etc/containers/containers.conf</code> or
+<code>$HOME/.config/containers/containers.conf</code>) file.</p>
+<ul>
+<li><p><code>mask=/path/1:/path/2</code> : The paths to mask separated
+by a colon. A masked path cannot be accessed inside the containers
+within the pod.</p></li>
+<li><p><code>no-new-privileges</code> : Disable container processes from
+gaining additional privileges.</p></li>
+<li><p><code>seccomp=unconfined</code> : Turn off seccomp confinement
+for the pod</p></li>
+<li><p><code>seccomp=profile.json</code> : Whitelisted syscalls seccomp
+Json file to be used as a seccomp filter</p></li>
+<li><p><code>proc-opts=OPTIONS</code> : Comma-separated list of options
+to use for the /proc mount. More details for the possible mount options
+are specified in the <strong>proc(5)</strong> man page.</p></li>
+<li><p><strong>unmask</strong>=<em>ALL</em> or <em>/path/1:/path/2</em>,
+or shell expanded paths (/proc/*): Paths to unmask separated by a colon.
+If set to <strong>ALL</strong>, it will unmask all the paths that are
+masked or made read-only by default. The default masked paths are
+<strong>/proc/acpi, /proc/kcore, /proc/keys, /proc/latency_stats,
+/proc/sched_debug, /proc/scsi, /proc/timer_list, /proc/timer_stats,
+/sys/firmware, and /sys/fs/selinux.</strong> The default paths that are
+read-only are <strong>/proc/asound, /proc/bus, /proc/fs, /proc/irq,
+/proc/sys, /proc/sysrq-trigger, /sys/fs/cgroup</strong>.</p></li>
+</ul>
+<p>Note: Labeling can be disabled for all containers by setting
+label=false in the <strong>containers.conf</strong>
+(<code>/etc/containers/containers.conf</code> or
+<code>$HOME/.config/containers/containers.conf</code>) file.</p>
+<h4 id="shm-sizesize"><strong>--shm-size</strong>=<em>size</em></h4>
+<p>Size of <code>/dev/shm</code> (format:
+<code>&lt;number&gt;[&lt;unit&gt;]</code>, where unit = b (bytes), k
+(kibibytes), m (mebibytes), or g (gibibytes)) If the unit is omitted,
+the system uses bytes. If the size is omitted, the system uses
+<code>64m</code>. When size is <code>0</code>, there is no limit on the
+amount of memory used for IPC by the pod. This option conflicts with
+<strong>--ipc=host</strong> when running containers.</p>
+<h4 id="start"><strong>--start</strong></h4>
+<p>When set to true, this flag starts the newly created pod after the
+clone process has completed. All containers within the pod are
+started.</p>
+<h4 id="subgidnamename"><strong>--subgidname</strong>=<em>name</em></h4>
+<p>Name for GID map from the <code>/etc/subgid</code> file. Using this
+flag will run the container with user namespace enabled. This flag
+conflicts with <code>--userns</code> and <code>--gidmap</code>.</p>
+<h4 id="subuidnamename"><strong>--subuidname</strong>=<em>name</em></h4>
+<p>Name for UID map from the <code>/etc/subuid</code> file. Using this
+flag will run the container with user namespace enabled. This flag
+conflicts with <code>--userns</code> and <code>--uidmap</code>.</p>
+<h4
+id="sysctlnamevalue"><strong>--sysctl</strong>=<em>name=value</em></h4>
+<p>Configure namespace kernel parameters for all containers in the new
+pod.</p>
+<p>For the IPC namespace, the following sysctls are allowed:</p>
+<ul>
+<li>kernel.msgmax</li>
+<li>kernel.msgmnb</li>
+<li>kernel.msgmni</li>
+<li>kernel.sem</li>
+<li>kernel.shmall</li>
+<li>kernel.shmmax</li>
+<li>kernel.shmmni</li>
+<li>kernel.shm_rmid_forced</li>
+<li>Sysctls beginning with fs.mqueue.*</li>
+</ul>
+<p>Note: if the ipc namespace is not shared within the pod, these
+sysctls are not allowed.</p>
+<p>For the network namespace, only sysctls beginning with net.* are
+allowed.</p>
+<p>Note: if the network namespace is not shared within the pod, these
+sysctls are not allowed.</p>
+<h4
+id="uidmapcontainer_uidfrom_uidamount"><strong>--uidmap</strong>=<em>container_uid:from_uid:amount</em></h4>
+<p>Run all containers in the pod in a new user namespace using the
+supplied mapping. This option conflicts with the
+<strong>--userns</strong> and <strong>--subuidname</strong> options.
+This option provides a way to map host UIDs to container UIDs. It can be
+passed several times to map different ranges.</p>
+<h4 id="usernsmode"><strong>--userns</strong>=<em>mode</em></h4>
+<p>Set the user namespace mode for all the containers in a pod. It
+defaults to the <strong>PODMAN_USERNS</strong> environment variable. An
+empty value ("") means user namespaces are disabled.</p>
+<p>Rootless user --userns=Key mappings:</p>
+<table>
+<colgroup>
+<col style="width: 21%" />
+<col style="width: 32%" />
+<col style="width: 45%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Key</th>
+<th>Host User</th>
+<th>Container User</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>""</td>
+<td><span
+class="math inline"><em>U</em><em>I</em><em>D</em>|0(<em>D</em><em>e</em><em>f</em><em>a</em><em>u</em><em>l</em><em>t</em><em>U</em><em>s</em><em>e</em><em>r</em><em>a</em><em>c</em><em>c</em><em>o</em><em>u</em><em>n</em><em>t</em><em>m</em><em>a</em><em>p</em><em>p</em><em>e</em><em>d</em><em>t</em><em>o</em><em>r</em><em>o</em><em>o</em><em>t</em><em>u</em><em>s</em><em>e</em><em>r</em><em>i</em><em>n</em><em>c</em><em>o</em><em>n</em><em>t</em><em>a</em><em>i</em><em>n</em><em>e</em><em>r</em>.)<em>k</em><em>e</em><em>e</em><em>p</em>&#x2212;<em>i</em><em>d</em>|</span>UID</td>
+<td><span
+class="math inline"><em>U</em><em>I</em><em>D</em>(<em>M</em><em>a</em><em>p</em><em>u</em><em>s</em><em>e</em><em>r</em><em>a</em><em>c</em><em>c</em><em>o</em><em>u</em><em>n</em><em>t</em><em>t</em><em>o</em><em>s</em><em>a</em><em>m</em><em>e</em><em>U</em><em>I</em><em>D</em><em>w</em><em>i</em><em>t</em><em>h</em><em>i</em><em>n</em><em>c</em><em>o</em><em>n</em><em>t</em><em>a</em><em>i</em><em>n</em><em>e</em><em>r</em>.)<em>a</em><em>u</em><em>t</em><em>o</em>|</span>UID</td>
+</tr>
+<tr class="even">
+<td>nomap</td>
+<td>$UID</td>
+<td>nil (Host User UID is not mapped into container.)</td>
+</tr>
+</tbody>
+</table>
+<p>Valid <em>mode</em> values are:</p>
+<ul>
+<li><p><em>auto[:<em><em>OPTIONS,...</em></em>]</em>: automatically
+create a namespace. It is possible to specify these options to
+<code>auto</code>:</p></li>
+<li><p><em>gidmapping=</em>_CONTAINER_GID:HOST_GID:SIZE_ to force a GID
+mapping to be present in the user namespace.</p></li>
+<li><p><em>size=</em>_SIZE_: to specify an explicit size for the
+automatic user namespace. e.g. <code>--userns=auto:size=8192</code>. If
+<code>size</code> is not specified, <code>auto</code> will estimate a
+size for the user namespace.</p></li>
+<li><p><em>uidmapping=</em>_CONTAINER_UID:HOST_UID:SIZE_ to force a UID
+mapping to be present in the user namespace.</p></li>
+<li><p><em>host</em>: run in the user namespace of the caller. The
+processes running in the container will have the same privileges on the
+host as any other process launched by the calling user
+(default).</p></li>
+<li><p><em>keep-id</em>: creates a user namespace where the current
+rootless user's UID:GID are mapped to the same values in the container.
+This option is ignored for containers created by the root user.</p></li>
+<li><p><em>nomap</em>: creates a user namespace where the current
+rootless user's UID:GID are not mapped into the container. This option
+is ignored for containers created by the root user.</p></li>
+</ul>
+<h4 id="utsmode"><strong>--uts</strong>=<em>mode</em></h4>
+<p>Set the UTS namespace mode for the pod. The following values are
+supported:</p>
+<ul>
+<li><strong>host</strong>: use the host's UTS namespace inside the
+pod.</li>
+<li><strong>private</strong>: create a new namespace for the pod
+(default).</li>
+<li><strong>ns:[path]</strong>: run the pod in the given existing UTS
+namespace.</li>
+</ul>
+<h4
+id="volume--vsource-volumehost-dircontainer-diroptions"><strong>--volume</strong>,
+<strong>-v</strong>=<em>[[SOURCE-VOLUME|HOST-DIR:]CONTAINER-DIR[:OPTIONS]]</em></h4>
+<p>Create a bind mount. If <code>-v /HOST-DIR:/CONTAINER-DIR</code> is
+specified, Podman bind mounts <code>/HOST-DIR</code> in the host to
+<code>/CONTAINER-DIR</code> in the Podman container. Similarly,
+<code>-v SOURCE-VOLUME:/CONTAINER-DIR</code> will mount the volume in
+the host to the container. If no such named volume exists, Podman will
+create one. The <code>OPTIONS</code> are a comma-separated list and can
+be: <sup><a href="#Footnote1">[1]</a></sup> (Note when using the remote
+client, including Mac and Windows (excluding WSL2) machines, the volumes
+will be mounted from the remote server, not necessarily the client
+machine.)</p>
+<p>The <em>options</em> is a comma-separated list and can be:</p>
+<ul>
+<li><strong>rw</strong>|<strong>ro</strong></li>
+<li><strong>z</strong>|<strong>Z</strong></li>
+<li>[<strong>r</strong>]<strong>shared</strong>|[<strong>r</strong>]<strong>slave</strong>|[<strong>r</strong>]<strong>private</strong>[<strong>r</strong>]<strong>unbindable</strong></li>
+<li>[<strong>r</strong>]<strong>bind</strong></li>
+<li>[<strong>no</strong>]<strong>exec</strong></li>
+<li>[<strong>no</strong>]<strong>dev</strong></li>
+<li>[<strong>no</strong>]<strong>suid</strong></li>
+<li>[<strong>O</strong>]</li>
+<li>[<strong>U</strong>]</li>
+</ul>
+<p>The <code>CONTAINER-DIR</code> must be an absolute path such as
+<code>/src/docs</code>. The volume will be mounted into the container at
+this directory.</p>
+<p>Volumes may specify a source as well, as either a directory on the
+host or the name of a named volume. If no source is given, the volume
+will be created as an anonymously named volume with a randomly generated
+name, and will be removed when the pod is removed via the
+<code>--rm</code> flag or <code>podman rm --volumes</code> commands.</p>
+<p>If a volume source is specified, it must be a path on the host or the
+name of a named volume. Host paths are allowed to be absolute or
+relative; relative paths are resolved relative to the directory Podman
+is run in. If the source does not exist, Podman will return an error.
+Users must pre-create the source files or directories.</p>
+<p>Any source that does not begin with a <code>.</code> or
+<code>/</code> will be treated as the name of a named volume. If a
+volume with that name does not exist, it will be created. Volumes
+created with names are not anonymous, and they are not removed by the
+<code>--rm</code> option and the <code>podman rm --volumes</code>
+command.</p>
+<p>Specify multiple <strong>-v</strong> options to mount one or more
+volumes into a pod.</p>
+<p><code>Write Protected Volume Mounts</code></p>
+<p>Add <code>:ro</code> or <code>:rw</code> suffix to a volume to mount
+it read-only or read-write mode, respectively. By default, the volumes
+are mounted read-write. See examples.</p>
+<p><code>Chowning Volume Mounts</code></p>
+<p>By default, Podman does not change the owner and group of source
+volume directories mounted into containers. If a pod is created in a new
+user namespace, the UID and GID in the container may correspond to
+another UID and GID on the host.</p>
+<p>The <code>:U</code> suffix tells Podman to use the correct host UID
+and GID based on the UID and GID within the pod, to change recursively
+the owner and group of the source volume.</p>
+<p><strong>Warning</strong> use with caution since this will modify the
+host filesystem.</p>
+<p><code>Labeling Volume Mounts</code></p>
+<p>Labeling systems like SELinux require that proper labels are placed
+on volume content mounted into a pod. Without a label, the security
+system might prevent the processes running inside the pod from using the
+content. By default, Podman does not change the labels set by the
+OS.</p>
+<p>To change a label in the pod context, add either of two suffixes
+<code>:z</code> or <code>:Z</code> to the volume mount. These suffixes
+tell Podman to relabel file objects on the shared volumes. The
+<code>z</code> option tells Podman that two pods share the volume
+content. As a result, Podman labels the content with a shared content
+label. Shared volume labels allow all containers to read/write content.
+The <code>Z</code> option tells Podman to label the content with a
+private unshared label. Only the current pod can use a private
+volume.</p>
+<p><code>Overlay Volume Mounts</code></p>
+<p>The <code>:O</code> flag tells Podman to mount the directory from the
+host as a temporary storage using the <code>overlay file system</code>.
+The pod processes can modify content within the mountpoint which is
+stored in the container storage in a separate directory. In overlay
+terms, the source directory will be the lower, and the container storage
+directory will be the upper. Modifications to the mount point are
+destroyed when the pod finishes executing, similar to a tmpfs mount
+point being unmounted.</p>
+<p>Subsequent executions of the container will see the original source
+directory content, any changes from previous pod executions no longer
+exist.</p>
+<p>One use case of the overlay mount is sharing the package cache from
+the host into the container to allow speeding up builds.</p>
+<p>Note:</p>
+<pre><code> - The `O` flag conflicts with other options listed above.</code></pre>
+<p>Content mounted into the container is labeled with the private label.
+On SELinux systems, labels in the source directory must be readable by
+the infra container label. Usually containers can read/execute
+<code>container_share_t</code> and can read/write
+<code>container_file_t</code>. If unable to change the labels on a
+source volume, SELinux container separation must be disabled for the
+infra container/pod to work. - The source directory mounted into the pod
+with an overlay mount should not be modified, it can cause unexpected
+failures. It is recommended to not modify the directory until the
+container finishes running.</p>
+<p><code>Mounts propagation</code></p>
+<p>By default bind mounted volumes are <code>private</code>. That means
+any mounts done inside pod will not be visible on host and vice versa.
+One can change this behavior by specifying a volume mount propagation
+property. Making a volume <code>shared</code> mounts done under that
+volume inside pod will be visible on host and vice versa. Making a
+volume <code>slave</code> enables only one way mount propagation and
+that is mounts done on host under that volume will be visible inside
+container but not the other way around. <sup><a
+href="#Footnote1">[1]</a></sup></p>
+<p>To control mount propagation property of a volume one can use the
+[<strong>r</strong>]<strong>shared</strong>,
+[<strong>r</strong>]<strong>slave</strong>,
+[<strong>r</strong>]<strong>private</strong> or the
+[<strong>r</strong>]<strong>unbindable</strong> propagation flag.
+Propagation property can be specified only for bind mounted volumes and
+not for internal volumes or named volumes. For mount propagation to work
+the source mount point (the mount point where source dir is mounted on)
+has to have the right propagation properties. For shared volumes, the
+source mount point has to be shared. And for slave volumes, the source
+mount point has to be either shared or slave. <sup><a
+href="#Footnote1">[1]</a></sup></p>
+<p>To recursively mount a volume and all of its submounts into a pod,
+use the <code>rbind</code> option. By default the bind option is used,
+and submounts of the source directory will not be mounted into the
+pod.</p>
+<p>Mounting the volume with the <code>nosuid</code> options means that
+SUID applications on the volume will not be able to change their
+privilege. By default volumes are mounted with <code>nosuid</code>.</p>
+<p>Mounting the volume with the noexec option means that no executables
+on the volume will be able to executed within the pod.</p>
+<p>Mounting the volume with the nodev option means that no devices on
+the volume will be able to be used by processes within the pod. By
+default volumes are mounted with <code>nodev</code>.</p>
+<p>If the <code>&lt;source-dir&gt;</code> is a mount point, then "dev",
+"suid", and "exec" options are ignored by the kernel.</p>
+<p>Use <code>df &lt;source-dir&gt;</code> to figure out the source mount
+and then use
+<code>findmnt -o TARGET,PROPAGATION &lt;source-mount-dir&gt;</code> to
+figure out propagation properties of source mount. If
+<code>findmnt</code> utility is not available, then one can look at the
+mount entry for the source mount point in
+<code>/proc/self/mountinfo</code>. Look at <code>optional fields</code>
+and see if any propagation properties are specified.
+<code>shared:X</code> means mount is <code>shared</code>,
+<code>master:X</code> means mount is <code>slave</code> and if nothing
+is there that means mount is <code>private</code>. <sup><a
+href="#Footnote1">[1]</a></sup></p>
+<p>To change propagation properties of a mount point use
+<code>mount</code> command. For example, if one wants to bind mount
+source directory <code>/foo</code> one can do
+<code>mount --bind /foo /foo</code> and
+<code>mount --make-private --make-shared /foo</code>. This will convert
+/foo into a <code>shared</code> mount point. Alternatively one can
+directly change propagation properties of source mount. Say
+<code>/</code> is source mount for <code>/foo</code>, then use
+<code>mount --make-shared /</code> to convert <code>/</code> into a
+<code>shared</code> mount.</p>
+<p>Note: if the user only has access rights via a group, accessing the
+volume from inside a rootless pod will fail.</p>
+<h4
+id="volumes-fromcontaineroptions"><strong>--volumes-from</strong>=<em>container[:options]]</em></h4>
+<p>Mount volumes from the specified container(s). Used to share volumes
+between containers and pods. The <em>options</em> is a comma-separated
+list with the following available elements:</p>
+<ul>
+<li><strong>rw</strong>|<strong>ro</strong></li>
+<li><strong>z</strong></li>
+</ul>
+<p>Mounts already mounted volumes from a source container into another
+pod. Must supply the source's container-id or container-name. To share a
+volume, use the --volumes-from option when running the target container.
+Volumes can be shared even if the source container is not running.</p>
+<p>By default, Podman mounts the volumes in the same mode (read-write or
+read-only) as it is mounted in the source container. This can be changed
+by adding a <code>ro</code> or <code>rw</code> <em>option</em>.</p>
+<p>Labeling systems like SELinux require that proper labels are placed
+on volume content mounted into a pod. Without a label, the security
+system might prevent the processes running inside the container from
+using the content. By default, Podman does not change the labels set by
+the OS.</p>
+<p>To change a label in the pod context, add <code>z</code> to the
+volume mount. This suffix tells Podman to relabel file objects on the
+shared volumes. The <code>z</code> option tells Podman that two entities
+share the volume content. As a result, Podman labels the content with a
+shared content label. Shared volume labels allow all containers to
+read/write content.</p>
+<p>If the location of the volume from the source container overlaps with
+data residing on a target pod, then the volume hides that data on the
+target.</p>
+<h2 id="examples">EXAMPLES</h2>
+<pre><code># podman pod clone pod-name
+6b2c73ff8a1982828c9ae2092954bcd59836a131960f7e05221af9df5939c584</code></pre>
+<pre><code># podman pod clone --name=cloned-pod
+d0cf1f782e2ed67e8c0050ff92df865a039186237a4df24d7acba5b1fa8cc6e7
+6b2c73ff8a1982828c9ae2092954bcd59836a131960f7e05221af9df5939c584</code></pre>
+<pre><code># podman pod clone --destroy --cpus=5 d0cf1f782e2ed67e8c0050ff92df865a039186237a4df24d7acba5b1fa8cc6e7
+6b2c73ff8a1982828c9ae2092954bcd59836a131960f7e05221af9df5939c584</code></pre>
+<pre><code># podman pod clone 2d4d4fca7219b4437e0d74fcdc272c4f031426a6eacd207372691207079551de new_name
+5a9b7851013d326aa4ac4565726765901b3ecc01fcbc0f237bc7fd95588a24f9</code></pre>
+<h2 id="see-also">SEE ALSO</h2>
+<p><strong><a
+href="podman-pod-create.html">podman-pod-create(1)</a></strong></p>
+<h2 id="history">HISTORY</h2>
+<p>May 2022, Originally written by Charlie Doern <a
+href="mailto:cdoern@redhat.com" class="email">cdoern@redhat.com</a></p>
+</body>
+</html>

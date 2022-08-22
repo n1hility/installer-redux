@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>podman-ps(1)</title>
+  <style>
+    html {
+      line-height: 1.5;
+      font-family: Georgia, serif;
+      font-size: 20px;
+      color: #1a1a1a;
+      background-color: #fdfdfd;
+    }
+    body {
+      margin: 0 auto;
+      max-width: 36em;
+      padding-left: 50px;
+      padding-right: 50px;
+      padding-top: 50px;
+      padding-bottom: 50px;
+      hyphens: auto;
+      overflow-wrap: break-word;
+      text-rendering: optimizeLegibility;
+      font-kerning: normal;
+    }
+    @media (max-width: 600px) {
+      body {
+        font-size: 0.9em;
+        padding: 1em;
+      }
+      h1 {
+        font-size: 1.8em;
+      }
+    }
+    @media print {
+      body {
+        background-color: transparent;
+        color: black;
+        font-size: 12pt;
+      }
+      p, h2, h3 {
+        orphans: 3;
+        widows: 3;
+      }
+      h2, h3, h4 {
+        page-break-after: avoid;
+      }
+    }
+    p {
+      margin: 1em 0;
+    }
+    a {
+      color: #1a1a1a;
+    }
+    a:visited {
+      color: #1a1a1a;
+    }
+    img {
+      max-width: 100%;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      margin-top: 1.4em;
+    }
+    h5, h6 {
+      font-size: 1em;
+      font-style: italic;
+    }
+    h6 {
+      font-weight: normal;
+    }
+    ol, ul {
+      padding-left: 1.7em;
+      margin-top: 1em;
+    }
+    li > ol, li > ul {
+      margin-top: 0;
+    }
+    blockquote {
+      margin: 1em 0 1em 1.7em;
+      padding-left: 1em;
+      border-left: 2px solid #e6e6e6;
+      color: #606060;
+    }
+    code {
+      font-family: Menlo, Monaco, 'Lucida Console', Consolas, monospace;
+      font-size: 85%;
+      margin: 0;
+    }
+    pre {
+      margin: 1em 0;
+      overflow: auto;
+    }
+    pre code {
+      padding: 0;
+      overflow: visible;
+      overflow-wrap: normal;
+    }
+    .sourceCode {
+     background-color: transparent;
+     overflow: visible;
+    }
+    hr {
+      background-color: #1a1a1a;
+      border: none;
+      height: 1px;
+      margin: 1em 0;
+    }
+    table {
+      margin: 1em 0;
+      border-collapse: collapse;
+      width: 100%;
+      overflow-x: auto;
+      display: block;
+      font-variant-numeric: lining-nums tabular-nums;
+    }
+    table caption {
+      margin-bottom: 0.75em;
+    }
+    tbody {
+      margin-top: 0.5em;
+      border-top: 1px solid #1a1a1a;
+      border-bottom: 1px solid #1a1a1a;
+    }
+    th {
+      border-top: 1px solid #1a1a1a;
+      padding: 0.25em 0.5em 0.25em 0.5em;
+    }
+    td {
+      padding: 0.125em 0.5em 0.25em 0.5em;
+    }
+    header {
+      margin-bottom: 4em;
+      text-align: center;
+    }
+    #TOC li {
+      list-style: none;
+    }
+    #TOC ul {
+      padding-left: 1.3em;
+    }
+    #TOC > ul {
+      padding-left: 0;
+    }
+    #TOC a:not(:hover) {
+      text-decoration: none;
+    }
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    span.underline{text-decoration: underline;}
+    div.column{display: inline-block; vertical-align: top; width: 50%;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    ul.task-list{list-style: none;}
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+  </style>
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<h2 id="name">NAME</h2>
+<p>podman-ps - Prints out information about containers</p>
+<h2 id="synopsis">SYNOPSIS</h2>
+<p><strong>podman ps</strong> [<em>options</em>]</p>
+<p><strong>podman container ps</strong> [<em>options</em>]</p>
+<p><strong>podman container list</strong> [<em>options</em>]</p>
+<p><strong>podman container ls</strong> [<em>options</em>]</p>
+<h2 id="description">DESCRIPTION</h2>
+<p><strong>podman ps</strong> lists the running containers on the
+system. Use the <strong>--all</strong> flag to view all the containers
+information. By default it lists:</p>
+<ul>
+<li>container id</li>
+<li>the name of the image the container is using</li>
+<li>the COMMAND the container is executing</li>
+<li>the time the container was created</li>
+<li>the status of the container</li>
+<li>port mappings the container is using</li>
+<li>alternative names for the container</li>
+</ul>
+<h2 id="options">OPTIONS</h2>
+<h4 id="all--a"><strong>--all</strong>, <strong>-a</strong></h4>
+<p>Show all the containers created by Podman, default is only running
+containers.</p>
+<p>Note: Podman shares containers storage with other tools such as
+Buildah and CRI-O. In some cases these <code>external</code> containers
+might also exist in the same storage. Use the <code>--external</code>
+option to see these external containers. External containers show the
+'storage' status.</p>
+<h4 id="external"><strong>--external</strong></h4>
+<p>Display external containers that are not controlled by Podman but are
+stored in containers storage. These external containers are generally
+created via other container technology such as Buildah or CRI-O and may
+depend on the same container images that Podman is also using. External
+containers are denoted with either a 'buildah' or 'storage' in the
+COMMAND and STATUS column of the ps output.</p>
+<h4 id="filter--f"><strong>--filter</strong>, <strong>-f</strong></h4>
+<p>Filter what containers are shown in the output. Multiple filters can
+be given with multiple uses of the --filter flag. Filters with the same
+key work inclusive with the only exception being <code>label</code>
+which is exclusive. Filters with different keys always work
+exclusive.</p>
+<p>Valid filters are listed below:</p>
+<table>
+<colgroup>
+<col style="width: 15%" />
+<col style="width: 84%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th><strong>Filter</strong></th>
+<th><strong>Description</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>id</td>
+<td>[ID] Container's ID (accepts regex)</td>
+</tr>
+<tr class="even">
+<td>name</td>
+<td><a href="#name">Name</a> Container's name (accepts regex)</td>
+</tr>
+<tr class="odd">
+<td>label</td>
+<td>[Key] or [Key=Value] Label assigned to a container</td>
+</tr>
+<tr class="even">
+<td>exited</td>
+<td>[Int] Container's exit code</td>
+</tr>
+<tr class="odd">
+<td>status</td>
+<td>[Status] Container's status: 'created', 'exited', 'paused',
+'running', 'unknown'</td>
+</tr>
+<tr class="even">
+<td>ancestor</td>
+<td>[ImageName] Image or descendant used to create container</td>
+</tr>
+<tr class="odd">
+<td>before</td>
+<td>[ID] or <a href="#name">Name</a> Containers created before this
+container</td>
+</tr>
+<tr class="even">
+<td>since</td>
+<td>[ID] or <a href="#name">Name</a> Containers created since this
+container</td>
+</tr>
+<tr class="odd">
+<td>volume</td>
+<td>[VolumeName] or [MountpointDestination] Volume mounted in
+container</td>
+</tr>
+<tr class="even">
+<td>health</td>
+<td>[Status] healthy or unhealthy</td>
+</tr>
+<tr class="odd">
+<td>pod</td>
+<td>[Pod] name or full or partial ID of pod</td>
+</tr>
+<tr class="even">
+<td>network</td>
+<td>[Network] name or full ID of network</td>
+</tr>
+</tbody>
+</table>
+<h4 id="formatformat"><strong>--format</strong>=<em>format</em></h4>
+<p>Pretty-print containers to JSON or using a Go template</p>
+<p>Valid placeholders for the Go template are listed below:</p>
+<table>
+<thead>
+<tr class="header">
+<th><strong>Placeholder</strong></th>
+<th><strong>Description</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>.ID</td>
+<td>Container ID</td>
+</tr>
+<tr class="even">
+<td>.Image</td>
+<td>Image Name/ID</td>
+</tr>
+<tr class="odd">
+<td>.ImageID</td>
+<td>Image ID</td>
+</tr>
+<tr class="even">
+<td>.Command</td>
+<td>Quoted command used</td>
+</tr>
+<tr class="odd">
+<td>.CreatedAt</td>
+<td>Creation time for container</td>
+</tr>
+<tr class="even">
+<td>.RunningFor</td>
+<td>Time elapsed since container was started</td>
+</tr>
+<tr class="odd">
+<td>.Status</td>
+<td>Status of container</td>
+</tr>
+<tr class="even">
+<td>.Pod</td>
+<td>Pod the container is associated with</td>
+</tr>
+<tr class="odd">
+<td>.Ports</td>
+<td>Exposed ports</td>
+</tr>
+<tr class="even">
+<td>.Size</td>
+<td>Size of container</td>
+</tr>
+<tr class="odd">
+<td>.Names</td>
+<td>Name of container</td>
+</tr>
+<tr class="even">
+<td>.Networks</td>
+<td>Show all networks connected to the container</td>
+</tr>
+<tr class="odd">
+<td>.Labels</td>
+<td>All the labels assigned to the container</td>
+</tr>
+<tr class="even">
+<td>.Mounts</td>
+<td>Volumes mounted in the container</td>
+</tr>
+</tbody>
+</table>
+<h4 id="help--h"><strong>--help</strong>, <strong>-h</strong></h4>
+<p>Print usage statement</p>
+<h4 id="last--n"><strong>--last</strong>, <strong>-n</strong></h4>
+<p>Print the n last created containers (all states)</p>
+<h4 id="latest--l"><strong>--latest</strong>, <strong>-l</strong></h4>
+<p>Show the latest container created (all states) (This option is not
+available with the remote Podman client, including Mac and Windows
+(excluding WSL2) machines)</p>
+<h4 id="namespace---ns"><strong>--namespace</strong>,
+<strong>--ns</strong></h4>
+<p>Display namespace information</p>
+<h4 id="no-trunc"><strong>--no-trunc</strong></h4>
+<p>Do not truncate the output (default <em>false</em>).</p>
+<h4 id="noheading"><strong>--noheading</strong></h4>
+<p>Omit the table headings from the listing of containers.</p>
+<h4 id="pod--p"><strong>--pod</strong>, <strong>-p</strong></h4>
+<p>Display the pods the containers are associated with</p>
+<h4 id="quiet--q"><strong>--quiet</strong>, <strong>-q</strong></h4>
+<p>Print the numeric IDs of the containers only</p>
+<h4 id="size--s"><strong>--size</strong>, <strong>-s</strong></h4>
+<p>Display the total file size</p>
+<h4 id="sortcreated"><strong>--sort</strong>=<em>created</em></h4>
+<p>Sort by command, created, id, image, names, runningfor, size, or
+status", Note: Choosing size will sort by size of rootFs, not
+alphabetically like the rest of the options</p>
+<h4 id="sync"><strong>--sync</strong></h4>
+<p>Force a sync of container state with the OCI runtime. In some cases,
+a container's state in the runtime can become out of sync with Podman's
+state. This will update Podman's state based on what the OCI runtime
+reports. Forcibly syncing is much slower, but can resolve inconsistent
+state issues.</p>
+<h4 id="watch--w"><strong>--watch</strong>, <strong>-w</strong></h4>
+<p>Refresh the output with current containers on an interval in
+seconds.</p>
+<h2 id="examples">EXAMPLES</h2>
+<pre><code>$ podman ps -a
+CONTAINER ID   IMAGE         COMMAND         CREATED       STATUS                    PORTS     NAMES
+02f65160e14ca  redis:alpine  &quot;redis-server&quot;  19 hours ago  Exited (-1) 19 hours ago  6379/tcp  k8s_podsandbox1-redis_podsandbox1_redhat.test.crio_redhat-test-crio_0
+69ed779d8ef9f  redis:alpine  &quot;redis-server&quot;  25 hours ago  Created                   6379/tcp  k8s_container1_podsandbox1_redhat.test.crio_redhat-test-crio_1</code></pre>
+<pre><code>$ podman ps -a -s
+CONTAINER ID   IMAGE         COMMAND         CREATED       STATUS                    PORTS     NAMES                                                                  SIZE
+02f65160e14ca  redis:alpine  &quot;redis-server&quot;  20 hours ago  Exited (-1) 20 hours ago  6379/tcp  k8s_podsandbox1-redis_podsandbox1_redhat.test.crio_redhat-test-crio_0  27.49 MB
+69ed779d8ef9f  redis:alpine  &quot;redis-server&quot;  25 hours ago  Created                   6379/tcp  k8s_container1_podsandbox1_redhat.test.crio_redhat-test-crio_1         27.49 MB</code></pre>
+<pre><code>$ podman ps -a --format &quot;{{.ID}}  {{.Image}}  {{.Labels}}  {{.Mounts}}&quot;
+02f65160e14ca  redis:alpine  tier=backend  proc,tmpfs,devpts,shm,mqueue,sysfs,cgroup,/var/run/,/var/run/
+69ed779d8ef9f  redis:alpine  batch=no,type=small  proc,tmpfs,devpts,shm,mqueue,sysfs,cgroup,/var/run/,/var/run/</code></pre>
+<pre><code>$ podman ps --ns -a
+CONTAINER ID    NAMES                                                                   PID     CGROUP       IPC          MNT          NET          PIDNS        USER         UTS
+3557d882a82e3   k8s_container2_podsandbox1_redhat.test.crio_redhat-test-crio_1          29910   4026531835   4026532585   4026532593   4026532508   4026532595   4026531837   4026532594
+09564cdae0bec   k8s_container1_podsandbox1_redhat.test.crio_redhat-test-crio_1          29851   4026531835   4026532585   4026532590   4026532508   4026532592   4026531837   4026532591
+a31ebbee9cee7   k8s_podsandbox1-redis_podsandbox1_redhat.test.crio_redhat-test-crio_0   29717   4026531835   4026532585   4026532587   4026532508   4026532589   4026531837   4026532588</code></pre>
+<pre><code>$ podman ps -a --size --sort names
+CONTAINER ID   IMAGE         COMMAND         CREATED       STATUS                    PORTS     NAMES
+69ed779d8ef9f  redis:alpine  &quot;redis-server&quot;  25 hours ago  Created                   6379/tcp  k8s_container1_podsandbox1_redhat.test.crio_redhat-test-crio_1
+02f65160e14ca  redis:alpine  &quot;redis-server&quot;  19 hours ago  Exited (-1) 19 hours ago  6379/tcp  k8s_podsandbox1-redis_podsandbox1_redhat.test.crio_redhat-test-crio_0</code></pre>
+<pre><code>$ podman ps
+CONTAINER ID  IMAGE                            COMMAND    CREATED        STATUS            PORTS                                                   NAMES
+4089df24d4f3  docker.io/library/centos:latest  /bin/bash  2 minutes ago  Up 2 minutes ago  0.0.0.0:80-&gt;8080/tcp, 0.0.0.0:2000-2006-&gt;2000-2006/tcp  manyports
+92f58933c28c  docker.io/library/centos:latest  /bin/bash  3 minutes ago  Up 3 minutes ago  192.168.99.100:1000-1006-&gt;1000-1006/tcp                 zen_sanderson
+</code></pre>
+<pre><code>$ podman ps --external -a
+CONTAINER ID  IMAGE                             COMMAND  CREATED      STATUS  PORTS  NAMES
+69ed779d8ef9f  redis:alpine  &quot;redis-server&quot;  25 hours ago  Created                   6379/tcp  k8s_container1_podsandbox1_redhat.test.crio_redhat-test-crio_1
+38a8a78596f9  docker.io/library/busybox:latest  buildah  2 hours ago  storage        busybox-working-container
+fd7b786b5c32  docker.io/library/alpine:latest   buildah  2 hours ago  storage        alpine-working-container
+f78620804e00  scratch                           buildah  2 hours ago  storage        working-container</code></pre>
+<h2 id="ps">ps</h2>
+<p>Print a list of containers</p>
+<h2 id="see-also">SEE ALSO</h2>
+<p><strong><a href="podman.html">podman(1)</a></strong>, <strong><a
+href="https://github.com/containers/buildah/blob/main/docs/buildah.html">buildah(1)</a></strong>,
+<strong><a
+href="https://github.com/cri-o/cri-o/blob/main/docs/crio.8.md">crio(8)</a></strong></p>
+<h2 id="history">HISTORY</h2>
+<p>August 2017, Originally compiled by Urvashi Mohnani <a
+href="mailto:umohnani@redhat.com"
+class="email">umohnani@redhat.com</a></p>
+</body>
+</html>

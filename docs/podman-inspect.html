@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>podman-inspect(1)</title>
+  <style>
+    html {
+      line-height: 1.5;
+      font-family: Georgia, serif;
+      font-size: 20px;
+      color: #1a1a1a;
+      background-color: #fdfdfd;
+    }
+    body {
+      margin: 0 auto;
+      max-width: 36em;
+      padding-left: 50px;
+      padding-right: 50px;
+      padding-top: 50px;
+      padding-bottom: 50px;
+      hyphens: auto;
+      overflow-wrap: break-word;
+      text-rendering: optimizeLegibility;
+      font-kerning: normal;
+    }
+    @media (max-width: 600px) {
+      body {
+        font-size: 0.9em;
+        padding: 1em;
+      }
+      h1 {
+        font-size: 1.8em;
+      }
+    }
+    @media print {
+      body {
+        background-color: transparent;
+        color: black;
+        font-size: 12pt;
+      }
+      p, h2, h3 {
+        orphans: 3;
+        widows: 3;
+      }
+      h2, h3, h4 {
+        page-break-after: avoid;
+      }
+    }
+    p {
+      margin: 1em 0;
+    }
+    a {
+      color: #1a1a1a;
+    }
+    a:visited {
+      color: #1a1a1a;
+    }
+    img {
+      max-width: 100%;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      margin-top: 1.4em;
+    }
+    h5, h6 {
+      font-size: 1em;
+      font-style: italic;
+    }
+    h6 {
+      font-weight: normal;
+    }
+    ol, ul {
+      padding-left: 1.7em;
+      margin-top: 1em;
+    }
+    li > ol, li > ul {
+      margin-top: 0;
+    }
+    blockquote {
+      margin: 1em 0 1em 1.7em;
+      padding-left: 1em;
+      border-left: 2px solid #e6e6e6;
+      color: #606060;
+    }
+    code {
+      font-family: Menlo, Monaco, 'Lucida Console', Consolas, monospace;
+      font-size: 85%;
+      margin: 0;
+    }
+    pre {
+      margin: 1em 0;
+      overflow: auto;
+    }
+    pre code {
+      padding: 0;
+      overflow: visible;
+      overflow-wrap: normal;
+    }
+    .sourceCode {
+     background-color: transparent;
+     overflow: visible;
+    }
+    hr {
+      background-color: #1a1a1a;
+      border: none;
+      height: 1px;
+      margin: 1em 0;
+    }
+    table {
+      margin: 1em 0;
+      border-collapse: collapse;
+      width: 100%;
+      overflow-x: auto;
+      display: block;
+      font-variant-numeric: lining-nums tabular-nums;
+    }
+    table caption {
+      margin-bottom: 0.75em;
+    }
+    tbody {
+      margin-top: 0.5em;
+      border-top: 1px solid #1a1a1a;
+      border-bottom: 1px solid #1a1a1a;
+    }
+    th {
+      border-top: 1px solid #1a1a1a;
+      padding: 0.25em 0.5em 0.25em 0.5em;
+    }
+    td {
+      padding: 0.125em 0.5em 0.25em 0.5em;
+    }
+    header {
+      margin-bottom: 4em;
+      text-align: center;
+    }
+    #TOC li {
+      list-style: none;
+    }
+    #TOC ul {
+      padding-left: 1.3em;
+    }
+    #TOC > ul {
+      padding-left: 0;
+    }
+    #TOC a:not(:hover) {
+      text-decoration: none;
+    }
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    span.underline{text-decoration: underline;}
+    div.column{display: inline-block; vertical-align: top; width: 50%;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    ul.task-list{list-style: none;}
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+  </style>
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<h2 id="name">NAME</h2>
+<p>podman-inspect - Display a container, image, volume, network, or
+pod's configuration</p>
+<h2 id="synopsis">SYNOPSIS</h2>
+<p><strong>podman inspect</strong> [<em>options</em>] <em>name</em>
+[...]</p>
+<h2 id="description">DESCRIPTION</h2>
+<p>This displays the low-level information on containers and images
+identified by name or ID. By default, this will render all results in a
+JSON array. If the inspect type is all, the order of inspection is:
+containers, images, volumes, network, pods. So, if a container has the
+same name as an image, then the container JSON will be returned, and so
+on. If a format is specified, the given template will be executed for
+each result.</p>
+<p>For more inspection options, see also <a
+href="podman-container-inspect.html">podman-container-inspect(1)</a>, <a
+href="podman-image-inspect.html">podman-image-inspect(1)</a>, <a
+href="podman-network-inspect.html">podman-network-inspect(1)</a>, <a
+href="podman-pod-inspect.html">podman-pod-inspect(1)</a>, and <a
+href="podman-volume-inspect.html">podman-volume-inspect(1)</a>.</p>
+<h2 id="options">OPTIONS</h2>
+<h4 id="format--fformat"><strong>--format</strong>,
+<strong>-f</strong>=<em>format</em></h4>
+<p>Format the output using the given Go template. The keys of the
+returned JSON can be used as the values for the --format flag (see
+examples below).</p>
+<h4 id="latest--l"><strong>--latest</strong>, <strong>-l</strong></h4>
+<p>Instead of providing the container name or ID, use the last created
+container. If you use methods other than Podman to run containers such
+as CRI-O, the last started container could be from either of those
+methods.</p>
+<p>This option can be used to inspect the latest pod created when used
+with --type pod. (This option is not available with the remote Podman
+client, including Mac and Windows (excluding WSL2) machines, or when
+invoked as <em>podman image inspect</em>.)</p>
+<h4 id="size--s"><strong>--size</strong>, <strong>-s</strong></h4>
+<p>In addition to normal output, display the total file size if the type
+is a container.</p>
+<h4 id="type--ttype"><strong>--type</strong>,
+<strong>-t</strong>=<em>type</em></h4>
+<p>Return JSON for the specified type. Type can be 'container', 'image',
+'volume', 'network', 'pod', or 'all' (default: all) (Only meaningful
+when invoked as <em>podman inspect</em>)</p>
+<h2 id="example">EXAMPLE</h2>
+<pre><code># podman inspect fedora
+[
+    {
+        &quot;Id&quot;: &quot;f0858ad3febdf45bb2e5501cb459affffacef081f79eaa436085c3b6d9bd46ca&quot;,
+        &quot;Digest&quot;: &quot;sha256:d4f7df6b691d61af6cee7328f82f1d8afdef63bc38f58516858ae3045083924a&quot;,
+        &quot;RepoTags&quot;: [
+            &quot;docker.io/library/fedora:latest&quot;
+        ],
+        &quot;RepoDigests&quot;: [
+            &quot;docker.io/library/fedora@sha256:8fa60b88e2a7eac8460b9c0104b877f1aa0cea7fbc03c701b7e545dacccfb433&quot;,
+            &quot;docker.io/library/fedora@sha256:d4f7df6b691d61af6cee7328f82f1d8afdef63bc38f58516858ae3045083924a&quot;
+        ],
+        &quot;Parent&quot;: &quot;&quot;,
+        &quot;Comment&quot;: &quot;&quot;,
+        &quot;Created&quot;: &quot;2019-10-29T03:23:37.695123423Z&quot;,
+        &quot;Config&quot;: {
+            &quot;Env&quot;: [
+                &quot;PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin&quot;,
+                &quot;DISTTAG=f31-updates-candidatecontainer&quot;,
+                &quot;FGC=f31-updates-candidate&quot;,
+                &quot;FBR=f31-updates-candidate&quot;
+            ],
+            &quot;Cmd&quot;: [
+                &quot;/bin/bash&quot;
+            ],
+            &quot;Labels&quot;: {
+                &quot;maintainer&quot;: &quot;Clement Verna \u003ccverna@fedoraproject.org\u003e&quot;
+            }
+        },
+        &quot;Version&quot;: &quot;18.06.1-ce&quot;,
+        &quot;Author&quot;: &quot;&quot;,
+        &quot;Architecture&quot;: &quot;amd64&quot;,
+        &quot;Os&quot;: &quot;linux&quot;,
+        &quot;Size&quot;: 201096840,
+        &quot;VirtualSize&quot;: 201096840,
+        &quot;GraphDriver&quot;: {
+            &quot;Name&quot;: &quot;overlay&quot;,
+            &quot;Data&quot;: {
+                &quot;UpperDir&quot;: &quot;/home/user/.local/share/containers/storage/overlay/2ae3cee18c8ef9e0d448649747dab81c4f1ca2714a8c4550eff49574cab262c9/diff&quot;,
+                &quot;WorkDir&quot;: &quot;/home/user/.local/share/containers/storage/overlay/2ae3cee18c8ef9e0d448649747dab81c4f1ca2714a8c4550eff49574cab262c9/work&quot;
+            }
+        },
+        &quot;RootFS&quot;: {
+            &quot;Type&quot;: &quot;layers&quot;,
+            &quot;Layers&quot;: [
+                &quot;sha256:2ae3cee18c8ef9e0d448649747dab81c4f1ca2714a8c4550eff49574cab262c9&quot;
+            ]
+        },
+        &quot;Labels&quot;: {
+            &quot;maintainer&quot;: &quot;Clement Verna \u003ccverna@fedoraproject.org\u003e&quot;
+        },
+        &quot;Annotations&quot;: {},
+        &quot;ManifestType&quot;: &quot;application/vnd.docker.distribution.manifest.v2+json&quot;,
+        &quot;User&quot;: &quot;&quot;,
+        &quot;History&quot;: [
+            {
+                &quot;created&quot;: &quot;2019-01-16T21:21:55.569693599Z&quot;,
+                &quot;created_by&quot;: &quot;/bin/sh -c #(nop)  LABEL maintainer=Clement Verna \u003ccverna@fedoraproject.org\u003e&quot;,
+                &quot;empty_layer&quot;: true
+            },
+            {
+                &quot;created&quot;: &quot;2019-09-27T21:21:07.784469821Z&quot;,
+                &quot;created_by&quot;: &quot;/bin/sh -c #(nop)  ENV DISTTAG=f31-updates-candidatecontainer FGC=f31-updates-candidate FBR=f31-updates-candidate&quot;,
+                &quot;empty_layer&quot;: true
+            },
+            {
+                &quot;created&quot;: &quot;2019-10-29T03:23:37.355187998Z&quot;,
+                &quot;created_by&quot;: &quot;/bin/sh -c #(nop) ADD file:298f828afc880ccde9205fc4418435d5e696ad165e283f0530d0b1a74326d6dc in / &quot;
+            },
+            {
+                &quot;created&quot;: &quot;2019-10-29T03:23:37.695123423Z&quot;,
+                &quot;created_by&quot;: &quot;/bin/sh -c #(nop)  CMD [\&quot;/bin/bash\&quot;]&quot;,
+                &quot;empty_layer&quot;: true
+            }
+        ],
+        &quot;NamesHistory&quot;: []
+    }
+]</code></pre>
+<pre><code># podman inspect a04 --format &quot;{{.ImageName}}&quot;
+fedora</code></pre>
+<pre><code># podman inspect a04 --format &quot;{{.GraphDriver.Name}}&quot;
+overlay</code></pre>
+<pre><code># podman image inspect --format &quot;size: {{.Size}}&quot; alpine
+size:   4405240</code></pre>
+<pre><code>podman container inspect --latest --format {{.EffectiveCaps}}
+[CAP_CHOWN CAP_DAC_OVERRIDE CAP_FSETID CAP_FOWNER CAP_MKNOD CAP_NET_RAW CAP_SETGID CAP_SETUID CAP_SETFCAP CAP_SETPCAP CAP_NET_BIND_SERVICE CAP_SYS_CHROOT CAP_KILL CAP_AUDIT_WRITE]</code></pre>
+<pre><code># podman inspect myPod --type pod --format &quot;{{.Name}}&quot;
+myPod</code></pre>
+<pre><code># podman inspect myVolume --type volume --format &quot;{{.Name}}&quot;
+myVolume</code></pre>
+<pre><code># podman inspect nyNetwork --type network --format &quot;{{.name}}&quot;
+myNetwork</code></pre>
+<h2 id="see-also">SEE ALSO</h2>
+<p><strong><a href="podman.html">podman(1)</a></strong>, <strong><a
+href="podman-container-inspect.html">podman-container-inspect(1)</a></strong>,
+<strong><a
+href="podman-image-inspect.html">podman-image-inspect(1)</a></strong>,
+<strong><a
+href="podman-network-inspect.html">podman-network-inspect(1)</a></strong>,
+<strong><a
+href="podman-pod-inspect.html">podman-pod-inspect(1)</a></strong>,
+<strong><a
+href="podman-volume-inspect.html">podman-volume-inspect(1)</a></strong></p>
+<h2 id="history">HISTORY</h2>
+<p>July 2017, Originally compiled by Dan Walsh <a
+href="mailto:dwalsh@redhat.com" class="email">dwalsh@redhat.com</a></p>
+</body>
+</html>

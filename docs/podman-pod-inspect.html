@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>podman-pod-inspect(1)</title>
+  <style>
+    html {
+      line-height: 1.5;
+      font-family: Georgia, serif;
+      font-size: 20px;
+      color: #1a1a1a;
+      background-color: #fdfdfd;
+    }
+    body {
+      margin: 0 auto;
+      max-width: 36em;
+      padding-left: 50px;
+      padding-right: 50px;
+      padding-top: 50px;
+      padding-bottom: 50px;
+      hyphens: auto;
+      overflow-wrap: break-word;
+      text-rendering: optimizeLegibility;
+      font-kerning: normal;
+    }
+    @media (max-width: 600px) {
+      body {
+        font-size: 0.9em;
+        padding: 1em;
+      }
+      h1 {
+        font-size: 1.8em;
+      }
+    }
+    @media print {
+      body {
+        background-color: transparent;
+        color: black;
+        font-size: 12pt;
+      }
+      p, h2, h3 {
+        orphans: 3;
+        widows: 3;
+      }
+      h2, h3, h4 {
+        page-break-after: avoid;
+      }
+    }
+    p {
+      margin: 1em 0;
+    }
+    a {
+      color: #1a1a1a;
+    }
+    a:visited {
+      color: #1a1a1a;
+    }
+    img {
+      max-width: 100%;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      margin-top: 1.4em;
+    }
+    h5, h6 {
+      font-size: 1em;
+      font-style: italic;
+    }
+    h6 {
+      font-weight: normal;
+    }
+    ol, ul {
+      padding-left: 1.7em;
+      margin-top: 1em;
+    }
+    li > ol, li > ul {
+      margin-top: 0;
+    }
+    blockquote {
+      margin: 1em 0 1em 1.7em;
+      padding-left: 1em;
+      border-left: 2px solid #e6e6e6;
+      color: #606060;
+    }
+    code {
+      font-family: Menlo, Monaco, 'Lucida Console', Consolas, monospace;
+      font-size: 85%;
+      margin: 0;
+    }
+    pre {
+      margin: 1em 0;
+      overflow: auto;
+    }
+    pre code {
+      padding: 0;
+      overflow: visible;
+      overflow-wrap: normal;
+    }
+    .sourceCode {
+     background-color: transparent;
+     overflow: visible;
+    }
+    hr {
+      background-color: #1a1a1a;
+      border: none;
+      height: 1px;
+      margin: 1em 0;
+    }
+    table {
+      margin: 1em 0;
+      border-collapse: collapse;
+      width: 100%;
+      overflow-x: auto;
+      display: block;
+      font-variant-numeric: lining-nums tabular-nums;
+    }
+    table caption {
+      margin-bottom: 0.75em;
+    }
+    tbody {
+      margin-top: 0.5em;
+      border-top: 1px solid #1a1a1a;
+      border-bottom: 1px solid #1a1a1a;
+    }
+    th {
+      border-top: 1px solid #1a1a1a;
+      padding: 0.25em 0.5em 0.25em 0.5em;
+    }
+    td {
+      padding: 0.125em 0.5em 0.25em 0.5em;
+    }
+    header {
+      margin-bottom: 4em;
+      text-align: center;
+    }
+    #TOC li {
+      list-style: none;
+    }
+    #TOC ul {
+      padding-left: 1.3em;
+    }
+    #TOC > ul {
+      padding-left: 0;
+    }
+    #TOC a:not(:hover) {
+      text-decoration: none;
+    }
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    span.underline{text-decoration: underline;}
+    div.column{display: inline-block; vertical-align: top; width: 50%;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    ul.task-list{list-style: none;}
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+  </style>
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<h2 id="name">NAME</h2>
+<p>podman-pod-inspect - Displays information describing a pod</p>
+<h2 id="synopsis">SYNOPSIS</h2>
+<p><strong>podman pod inspect</strong> [<em>options</em>] <em>pod</em>
+...</p>
+<h2 id="description">DESCRIPTION</h2>
+<p>Displays configuration and state information about a given pod. It
+also displays information about containers that belong to the pod.</p>
+<h2 id="options">OPTIONS</h2>
+<h4 id="format--fformat"><strong>--format</strong>,
+<strong>-f</strong>=<em>format</em></h4>
+<p>Change the default output format. This can be of a supported type
+like 'json' or a Go template. Valid placeholders for the Go template are
+listed below:</p>
+<table>
+<colgroup>
+<col style="width: 18%" />
+<col style="width: 81%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th><strong>Placeholder</strong></th>
+<th><strong>Description</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>.ID</td>
+<td>Pod ID</td>
+</tr>
+<tr class="even">
+<td>.Name</td>
+<td>Pod name</td>
+</tr>
+<tr class="odd">
+<td>.State</td>
+<td>Pod state</td>
+</tr>
+<tr class="even">
+<td>.Hostname</td>
+<td>Pod hostname</td>
+</tr>
+<tr class="odd">
+<td>.Labels</td>
+<td>Pod labels</td>
+</tr>
+<tr class="even">
+<td>.Created</td>
+<td>Time when the pod was created</td>
+</tr>
+<tr class="odd">
+<td>.CreateCgroup</td>
+<td>Whether cgroup was created</td>
+</tr>
+<tr class="even">
+<td>.CgroupParent</td>
+<td>Pod cgroup parent</td>
+</tr>
+<tr class="odd">
+<td>.CgroupPath</td>
+<td>Pod cgroup path</td>
+</tr>
+<tr class="even">
+<td>.CreateInfra</td>
+<td>Whether infrastructure created</td>
+</tr>
+<tr class="odd">
+<td>.InfraContainerID</td>
+<td>Pod infrastructure ID</td>
+</tr>
+<tr class="even">
+<td>.SharedNamespaces</td>
+<td>Pod shared namespaces</td>
+</tr>
+<tr class="odd">
+<td>.NumContainers</td>
+<td>Number of containers in the pod</td>
+</tr>
+<tr class="even">
+<td>.Containers</td>
+<td>Pod containers</td>
+</tr>
+</tbody>
+</table>
+<h4 id="latest--l"><strong>--latest</strong>, <strong>-l</strong></h4>
+<p>Instead of providing the pod name or ID, use the last created pod. If
+you use methods other than Podman to run pods such as CRI-O, the last
+started pod could be from either of those methods. (This option is not
+available with the remote Podman client, including Mac and Windows
+(excluding WSL2) machines)</p>
+<h2 id="example">EXAMPLE</h2>
+<pre><code># podman pod inspect foobar
+{
+
+     &quot;Id&quot;: &quot;3513ca70583dd7ef2bac83331350f6b6c47d7b4e526c908e49d89ebf720e4693&quot;,
+     &quot;Name&quot;: &quot;foobar&quot;,
+     &quot;Labels&quot;: {},
+     &quot;CgroupParent&quot;: &quot;/libpod_parent&quot;,
+     &quot;CreateCgroup&quot;: true,
+     &quot;Created&quot;: &quot;2018-08-08T11:15:18.823115347-05:00&quot;
+     &quot;State&quot;: &quot;created&quot;,
+     &quot;Hostname&quot;: &quot;&quot;,
+     &quot;SharedNamespaces&quot;: [
+          &quot;uts&quot;,
+          &quot;ipc&quot;,
+          &quot;net&quot;
+     ]
+     &quot;CreateInfra&quot;: false,
+     &quot;InfraContainerID&quot;: &quot;1020dd70583dd7ff2bac83331350f6b6e007de0d026c908e49d89ebf891d4699&quot;
+     &quot;CgroupPath&quot;: &quot;&quot;
+     &quot;Containers&quot;: [
+          {
+               &quot;id&quot;: &quot;d53f8bf1e9730281264aac6e6586e327429f62c704abea4b6afb5d8a2b2c9f2c&quot;,
+               &quot;state&quot;: &quot;configured&quot;
+          }
+     ]
+}</code></pre>
+<h2 id="see-also">SEE ALSO</h2>
+<p><strong><a href="podman.html">podman(1)</a></strong>, <strong><a
+href="podman-pod.html">podman-pod(1)</a></strong>, <strong><a
+href="podman-inspect.html">podman-inspect(1)</a></strong></p>
+<h2 id="history">HISTORY</h2>
+<p>August 2018, Originally compiled by Brent Baude <a
+href="mailto:bbaude@redhat.com" class="email">bbaude@redhat.com</a></p>
+</body>
+</html>

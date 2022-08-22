@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>podman-generate-systemd(1)</title>
+  <style>
+    html {
+      line-height: 1.5;
+      font-family: Georgia, serif;
+      font-size: 20px;
+      color: #1a1a1a;
+      background-color: #fdfdfd;
+    }
+    body {
+      margin: 0 auto;
+      max-width: 36em;
+      padding-left: 50px;
+      padding-right: 50px;
+      padding-top: 50px;
+      padding-bottom: 50px;
+      hyphens: auto;
+      overflow-wrap: break-word;
+      text-rendering: optimizeLegibility;
+      font-kerning: normal;
+    }
+    @media (max-width: 600px) {
+      body {
+        font-size: 0.9em;
+        padding: 1em;
+      }
+      h1 {
+        font-size: 1.8em;
+      }
+    }
+    @media print {
+      body {
+        background-color: transparent;
+        color: black;
+        font-size: 12pt;
+      }
+      p, h2, h3 {
+        orphans: 3;
+        widows: 3;
+      }
+      h2, h3, h4 {
+        page-break-after: avoid;
+      }
+    }
+    p {
+      margin: 1em 0;
+    }
+    a {
+      color: #1a1a1a;
+    }
+    a:visited {
+      color: #1a1a1a;
+    }
+    img {
+      max-width: 100%;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      margin-top: 1.4em;
+    }
+    h5, h6 {
+      font-size: 1em;
+      font-style: italic;
+    }
+    h6 {
+      font-weight: normal;
+    }
+    ol, ul {
+      padding-left: 1.7em;
+      margin-top: 1em;
+    }
+    li > ol, li > ul {
+      margin-top: 0;
+    }
+    blockquote {
+      margin: 1em 0 1em 1.7em;
+      padding-left: 1em;
+      border-left: 2px solid #e6e6e6;
+      color: #606060;
+    }
+    code {
+      font-family: Menlo, Monaco, 'Lucida Console', Consolas, monospace;
+      font-size: 85%;
+      margin: 0;
+    }
+    pre {
+      margin: 1em 0;
+      overflow: auto;
+    }
+    pre code {
+      padding: 0;
+      overflow: visible;
+      overflow-wrap: normal;
+    }
+    .sourceCode {
+     background-color: transparent;
+     overflow: visible;
+    }
+    hr {
+      background-color: #1a1a1a;
+      border: none;
+      height: 1px;
+      margin: 1em 0;
+    }
+    table {
+      margin: 1em 0;
+      border-collapse: collapse;
+      width: 100%;
+      overflow-x: auto;
+      display: block;
+      font-variant-numeric: lining-nums tabular-nums;
+    }
+    table caption {
+      margin-bottom: 0.75em;
+    }
+    tbody {
+      margin-top: 0.5em;
+      border-top: 1px solid #1a1a1a;
+      border-bottom: 1px solid #1a1a1a;
+    }
+    th {
+      border-top: 1px solid #1a1a1a;
+      padding: 0.25em 0.5em 0.25em 0.5em;
+    }
+    td {
+      padding: 0.125em 0.5em 0.25em 0.5em;
+    }
+    header {
+      margin-bottom: 4em;
+      text-align: center;
+    }
+    #TOC li {
+      list-style: none;
+    }
+    #TOC ul {
+      padding-left: 1.3em;
+    }
+    #TOC > ul {
+      padding-left: 0;
+    }
+    #TOC a:not(:hover) {
+      text-decoration: none;
+    }
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    span.underline{text-decoration: underline;}
+    div.column{display: inline-block; vertical-align: top; width: 50%;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    ul.task-list{list-style: none;}
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+  </style>
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<h2 id="name">NAME</h2>
+<p>podman-generate-systemd - Generate systemd unit file(s) for a
+container or pod</p>
+<h2 id="synopsis">SYNOPSIS</h2>
+<p><strong>podman generate systemd</strong> [<em>options</em>]
+<em>container|pod</em></p>
+<h2 id="description">DESCRIPTION</h2>
+<p><strong>podman generate systemd</strong> will create a systemd unit
+file that can be used to control a container or pod. By default, the
+command will print the content of the unit files to stdout.</p>
+<p>Generating unit files for a pod requires the pod to be created with
+an infra container (see <code>--infra=true</code>). An infra container
+runs across the entire lifespan of a pod and is hence required for
+systemd to manage the life cycle of the pod's main unit.</p>
+<p><em>Note: If you use this command with the remote client, including
+Mac and Windows (excluding WSL2) machines, you would still have to place
+the generated units on the remote system. Moreover, please make sure
+that the XDG_RUNTIME_DIR environment variable is set. If unset, you may
+set it via
+<code>export XDG_RUNTIME_DIR=/run/user/$(id -u)</code>.</em></p>
+<p><em>Note: The generated <code>podman run</code> command contains an
+<code>--sdnotify</code> option with the value taken from the container.
+If the container does not have any explicitly set value or the value is
+set to <strong>ignore</strong>, the value <strong>conmon</strong> is
+used. The reason for overriding the default value
+<strong>container</strong> is that almost no container workloads send
+notify messages. Systemd would wait for a ready message that never
+comes, if the value <strong>container</strong> is used for a container
+that does not send notify messages. The use of the default value might
+have been unintentional by the user, therefore the overridden default
+value.</em></p>
+<h3 id="kubernetes-integration">Kubernetes Integration</h3>
+<p>A Kubernetes YAML can be executed in systemd via the
+<code>podman-kube@.service</code> systemd template. The template's
+argument is the path to the YAML file. Given a
+<code>workload.yaml</code> file in the home directory, it can be
+executed as follows:</p>
+<pre><code>$ escaped=$(systemd-escape ~/sysadmin.yaml)
+$ systemctl --user start podman-kube@$escaped.service
+$ systemctl --user is-active podman-kube@$escaped.service
+active</code></pre>
+<h2 id="options">OPTIONS</h2>
+<h4
+id="afterdependency_name"><strong>--after</strong>=<em>dependency_name</em></h4>
+<p>Add the systemd unit after (<code>After=</code>) option, that
+ordering dependencies between the list of dependencies and this service.
+This option may be specified more than once.</p>
+<p>User-defined dependencies will be appended to the generated unit
+file, but any existing options such as needed or defined by default
+(e.g. <code>online.target</code>) will <strong>not</strong> be removed
+or overridden.</p>
+<h4
+id="container-prefixprefix"><strong>--container-prefix</strong>=<em>prefix</em></h4>
+<p>Set the systemd unit name prefix for containers. The default is
+<em>container</em>.</p>
+<h4 id="files--f"><strong>--files</strong>, <strong>-f</strong></h4>
+<p>Generate files instead of printing to stdout. The generated files are
+named {container,pod}-{ID,name}.service and will be placed in the
+current working directory.</p>
+<p>Note: On a system with SELinux enabled, the generated files will
+inherit contexts from the current working directory. Depending on the
+SELinux setup, changes to the generated files using
+<code>restorecon</code>, <code>chcon</code>, or <code>semanage</code>
+may be required to allow systemd to access these files. Alternatively,
+use the <code>-Z</code> option when running <code>mv</code> or
+<code>cp</code>.</p>
+<h4 id="formatformat"><strong>--format</strong>=<em>format</em></h4>
+<p>Print the created units in specified format (json). If
+<code>--files</code> is specified the paths to the created files will be
+printed instead of the unit content.</p>
+<h4 id="name--n"><strong>--name</strong>, <strong>-n</strong></h4>
+<p>Use the name of the container for the start, stop, and description in
+the unit file</p>
+<h4 id="new"><strong>--new</strong></h4>
+<p>Using this flag will yield unit files that do not expect containers
+and pods to exist. Instead, new containers and pods are created based on
+their configuration files. The unit files are created best effort and
+may need to be further edited; please review the generated files
+carefully before using them in production.</p>
+<p>Note that <code>--new</code> only works on containers and pods
+created directly via Podman (i.e.,
+<code>podman [container] {create,run}</code> or
+<code>podman pod create</code>). It does not work on containers or pods
+created via the REST API or via <code>podman kube play</code>.</p>
+<h4 id="no-header"><strong>--no-header</strong></h4>
+<p>Do not generate the header including meta data such as the Podman
+version and the timestamp.</p>
+<h4
+id="pod-prefixprefix"><strong>--pod-prefix</strong>=<em>prefix</em></h4>
+<p>Set the systemd unit name prefix for pods. The default is
+<em>pod</em>.</p>
+<h4
+id="requiresdependency_name"><strong>--requires</strong>=<em>dependency_name</em></h4>
+<p>Set the systemd unit requires (<code>Requires=</code>) option.
+Similar to wants, but declares a stronger requirement dependency.</p>
+<h4
+id="restart-policypolicy"><strong>--restart-policy</strong>=<em>policy</em></h4>
+<p>Set the systemd restart policy. The restart-policy must be one of:
+"no", "on-success", "on-failure", "on-abnormal", "on-watchdog",
+"on-abort", or "always". The default policy is <em>on-failure</em>.</p>
+<h4
+id="restart-sectime"><strong>--restart-sec</strong>=<em>time</em></h4>
+<p>Set the systemd service restartsec value. Configures the time to
+sleep before restarting a service (as configured with restart-policy).
+Takes a value in seconds.</p>
+<h4
+id="separatorseparator"><strong>--separator</strong>=<em>separator</em></h4>
+<p>Set the systemd unit name separator between the name/id of a
+container/pod and the prefix. The default is <em>-</em>.</p>
+<h4
+id="start-timeoutvalue"><strong>--start-timeout</strong>=<em>value</em></h4>
+<p>Override the default start timeout for the container with the given
+value in seconds.</p>
+<h4
+id="stop-timeoutvalue"><strong>--stop-timeout</strong>=<em>value</em></h4>
+<p>Override the default stop timeout for the container with the given
+value in seconds.</p>
+<h4 id="template"><strong>--template</strong></h4>
+<p>Add template specifiers to run multiple services from the systemd
+unit file.</p>
+<p>Note that if <code>--new</code> was not set to true, it is set to
+true by default. However, if <code>--new</code> is set to
+<code>false</code> explicitly the command will fail.</p>
+<h4
+id="wantsdependency_name"><strong>--wants</strong>=<em>dependency_name</em></h4>
+<p>Add the systemd unit wants (<code>Wants=</code>) option, that this
+service is (weak) dependent on. This option may be specified more than
+once. This option does not influence the order in which services are
+started or stopped.</p>
+<p>User-defined dependencies will be appended to the generated unit
+file, but any existing options such as needed or defined by default
+(e.g. <code>online.target</code>) will <strong>not</strong> be removed
+or overridden.</p>
+<h2 id="examples">EXAMPLES</h2>
+<h3 id="generate-and-print-a-systemd-unit-file-for-a-container">Generate
+and print a systemd unit file for a container</h3>
+<p>Generate a systemd unit file for a container running nginx with an
+<em>always</em> restart policy and 1-second timeout to stdout. Note that
+the <strong>RequiresMountsFor</strong> option in the
+<strong>Unit</strong> section ensures that the container storage for
+both the GraphRoot and the RunRoot are mounted prior to starting the
+service. For systems with container storage on disks like iSCSI or other
+remote block protocols, this ensures that Podman is not executed prior
+to any necessary storage operations coming online.</p>
+<pre><code>$ podman create --name nginx nginx:latest
+$ podman generate systemd --restart-policy=always -t 1 nginx
+# container-de1e3223b1b888bc02d0962dd6cb5855eb00734061013ffdd3479d225abacdc6.service
+# autogenerated by Podman 1.8.0
+# Wed Mar 09 09:46:45 CEST 2020
+
+[Unit]
+Description=Podman container-de1e3223b1b888bc02d0962dd6cb5855eb00734061013ffdd3479d225abacdc6.service
+Documentation=man:podman-generate-systemd(1)
+Wants=network-online.target
+After=network-online.target
+RequiresMountsFor=/var/run/container/storage
+
+[Service]
+Restart=always
+ExecStart=/usr/bin/podman start de1e3223b1b888bc02d0962dd6cb5855eb00734061013ffdd3479d225abacdc6
+ExecStop=/usr/bin/podman stop -t 1 de1e3223b1b888bc02d0962dd6cb5855eb00734061013ffdd3479d225abacdc6
+KillMode=none
+Type=forking
+PIDFile=/run/user/1000/overlay-containers/de1e3223b1b888bc02d0962dd6cb5855eb00734061013ffdd3479d225abacdc6/userdata/conmon.pid
+
+[Install]
+WantedBy=default.target</code></pre>
+<h3
+id="generate-systemd-unit-file-for-a-container-with---new-flag">Generate
+systemd unit file for a container with <code>--new</code> flag</h3>
+<p>The <code>--new</code> flag generates systemd unit files that create
+and remove containers at service start and stop commands (see
+ExecStartPre and ExecStopPost service actions). Such unit files are not
+tied to a single machine and can easily be shared and used on other
+machines.</p>
+<pre><code>$ sudo podman generate systemd --new --files --name bb310a0780ae
+# container-busy_moser.service
+# autogenerated by Podman 1.8.3
+# Fri Apr  3 09:40:47 EDT 2020
+
+[Unit]
+Description=Podman container-busy_moser.service
+Documentation=man:podman-generate-systemd(1)
+Wants=network-online.target
+After=network-online.target
+RequiresMountsFor=/var/run/container/storage
+
+[Service]
+Environment=PODMAN_SYSTEMD_UNIT=%n
+Restart=on-failure
+ExecStartPre=/bin/rm -f %t/%n-pid %t/%n-cid
+ExecStart=/usr/local/bin/podman run
+    --conmon-pidfile %t/%n-pid
+    --cidfile %t/%n-cid
+    --cgroups=no-conmon
+    -d
+    -dit alpine
+ExecStop=/usr/local/bin/podman stop --ignore --cidfile %t/%n-cid -t 10
+ExecStopPost=/usr/local/bin/podman rm --ignore -f --cidfile %t/%n-cid
+PIDFile=%t/%n-pid
+KillMode=none
+Type=forking
+
+[Install]
+WantedBy=default.target</code></pre>
+<h3
+id="generate-systemd-unit-files-for-a-pod-with-two-simple-alpine-containers">Generate
+systemd unit files for a pod with two simple alpine containers</h3>
+<p>Note <code>systemctl</code> should only be used on the pod unit and
+one should not start or stop containers individually via
+<code>systemctl</code>, as they are managed by the pod service along
+with the internal infra-container.</p>
+<p>You can still use <code>systemctl status</code> or
+<code>journalctl</code> to examine container or pod unit files.</p>
+<pre><code>$ podman pod create --name systemd-pod
+$ podman create --pod systemd-pod alpine top
+$ podman create --pod systemd-pod alpine top
+$ podman generate systemd --files --name systemd-pod
+/home/user/pod-systemd-pod.service
+/home/user/container-amazing_chandrasekhar.service
+/home/user/container-jolly_shtern.service
+$ cat pod-systemd-pod.service
+# pod-systemd-pod.service
+# autogenerated by Podman 1.8.0
+# Wed Mar 09 09:52:37 CEST 2020
+
+[Unit]
+Description=Podman pod-systemd-pod.service
+Documentation=man:podman-generate-systemd(1)
+Requires=container-amazing_chandrasekhar.service container-jolly_shtern.service
+Before=container-amazing_chandrasekhar.service container-jolly_shtern.service
+Wants=network-online.target
+After=network-online.target
+RequiresMountsFor=/var/run/container/storage
+
+[Service]
+Restart=on-failure
+ExecStart=/usr/bin/podman start 77a818221650-infra
+ExecStop=/usr/bin/podman stop -t 10 77a818221650-infra
+KillMode=none
+Type=forking
+PIDFile=/run/user/1000/overlay-containers/ccfd5c71a088768774ca7bd05888d55cc287698dde06f475c8b02f696a25adcd/userdata/conmon.pid
+
+[Install]
+WantedBy=default.target</code></pre>
+<h3 id="installation-of-generated-systemd-unit-files.">Installation of
+generated systemd unit files.</h3>
+<p>Podman-generated unit files include an <code>[Install]</code>
+section, which carries installation information for the unit. It is used
+by the enable and disable commands of systemctl(1) during
+installation.</p>
+<p>Once you have generated the systemd unit file, you can copy the
+generated systemd file to <code>/etc/systemd/system</code> for
+installing as a root user and to <code>$HOME/.config/systemd/user</code>
+for installing it as a non-root user. Enable the copied unit file or
+files using <code>systemctl enable</code>.</p>
+<p>Note: Copying unit files to <code>/etc/systemd/system</code> and
+enabling it marks the unit file to be automatically started at boot. And
+similarly, copying a unit file to
+<code>$HOME/.config/systemd/user</code> and enabling it marks the unit
+file to be automatically started on user login.</p>
+<pre><code># Generated systemd files.
+$ podman pod create --name systemd-pod
+$ podman create --pod systemd-pod alpine top
+$ podman generate systemd --files --name systemd-pod
+
+# Copy all the generated files.
+
+$ sudo cp pod-systemd-pod.service container-great_payne.service /etc/systemd/system
+$ systemctl enable pod-systemd-pod.service
+Created symlink /etc/systemd/system/multi-user.target.wants/pod-systemd-pod.service &#x2192; /etc/systemd/system/pod-systemd-pod.service.
+Created symlink /etc/systemd/system/default.target.wants/pod-systemd-pod.service &#x2192; /etc/systemd/system/pod-systemd-pod.service.
+$ systemctl is-enabled pod-systemd-pod.service
+enabled</code></pre>
+<p>To run the user services placed in
+<code>$HOME/.config/systemd/user</code> on first login of that user,
+enable the service with --user flag.</p>
+<pre><code>$ systemctl --user enable &lt;.service&gt;</code></pre>
+<p>The systemd user instance is killed after the last session for the
+user is closed. The systemd user instance can be started at boot and
+kept running even after the user logs out by enabling
+<code>lingering</code> using</p>
+<pre><code>$ loginctl enable-linger &lt;username&gt;</code></pre>
+<h3
+id="use-systemctl-to-perform-operations-on-generated-installed-unit-files.">Use
+<code>systemctl</code> to perform operations on generated installed unit
+files.</h3>
+<p>Create and enable systemd unit files for a pod using the above
+examples as reference and use <code>systemctl</code> to perform
+operations.</p>
+<p>Since systemctl defaults to using the root user, all the changes
+using the systemctl can be seen by appending sudo to the podman cli
+commands. To perform <code>systemctl</code> actions as a non-root user
+use the <code>--user</code> flag when interacting with
+<code>systemctl</code>.</p>
+<p>Note: If the previously created containers or pods are using shared
+resources, such as ports, make sure to remove them before starting the
+generated systemd units.</p>
+<pre><code>$ systemctl --user start pod-systemd-pod.service
+$ podman pod ps
+POD ID         NAME          STATUS    CREATED          # OF CONTAINERS   INFRA ID
+0815c7b8e7f5   systemd-pod   Running   29 minutes ago   2                 6c5d116f4bbe
+$ sudo podman ps # 0 Number of pods on root.
+CONTAINER ID  IMAGE  COMMAND  CREATED  STATUS  PORTS  NAMES
+$ systemctl stop pod-systemd-pod.service
+$ podman pod ps
+POD ID         NAME          STATUS   CREATED          # OF CONTAINERS   INFRA ID
+272d2813c798   systemd-pod   Exited   29 minutes ago   2                 6c5d116f4bbe</code></pre>
+<p>Create a simple alpine container and generate the systemd unit file
+with <code>--new</code> flag. Enable the service and control operations
+using the systemctl commands.</p>
+<p>Note: When starting the container using <code>systemctl start</code>
+rather than altering the already running container it spins up a "new"
+container with similar configuration.</p>
+<pre><code># Enable the service.
+
+$ sudo podman ps -a
+CONTAINER ID  IMAGE                            COMMAND  CREATED        STATUS     PORTS  NAMES
+bb310a0780ae  docker.io/library/alpine:latest  /bin/sh  2 minutes ago  Created           busy_moser
+$ sudo systemctl start container-busy_moser.service
+$ sudo podman ps -a
+CONTAINER ID  IMAGE                            COMMAND  CREATED        STATUS            PORTS      NAMES
+772df2f8cf3b  docker.io/library/alpine:latest  /bin/sh  1 second ago   Up 1 second ago              distracted_albattani
+bb310a0780ae  docker.io/library/alpine:latest  /bin/sh  3 minutes ago  Created                      busy_moser</code></pre>
+<h2 id="see-also">SEE ALSO</h2>
+<p><strong><a href="podman.html">podman(1)</a></strong>, <strong><a
+href="podman-container.html">podman-container(1)</a></strong>,
+<strong>systemctl(1)</strong>, <strong>systemd.unit(5)</strong>,
+<strong>systemd.service(5)</strong>, <strong><a
+href="https://github.com/containers/conmon/blob/main/docs/conmon.8.md">conmon(8)</a></strong></p>
+<h2 id="history">HISTORY</h2>
+<p>April 2020, Updated details and added use case to use generated
+.service files as root and non-root, by Sujil Shah (sushah at redhat dot
+com)</p>
+<p>August 2019, Updated with pod support by Valentin Rothberg (rothberg
+at redhat dot com)</p>
+<p>April 2019, Originally compiled by Brent Baude (bbaude at redhat dot
+com)</p>
+</body>
+</html>

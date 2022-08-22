@@ -1,0 +1,865 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>podman(1)</title>
+  <style>
+    html {
+      line-height: 1.5;
+      font-family: Georgia, serif;
+      font-size: 20px;
+      color: #1a1a1a;
+      background-color: #fdfdfd;
+    }
+    body {
+      margin: 0 auto;
+      max-width: 36em;
+      padding-left: 50px;
+      padding-right: 50px;
+      padding-top: 50px;
+      padding-bottom: 50px;
+      hyphens: auto;
+      overflow-wrap: break-word;
+      text-rendering: optimizeLegibility;
+      font-kerning: normal;
+    }
+    @media (max-width: 600px) {
+      body {
+        font-size: 0.9em;
+        padding: 1em;
+      }
+      h1 {
+        font-size: 1.8em;
+      }
+    }
+    @media print {
+      body {
+        background-color: transparent;
+        color: black;
+        font-size: 12pt;
+      }
+      p, h2, h3 {
+        orphans: 3;
+        widows: 3;
+      }
+      h2, h3, h4 {
+        page-break-after: avoid;
+      }
+    }
+    p {
+      margin: 1em 0;
+    }
+    a {
+      color: #1a1a1a;
+    }
+    a:visited {
+      color: #1a1a1a;
+    }
+    img {
+      max-width: 100%;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      margin-top: 1.4em;
+    }
+    h5, h6 {
+      font-size: 1em;
+      font-style: italic;
+    }
+    h6 {
+      font-weight: normal;
+    }
+    ol, ul {
+      padding-left: 1.7em;
+      margin-top: 1em;
+    }
+    li > ol, li > ul {
+      margin-top: 0;
+    }
+    blockquote {
+      margin: 1em 0 1em 1.7em;
+      padding-left: 1em;
+      border-left: 2px solid #e6e6e6;
+      color: #606060;
+    }
+    code {
+      font-family: Menlo, Monaco, 'Lucida Console', Consolas, monospace;
+      font-size: 85%;
+      margin: 0;
+    }
+    pre {
+      margin: 1em 0;
+      overflow: auto;
+    }
+    pre code {
+      padding: 0;
+      overflow: visible;
+      overflow-wrap: normal;
+    }
+    .sourceCode {
+     background-color: transparent;
+     overflow: visible;
+    }
+    hr {
+      background-color: #1a1a1a;
+      border: none;
+      height: 1px;
+      margin: 1em 0;
+    }
+    table {
+      margin: 1em 0;
+      border-collapse: collapse;
+      width: 100%;
+      overflow-x: auto;
+      display: block;
+      font-variant-numeric: lining-nums tabular-nums;
+    }
+    table caption {
+      margin-bottom: 0.75em;
+    }
+    tbody {
+      margin-top: 0.5em;
+      border-top: 1px solid #1a1a1a;
+      border-bottom: 1px solid #1a1a1a;
+    }
+    th {
+      border-top: 1px solid #1a1a1a;
+      padding: 0.25em 0.5em 0.25em 0.5em;
+    }
+    td {
+      padding: 0.125em 0.5em 0.25em 0.5em;
+    }
+    header {
+      margin-bottom: 4em;
+      text-align: center;
+    }
+    #TOC li {
+      list-style: none;
+    }
+    #TOC ul {
+      padding-left: 1.3em;
+    }
+    #TOC > ul {
+      padding-left: 0;
+    }
+    #TOC a:not(:hover) {
+      text-decoration: none;
+    }
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    span.underline{text-decoration: underline;}
+    div.column{display: inline-block; vertical-align: top; width: 50%;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    ul.task-list{list-style: none;}
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+  </style>
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<h2 id="name">NAME</h2>
+<p>podman - Simple management tool for pods, containers and images</p>
+<h2 id="synopsis">SYNOPSIS</h2>
+<p><strong>podman</strong> [<em>options</em>] <em>command</em></p>
+<h2 id="description">DESCRIPTION</h2>
+<p>Podman (Pod Manager) is a fully featured container engine that is a
+simple daemonless tool. Podman provides a Docker-CLI comparable command
+line that eases the transition from other container engines and allows
+the management of pods, containers and images. Simply put:
+<code>alias docker=podman</code>. Most Podman commands can be run as a
+regular user, without requiring additional privileges.</p>
+<p>Podman uses Buildah(1) internally to create container images. Both
+tools share image (not container) storage, hence each can use or
+manipulate images (but not containers) created by the other.</p>
+<p>Default settings for flags are defined in
+<code>containers.conf</code>. Most settings for Remote connections use
+the server's containers.conf, except when documented in man pages.</p>
+<p><strong>podman <a href="#global-options">GLOBAL
+OPTIONS</a></strong></p>
+<h2 id="global-options">GLOBAL OPTIONS</h2>
+<h4
+id="cgroup-managermanager"><strong>--cgroup-manager</strong>=<em>manager</em></h4>
+<p>The CGroup manager to use for container cgroups. Supported values are
+cgroupfs or systemd. Default is systemd unless overridden in the
+containers.conf file.</p>
+<p>Note: Setting this flag can cause certain commands to break when
+called on containers previously created by the other CGroup manager
+type. Note: CGroup manager is not supported in rootless mode when using
+CGroups Version V1.</p>
+<h4 id="conmon"><strong>--conmon</strong></h4>
+<p>Path of the conmon binary (Default path is configured in
+<code>containers.conf</code>)</p>
+<h4 id="connection--c"><strong>--connection</strong>,
+<strong>-c</strong></h4>
+<p>Connection to use for remote podman, including Mac and Windows
+(excluding WSL2) machines, (Default connection is configured in
+<code>containers.conf</code>) Setting this option will switch the
+<strong>--remote</strong> option to true. Remote connections use local
+containers.conf for default.</p>
+<h4
+id="events-backendtype"><strong>--events-backend</strong>=<em>type</em></h4>
+<p>Backend to use for storing events. Allowed values are
+<strong>file</strong>, <strong>journald</strong>, and
+<strong>none</strong>. When <em>file</em> is specified, the events are
+stored under a subdirectory of the <em>tmpdir</em> location (see
+<strong>--tmpdir</strong> below).</p>
+<h4 id="help--h"><strong>--help</strong>, <strong>-h</strong></h4>
+<p>Print usage statement</p>
+<h4 id="hooks-dirpath"><strong>--hooks-dir</strong>=<em>path</em></h4>
+<p>Each <code>*.json</code> file in the path configures a hook for
+Podman containers. For more details on the syntax of the JSON files and
+the semantics of hook injection, see <code>oci-hooks(5)</code>. Podman
+and libpod currently support both the 1.0.0 and 0.1.0 hook schemas,
+although the 0.1.0 schema is deprecated.</p>
+<p>This option may be set multiple times; paths from later options have
+higher precedence (<code>oci-hooks(5)</code> discusses directory
+precedence).</p>
+<p>For the annotation conditions, libpod uses any annotations set in the
+generated OCI configuration.</p>
+<p>For the bind-mount conditions, only mounts explicitly requested by
+the caller via <code>--volume</code> are considered. Bind mounts that
+libpod inserts by default (e.g. <code>/dev/shm</code>) are not
+considered.</p>
+<p>If <code>--hooks-dir</code> is unset for root callers, Podman and
+libpod will currently default to
+<code>/usr/share/containers/oci/hooks.d</code> and
+<code>/etc/containers/oci/hooks.d</code> in order of increasing
+precedence. Using these defaults is deprecated, and callers should
+migrate to explicitly setting <code>--hooks-dir</code>.</p>
+<p>Podman and libpod currently support an additional
+<code>precreate</code> state which is called before the runtime's
+<code>create</code> operation. Unlike the other stages, which receive
+the container state on their standard input, <code>precreate</code>
+hooks receive the proposed runtime configuration on their standard
+input. They may alter that configuration as they see fit, and write the
+altered form to their standard output.</p>
+<p><strong>WARNING</strong>: the <code>precreate</code> hook lets you do
+powerful things, such as adding additional mounts to the runtime
+configuration. That power also makes it easy to break things. Before
+reporting libpod errors, try running your container with
+<code>precreate</code> hooks disabled to see if the problem is due to
+one of your hooks.</p>
+<h4 id="identitypath"><strong>--identity</strong>=<em>path</em></h4>
+<p>Path to ssh identity file. If the identity file has been encrypted,
+podman prompts the user for the passphrase. If no identity file is
+provided and no user is given, podman defaults to the user running the
+podman command. Podman prompts for the login password on the remote
+server.</p>
+<p>Identity value resolution precedence: - command line value -
+environment variable <code>CONTAINER_SSHKEY</code>, if
+<code>CONTAINER_HOST</code> is found - <code>containers.conf</code>
+Remote connections use local containers.conf for default.</p>
+<h4 id="log-levellevel"><strong>--log-level</strong>=<em>level</em></h4>
+<p>Log messages at and above specified level: debug, info, warn, error,
+fatal or panic (default: "warn")</p>
+<h4
+id="namespacenamespace"><strong>--namespace</strong>=<em>namespace</em></h4>
+<p>Set libpod namespace. Namespaces are used to separate groups of
+containers and pods in libpod's state. When namespace is set, created
+containers and pods will join the given namespace, and only containers
+and pods in the given namespace will be visible to Podman.</p>
+<h4
+id="network-cmd-pathpath"><strong>--network-cmd-path</strong>=<em>path</em></h4>
+<p>Path to the command binary to use for setting up a network. It is
+currently only used for setting up a slirp4netns network. If "" is used
+then the binary is looked up using the $PATH environment variable.</p>
+<h4
+id="network-config-dirdirectory"><strong>--network-config-dir</strong>=<em>directory</em></h4>
+<p>Path to the directory where network configuration files are located.
+For the CNI backend the default is "/etc/cni/net.d" as root and "<span
+class="math inline">$HOME/.config/cni/net.d" as rootless. For the
+netavark backend "/etc/containers/networks" is used as root and
+"$</span>graphroot/networks" as rootless.</p>
+<h4 id="noout"><strong>--noout</strong></h4>
+<p>Redirect stdout to /dev/null. This command will prevent all stdout
+from the Podman command. The <strong>--noout</strong> option will not
+block stderr or stdout from containers.</p>
+<h4 id="remote--r"><strong>--remote</strong>, <strong>-r</strong></h4>
+<p>When true, access to the Podman service will be remote. Defaults to
+false. Settings can be modified in the containers.conf file. If the
+CONTAINER_HOST environment variable is set, the
+<strong>--remote</strong> option defaults to true.</p>
+<h4 id="rootvalue"><strong>--root</strong>=<em>value</em></h4>
+<p>Storage root dir in which data, including images, is stored (default:
+"/var/lib/containers/storage" for UID 0,
+"$HOME/.local/share/containers/storage" for other users). Default root
+dir configured in <code>/etc/containers/storage.conf</code>.</p>
+<p>Overriding this option will cause the <em>storage-opt</em> settings
+in /etc/containers/storage.conf to be ignored. The user must specify
+additional options via the <code>--storage-opt</code> flag.</p>
+<h4 id="runrootvalue"><strong>--runroot</strong>=<em>value</em></h4>
+<p>Storage state directory where all state information is stored
+(default: "/run/containers/storage" for UID 0, "/run/user/$UID/run" for
+other users). Default state dir configured in
+<code>/etc/containers/storage.conf</code>.</p>
+<h4 id="runtimevalue"><strong>--runtime</strong>=<em>value</em></h4>
+<p>Name of the OCI runtime as specified in containers.conf or absolute
+path to the OCI compatible binary used to run containers.</p>
+<h4
+id="runtime-flagflag"><strong>--runtime-flag</strong>=<em>flag</em></h4>
+<p>Adds global flags for the container runtime. To list the supported
+flags, please consult the manpages of the selected container runtime
+(<code>runc</code> is the default runtime, the manpage to consult is
+<code>runc(8)</code>. When the machine is configured for cgroup V2, the
+default runtime is <code>crun</code>, the manpage to consult is
+<code>crun(8)</code>.).</p>
+<p>Note: Do not pass the leading <code>--</code> to the flag. To pass
+the runc flag <code>--log-format json</code> to podman build, the option
+given would be <code>--runtime-flag log-format=json</code>.</p>
+<h4 id="sshvalue"><strong>--ssh</strong>=<em>value</em></h4>
+<p>This option allows the user to change the ssh mode, meaning that
+rather than using the default <strong>golang</strong> mode, one can
+instead use <strong>--ssh=native</strong> to use the installed ssh
+binary and config file declared in containers.conf.</p>
+<h4
+id="storage-drivervalue"><strong>--storage-driver</strong>=<em>value</em></h4>
+<p>Storage driver. The default storage driver for UID 0 is configured in
+/etc/containers/storage.conf
+(<code>$HOME/.config/containers/storage.conf</code> in rootless mode),
+and is <em>vfs</em> for non-root users when <em>fuse-overlayfs</em> is
+not available. The <code>STORAGE_DRIVER</code> environment variable
+overrides the default. The --storage-driver specified driver overrides
+all.</p>
+<p>Overriding this option will cause the <em>storage-opt</em> settings
+in /etc/containers/storage.conf to be ignored. The user must specify
+additional options via the <code>--storage-opt</code> flag.</p>
+<h4
+id="storage-optvalue"><strong>--storage-opt</strong>=<em>value</em></h4>
+<p>Storage driver option, Default storage driver options are configured
+in /etc/containers/storage.conf
+(<code>$HOME/.config/containers/storage.conf</code> in rootless mode).
+The <code>STORAGE_OPTS</code> environment variable overrides the
+default. The --storage-opt specified options overrides all. If you
+specify --storage-opt="", no storage options will be used.</p>
+<h4 id="syslog"><strong>--syslog</strong></h4>
+<p>Output logging information to syslog as well as the console (default
+<em>false</em>).</p>
+<p>On remote clients, including Mac and Windows (excluding WSL2)
+machines, logging is directed to the file
+$HOME/.config/containers/podman.log.</p>
+<h4 id="tmpdir"><strong>--tmpdir</strong></h4>
+<p>Path to the tmp directory, for libpod runtime content.</p>
+<p>NOTE --tmpdir is not used for the temporary storage of downloaded
+images. Use the environment variable <code>TMPDIR</code> to change the
+temporary storage location of downloaded container images. Podman
+defaults to use <code>/var/tmp</code>.</p>
+<h4 id="urlvalue"><strong>--url</strong>=<em>value</em></h4>
+<p>URL to access Podman service (default from
+<code>containers.conf</code>, rootless
+<code>unix://run/user/$UID/podman/podman.sock</code> or as root
+<code>unix://run/podman/podman.sock</code>). Setting this option will
+switch the <strong>--remote</strong> option to true.</p>
+<ul>
+<li><code>CONTAINER_HOST</code> is of the format
+<code>&lt;schema&gt;://[&lt;user[:&lt;password&gt;]@]&lt;host&gt;[:&lt;port&gt;][&lt;path&gt;]</code></li>
+</ul>
+<p>Details: - <code>schema</code> is one of: * <code>ssh</code>
+(default): a local unix(7) socket on the named <code>host</code> and
+<code>port</code>, reachable via SSH * <code>tcp</code>: an unencrypted,
+unauthenticated TCP connection to the named <code>host</code> and
+<code>port</code> * <code>unix</code>: a local unix(7) socket at the
+specified <code>path</code>, or the default for the user -
+<code>user</code> will default to either <code>root</code> or the
+current running user (<code>ssh</code> only) - <code>password</code> has
+no default (<code>ssh</code> only) - <code>host</code> must be provided
+and is either the IP or name of the machine hosting the Podman service
+(<code>ssh</code> and <code>tcp</code>) - <code>port</code> defaults to
+22 (<code>ssh</code> and <code>tcp</code>) - <code>path</code> defaults
+to either <code>/run/podman/podman.sock</code>, or
+<code>/run/user/$UID/podman/podman.sock</code> if running rootless
+(<code>unix</code>), or must be explicitly specified
+(<code>ssh</code>)</p>
+<p>URL value resolution precedence: - command line value - environment
+variable <code>CONTAINER_HOST</code> - <code>containers.conf</code>
+<code>service_destinations</code> table -
+<code>unix://run/podman/podman.sock</code></p>
+<p>Remote connections use local containers.conf for default.</p>
+<p>Some example URL values in valid formats: -
+unix://run/podman/podman.sock - unix://run/user/<span
+class="math inline"><em>U</em><em>I</em><em>D</em>/<em>p</em><em>o</em><em>d</em><em>m</em><em>a</em><em>n</em>/<em>p</em><em>o</em><em>d</em><em>m</em><em>a</em><em>n</em>.<em>s</em><em>o</em><em>c</em><em>k</em>&#x2005;&#x2212;&#x2005;<em>s</em><em>s</em><em>h</em>&#x2004;:&#x2004;//<em>n</em><em>o</em><em>t</em><em>r</em><em>o</em><em>o</em><em>t</em>@<em>l</em><em>o</em><em>c</em><em>a</em><em>l</em><em>h</em><em>o</em><em>s</em><em>t</em>&#x2004;:&#x2004;22/<em>r</em><em>u</em><em>n</em>/<em>u</em><em>s</em><em>e</em><em>r</em>/</span>UID/podman/podman.sock
+- ssh://root@localhost:22/run/podman/podman.sock - tcp://localhost:34451
+- tcp://127.0.0.1:34451</p>
+<h4 id="version--v"><strong>--version</strong>, <strong>-v</strong></h4>
+<p>Print the version</p>
+<h4
+id="volumepathvalue"><strong>--volumepath</strong>=<em>value</em></h4>
+<p>Volume directory where builtin volume information is stored (default:
+"/var/lib/containers/storage/volumes" for UID 0,
+"$HOME/.local/share/containers/storage/volumes" for other users).
+Default volume path can be overridden in
+<code>containers.conf</code>.</p>
+<h2 id="environment-variables">Environment Variables</h2>
+<p>Podman can set up environment variables from env of [engine] table in
+containers.conf. These variables can be overridden by passing
+environment variables before the <code>podman</code> commands.</p>
+<h4 id="containers_conf"><strong>CONTAINERS_CONF</strong></h4>
+<p>Set default locations of containers.conf file</p>
+<h4
+id="containers_registries_conf"><strong>CONTAINERS_REGISTRIES_CONF</strong></h4>
+<p>Set default location of the registries.conf file.</p>
+<h4
+id="containers_storage_conf"><strong>CONTAINERS_STORAGE_CONF</strong></h4>
+<p>Set default location of the storage.conf file.</p>
+<h4 id="container_connection"><strong>CONTAINER_CONNECTION</strong></h4>
+<p>Override default <code>--connection</code> value to access Podman
+service. Also enabled --remote option.</p>
+<h4 id="container_host"><strong>CONTAINER_HOST</strong></h4>
+<p>Set default <code>--url</code> value to access Podman service. Also
+enabled --remote option.</p>
+<h4 id="container_sshkey"><strong>CONTAINER_SSHKEY</strong></h4>
+<p>Set default <code>--identity</code> path to ssh key file value used
+to access Podman service.</p>
+<h4 id="storage_driver"><strong>STORAGE_DRIVER</strong></h4>
+<p>Set default <code>--storage-driver</code> value.</p>
+<h4 id="storage_opts"><strong>STORAGE_OPTS</strong></h4>
+<p>Set default <code>--storage-opts</code> value.</p>
+<h4 id="tmpdir-1"><strong>TMPDIR</strong></h4>
+<p>Set the temporary storage location of downloaded container images.
+Podman defaults to use <code>/var/tmp</code>.</p>
+<h4 id="xdg_config_home"><strong>XDG_CONFIG_HOME</strong></h4>
+<p>In Rootless mode configuration files are read from
+<code>XDG_CONFIG_HOME</code> when specified, otherwise in the home
+directory of the user under <code>$HOME/.config/containers</code>.</p>
+<h4 id="xdg_data_home"><strong>XDG_DATA_HOME</strong></h4>
+<p>In Rootless mode images are pulled under <code>XDG_DATA_HOME</code>
+when specified, otherwise in the home directory of the user under
+<code>$HOME/.local/share/containers/storage</code>.</p>
+<h4 id="xdg_runtime_dir"><strong>XDG_RUNTIME_DIR</strong></h4>
+<p>In Rootless mode temporary configuration data is stored in
+<code>${XDG_RUNTIME_DIR}/containers</code>.</p>
+<h2 id="remote-access">Remote Access</h2>
+<p>The Podman command can be used with remote services using the
+<code>--remote</code> flag. Connections can be made using local unix
+domain sockets, ssh or directly to tcp sockets. When specifying the
+podman --remote flag, only the global options <code>--url</code>,
+<code>--identity</code>, <code>--log-level</code>,
+<code>--connection</code> are used.</p>
+<p>Connection information can also be managed using the containers.conf
+file.</p>
+<h2 id="exit-codes">Exit Codes</h2>
+<p>The exit code from <code>podman</code> gives information about why
+the container failed to run or why it exited. When <code>podman</code>
+commands exit with a non-zero code, the exit codes follow the
+<code>chroot</code> standard, see below:</p>
+<p><strong>125</strong> The error is with podman
+<strong><em>itself</em></strong></p>
+<pre><code>$ podman run --foo busybox; echo $?
+Error: unknown flag: --foo
+125</code></pre>
+<p><strong>126</strong> Executing a <em>contained command</em> and the
+<em>command</em> cannot be invoked</p>
+<pre><code>$ podman run busybox /etc; echo $?
+Error: container_linux.go:346: starting container process caused &quot;exec: \&quot;/etc\&quot;: permission denied&quot;: OCI runtime error
+126</code></pre>
+<p><strong>127</strong> Executing a <em>contained command</em> and the
+<em>command</em> cannot be found $ podman run busybox foo; echo $?
+Error: container_linux.go:346: starting container process caused "exec:
+"foo": executable file not found in $PATH": OCI runtime error 127</p>
+<p><strong>Exit code</strong> <em>contained command</em> exit code</p>
+<pre><code>$ podman run busybox /bin/sh -c &#39;exit 3&#39;; echo $?
+3</code></pre>
+<h2 id="commands">COMMANDS</h2>
+<table>
+<colgroup>
+<col style="width: 39%" />
+<col style="width: 60%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Command</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><a href="podman-attach.html">podman-attach(1)</a></td>
+<td>Attach to a running container.</td>
+</tr>
+<tr class="even">
+<td><a href="podman-auto-update.html">podman-auto-update(1)</a></td>
+<td>Auto update containers according to their auto-update policy</td>
+</tr>
+<tr class="odd">
+<td><a href="podman-build.html">podman-build(1)</a></td>
+<td>Build a container image using a Containerfile.</td>
+</tr>
+<tr class="even">
+<td><a href="podman-commit.html">podman-commit(1)</a></td>
+<td>Create new image based on the changed container.</td>
+</tr>
+<tr class="odd">
+<td><a href="podman-completion.html">podman-completion(1)</a></td>
+<td>Generate shell completion scripts</td>
+</tr>
+<tr class="even">
+<td><a href="podman-container.html">podman-container(1)</a></td>
+<td>Manage containers.</td>
+</tr>
+<tr class="odd">
+<td><a href="podman-cp.html">podman-cp(1)</a></td>
+<td>Copy files/folders between a container and the local
+filesystem.</td>
+</tr>
+<tr class="even">
+<td><a href="podman-create.html">podman-create(1)</a></td>
+<td>Create a new container.</td>
+</tr>
+<tr class="odd">
+<td><a href="podman-diff.html">podman-diff(1)</a></td>
+<td>Inspect changes on a container or image's filesystem.</td>
+</tr>
+<tr class="even">
+<td><a href="podman-events.html">podman-events(1)</a></td>
+<td>Monitor Podman events</td>
+</tr>
+<tr class="odd">
+<td><a href="podman-exec.html">podman-exec(1)</a></td>
+<td>Execute a command in a running container.</td>
+</tr>
+<tr class="even">
+<td><a href="podman-export.html">podman-export(1)</a></td>
+<td>Export a container's filesystem contents as a tar archive.</td>
+</tr>
+<tr class="odd">
+<td><a href="podman-generate.html">podman-generate(1)</a></td>
+<td>Generate structured data based on containers, pods or volumes.</td>
+</tr>
+<tr class="even">
+<td><a href="podman-healthcheck.html">podman-healthcheck(1)</a></td>
+<td>Manage healthchecks for containers</td>
+</tr>
+<tr class="odd">
+<td><a href="podman-history.html">podman-history(1)</a></td>
+<td>Show the history of an image.</td>
+</tr>
+<tr class="even">
+<td><a href="podman-image.html">podman-image(1)</a></td>
+<td>Manage images.</td>
+</tr>
+<tr class="odd">
+<td><a href="podman-images.html">podman-images(1)</a></td>
+<td>List images in local storage.</td>
+</tr>
+<tr class="even">
+<td><a href="podman-import.html">podman-import(1)</a></td>
+<td>Import a tarball and save it as a filesystem image.</td>
+</tr>
+<tr class="odd">
+<td><a href="podman-info.html">podman-info(1)</a></td>
+<td>Displays Podman related system information.</td>
+</tr>
+<tr class="even">
+<td><a href="podman-init.html">podman-init(1)</a></td>
+<td>Initialize one or more containers</td>
+</tr>
+<tr class="odd">
+<td><a href="podman-inspect.html">podman-inspect(1)</a></td>
+<td>Display a container, image, volume, network, or pod's
+configuration.</td>
+</tr>
+<tr class="even">
+<td><a href="podman-kill.html">podman-kill(1)</a></td>
+<td>Kill the main process in one or more containers.</td>
+</tr>
+<tr class="odd">
+<td><a href="podman-load.html">podman-load(1)</a></td>
+<td>Load image(s) from a tar archive into container storage.</td>
+</tr>
+<tr class="even">
+<td><a href="podman-login.html">podman-login(1)</a></td>
+<td>Login to a container registry.</td>
+</tr>
+<tr class="odd">
+<td><a href="podman-logout.html">podman-logout(1)</a></td>
+<td>Logout of a container registry.</td>
+</tr>
+<tr class="even">
+<td><a href="podman-logs.html">podman-logs(1)</a></td>
+<td>Display the logs of one or more containers.</td>
+</tr>
+<tr class="odd">
+<td><a href="podman-machine.html">podman-machine(1)</a></td>
+<td>Manage Podman's virtual machine</td>
+</tr>
+<tr class="even">
+<td><a href="podman-manifest.html">podman-manifest(1)</a></td>
+<td>Create and manipulate manifest lists and image indexes.</td>
+</tr>
+<tr class="odd">
+<td><a href="podman-mount.html">podman-mount(1)</a></td>
+<td>Mount a working container's root filesystem.</td>
+</tr>
+<tr class="even">
+<td><a href="podman-network.html">podman-network(1)</a></td>
+<td>Manage Podman networks.</td>
+</tr>
+<tr class="odd">
+<td><a href="podman-pause.html">podman-pause(1)</a></td>
+<td>Pause one or more containers.</td>
+</tr>
+<tr class="even">
+<td><a href="podman-kube.html">podman-kube(1)</a></td>
+<td>Play containers, pods or volumes based on a structured input
+file.</td>
+</tr>
+<tr class="odd">
+<td><a href="podman-pod.html">podman-pod(1)</a></td>
+<td>Management tool for groups of containers, called pods.</td>
+</tr>
+<tr class="even">
+<td><a href="podman-port.html">podman-port(1)</a></td>
+<td>List port mappings for a container.</td>
+</tr>
+<tr class="odd">
+<td><a href="podman-ps.html">podman-ps(1)</a></td>
+<td>Prints out information about containers.</td>
+</tr>
+<tr class="even">
+<td><a href="podman-pull.html">podman-pull(1)</a></td>
+<td>Pull an image from a registry.</td>
+</tr>
+<tr class="odd">
+<td><a href="podman-push.html">podman-push(1)</a></td>
+<td>Push an image, manifest list or image index from local storage to
+elsewhere.</td>
+</tr>
+<tr class="even">
+<td><a href="podman-rename.html">podman-rename(1)</a></td>
+<td>Rename an existing container.</td>
+</tr>
+<tr class="odd">
+<td><a href="podman-restart.html">podman-restart(1)</a></td>
+<td>Restart one or more containers.</td>
+</tr>
+<tr class="even">
+<td><a href="podman-rm.html">podman-rm(1)</a></td>
+<td>Remove one or more containers.</td>
+</tr>
+<tr class="odd">
+<td><a href="podman-rmi.html">podman-rmi(1)</a></td>
+<td>Removes one or more locally stored images.</td>
+</tr>
+<tr class="even">
+<td><a href="podman-run.html">podman-run(1)</a></td>
+<td>Run a command in a new container.</td>
+</tr>
+<tr class="odd">
+<td><a href="podman-save.html">podman-save(1)</a></td>
+<td>Save image(s) to an archive.</td>
+</tr>
+<tr class="even">
+<td><a href="podman-search.html">podman-search(1)</a></td>
+<td>Search a registry for an image.</td>
+</tr>
+<tr class="odd">
+<td><a href="podman-secret.html">podman-secret(1)</a></td>
+<td>Manage podman secrets.</td>
+</tr>
+<tr class="even">
+<td><a href="podman-start.html">podman-start(1)</a></td>
+<td>Start one or more containers.</td>
+</tr>
+<tr class="odd">
+<td><a href="podman-stats.html">podman-stats(1)</a></td>
+<td>Display a live stream of one or more container's resource usage
+statistics.</td>
+</tr>
+<tr class="even">
+<td><a href="podman-stop.html">podman-stop(1)</a></td>
+<td>Stop one or more running containers.</td>
+</tr>
+<tr class="odd">
+<td><a href="podman-system.html">podman-system(1)</a></td>
+<td>Manage podman.</td>
+</tr>
+<tr class="even">
+<td><a href="podman-tag.html">podman-tag(1)</a></td>
+<td>Add an additional name to a local image.</td>
+</tr>
+<tr class="odd">
+<td><a href="podman-top.html">podman-top(1)</a></td>
+<td>Display the running processes of a container.</td>
+</tr>
+<tr class="even">
+<td><a href="podman-unmount.html">podman-unmount(1)</a></td>
+<td>Unmount a working container's root filesystem.</td>
+</tr>
+<tr class="odd">
+<td><a href="podman-unpause.html">podman-unpause(1)</a></td>
+<td>Unpause one or more containers.</td>
+</tr>
+<tr class="even">
+<td><a href="podman-unshare.html">podman-unshare(1)</a></td>
+<td>Run a command inside of a modified user namespace.</td>
+</tr>
+<tr class="odd">
+<td><a href="podman-untag.html">podman-untag(1)</a></td>
+<td>Removes one or more names from a locally-stored image.</td>
+</tr>
+<tr class="even">
+<td><a href="podman-version.html">podman-version(1)</a></td>
+<td>Display the Podman version information.</td>
+</tr>
+<tr class="odd">
+<td><a href="podman-volume.html">podman-volume(1)</a></td>
+<td>Simple management tool for volumes.</td>
+</tr>
+<tr class="even">
+<td><a href="podman-wait.html">podman-wait(1)</a></td>
+<td>Wait on one or more containers to stop and print their exit
+codes.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="configuration-files">CONFIGURATION FILES</h2>
+<p><strong>containers.conf</strong>
+(<code>/usr/share/containers/containers.conf</code>,
+<code>/etc/containers/containers.conf</code>,
+<code>$HOME/.config/containers/containers.conf</code>)</p>
+<p>Podman has builtin defaults for command line options. These defaults
+can be overridden using the containers.conf configuration files.</p>
+<p>Distributions ship the
+<code>/usr/share/containers/containers.conf</code> file with their
+default settings. Administrators can override fields in this file by
+creating the <code>/etc/containers/containers.conf</code> file. Users
+can further modify defaults by creating the
+<code>$HOME/.config/containers/containers.conf</code> file. Podman
+merges its builtin defaults with the specified fields from these files,
+if they exist. Fields specified in the users file override the
+administrator's file, which overrides the distribution's file, which
+override the built-in defaults.</p>
+<p>Podman uses builtin defaults if no containers.conf file is found.</p>
+<p>If the <strong>CONTAINERS_CONF</strong> environment variable is set,
+then its value is used for the containers.conf file rather than the
+default.</p>
+<p><strong>mounts.conf</strong>
+(<code>/usr/share/containers/mounts.conf</code>)</p>
+<p>The mounts.conf file specifies volume mount directories that are
+automatically mounted inside containers when executing the
+<code>podman run</code> or <code>podman start</code> commands.
+Administrators can override the defaults file by creating
+<code>/etc/containers/mounts.conf</code>.</p>
+<p>When Podman runs in rootless mode, the file
+<code>$HOME/.config/containers/mounts.conf</code> will override the
+default if it exists. Please refer to containers-mounts.conf(5) for
+further details.</p>
+<p><strong>policy.json</strong>
+(<code>/etc/containers/policy.json</code>)</p>
+<p>Signature verification policy files are used to specify policy, e.g.
+trusted keys, applicable when deciding whether to accept an image, or
+individual signatures of that image, as valid.</p>
+<p><strong>registries.conf</strong>
+(<code>/etc/containers/registries.conf</code>,
+<code>$HOME/.config/containers/registries.conf</code>)</p>
+<p>registries.conf is the configuration file which specifies which
+container registries should be consulted when completing image names
+which do not include a registry or domain portion.</p>
+<p>Non root users of Podman can create the
+<code>$HOME/.config/containers/registries.conf</code> file to be used
+instead of the system defaults.</p>
+<p>If the <strong>CONTAINERS_REGISTRIES_CONF</strong> environment
+variable is set, then its value is used for the registries.conf file
+rather than the default.</p>
+<p><strong>storage.conf</strong>
+(<code>/etc/containers/storage.conf</code>,
+<code>$HOME/.config/containers/storage.conf</code>)</p>
+<p>storage.conf is the storage configuration file for all tools using
+containers/storage</p>
+<p>The storage configuration file specifies all of the available
+container storage options for tools using shared container storage.</p>
+<p>When Podman runs in rootless mode, the file
+<code>$HOME/.config/containers/storage.conf</code> is used instead of
+the system defaults.</p>
+<p>If the <strong>CONTAINERS_STORAGE_CONF</strong> environment variable
+is set, then its value is used for the storage.conf file rather than the
+default.</p>
+<h2 id="rootless-mode">Rootless mode</h2>
+<p>Podman can also be used as non-root user. When podman runs in
+rootless mode, a user namespace is automatically created for the user,
+defined in /etc/subuid and /etc/subgid.</p>
+<p>Containers created by a non-root user are not visible to other users
+and are not seen or managed by Podman running as root.</p>
+<p>It is required to have multiple uids/gids set for a user. Be sure the
+user is present in the files <code>/etc/subuid</code> and
+<code>/etc/subgid</code>.</p>
+<p>If you have a recent version of usermod, you can execute the
+following commands to add the ranges to the files</p>
+<pre><code>$ sudo usermod --add-subuids 10000-75535 USERNAME
+$ sudo usermod --add-subgids 10000-75535 USERNAME</code></pre>
+<p>Or just add the content manually.</p>
+<pre><code>$ echo USERNAME:10000:65536 &gt;&gt; /etc/subuid
+$ echo USERNAME:10000:65536 &gt;&gt; /etc/subgid</code></pre>
+<p>See the <code>subuid(5)</code> and <code>subgid(5)</code> man pages
+for more information.</p>
+<p>Images are pulled under <code>XDG_DATA_HOME</code> when specified,
+otherwise in the home directory of the user under
+<code>.local/share/containers/storage</code>.</p>
+<p>Currently the slirp4netns package is required to be installed to
+create a network device, otherwise rootless containers need to run in
+the network namespace of the host.</p>
+<p>In certain environments like HPC (High Performance Computing), users
+cannot take advantage of the additional UIDs and GIDs from the
+/etc/subuid and /etc/subgid systems. However, in this environment,
+rootless Podman can operate with a single UID. To make this work, set
+the <code>ignore_chown_errors</code> option in the
+/etc/containers/storage.conf or in ~/.config/containers/storage.conf
+files. This option tells Podman when pulling an image to ignore chown
+errors when attempting to change a file in a container image to match
+the non-root UID in the image. This means all files get saved as the
+user's UID. Note this could cause issues when running the container.</p>
+<h3
+id="note-unsupported-file-systems-in-rootless-mode"><strong>NOTE:</strong>
+Unsupported file systems in rootless mode</h3>
+<p>The Overlay file system (OverlayFS) is not supported with kernels
+prior to 5.12.9 in rootless mode. The fuse-overlayfs package is a tool
+that provides the functionality of OverlayFS in user namespace that
+allows mounting file systems in rootless environments. It is recommended
+to install the fuse-overlayfs package. In rootless mode, Podman will
+automatically use the fuse-overlayfs program as the mount_program if
+installed, as long as the $HOME/.config/containers/storage.conf file was
+not previously created. If storage.conf exists in the homedir, add
+<code>mount_program = "/usr/bin/fuse-overlayfs"</code> under
+<code>[storage.options.overlay]</code> to enable this feature.</p>
+<p>The Network File System (NFS) and other distributed file systems (for
+example: Lustre, Spectrum Scale, the General Parallel File System
+(GPFS)) are not supported when running in rootless mode as these file
+systems do not understand user namespace. However, rootless Podman can
+make use of an NFS Homedir by modifying the
+<code>$HOME/.config/containers/storage.conf</code> to have the
+<code>graphroot</code> option point to a directory stored on local (Non
+NFS) storage.</p>
+<p>For more information, please refer to the <a
+href="https://github.com/containers/podman/blob/main/troubleshooting.md">Podman
+Troubleshooting Page</a>.</p>
+<h2 id="see-also">SEE ALSO</h2>
+<p><strong><a
+href="https://github.com/containers/common/blob/main/docs/containers-mounts.conf.5.md">containers-mounts.conf(5)</a></strong>,
+<strong><a
+href="https://github.com/containers/common/blob/main/docs/containers.conf.5.md">containers.conf(5)</a></strong>,
+<strong><a
+href="https://github.com/containers/image/blob/main/docs/containers-registries.conf.5.md">containers-registries.conf(5)</a></strong>,
+<strong><a
+href="https://github.com/containers/storage/blob/main/docs/containers-storage.conf.5.md">containers-storage.conf(5)</a></strong>,
+<strong><a
+href="https://github.com/containers/buildah/blob/main/docs/buildah.html">buildah(1)</a></strong>,
+<strong>oci-hooks(5)</strong>, <strong><a
+href="https://github.com/containers/image/blob/main/docs/containers-policy.json.5.md">containers-policy.json(5)</a></strong>,
+<strong><a
+href="https://github.com/containers/crun/blob/main/crun.html">crun(1)</a></strong>,
+<strong><a
+href="https://github.com/opencontainers/runc/blob/master/man/runc.8.md">runc(8)</a></strong>,
+<strong><a
+href="https://www.unix.com/man-page/linux/5/subuid">subuid(5)</a></strong>,
+<strong><a
+href="https://www.unix.com/man-page/linux/5/subgid">subgid(5)</a></strong>,
+<strong><a
+href="https://github.com/rootless-containers/slirp4netns/blob/master/slirp4netns.html">slirp4netns(1)</a></strong>,
+<strong><a
+href="https://github.com/containers/conmon/blob/main/docs/conmon.8.md">conmon(8)</a></strong></p>
+<h2 id="history">HISTORY</h2>
+<p>Dec 2016, Originally compiled by Dan Walsh <a
+href="mailto:dwalsh@redhat.com" class="email">dwalsh@redhat.com</a></p>
+</body>
+</html>

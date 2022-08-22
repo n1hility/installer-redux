@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>podman-container-restore(1)</title>
+  <style>
+    html {
+      line-height: 1.5;
+      font-family: Georgia, serif;
+      font-size: 20px;
+      color: #1a1a1a;
+      background-color: #fdfdfd;
+    }
+    body {
+      margin: 0 auto;
+      max-width: 36em;
+      padding-left: 50px;
+      padding-right: 50px;
+      padding-top: 50px;
+      padding-bottom: 50px;
+      hyphens: auto;
+      overflow-wrap: break-word;
+      text-rendering: optimizeLegibility;
+      font-kerning: normal;
+    }
+    @media (max-width: 600px) {
+      body {
+        font-size: 0.9em;
+        padding: 1em;
+      }
+      h1 {
+        font-size: 1.8em;
+      }
+    }
+    @media print {
+      body {
+        background-color: transparent;
+        color: black;
+        font-size: 12pt;
+      }
+      p, h2, h3 {
+        orphans: 3;
+        widows: 3;
+      }
+      h2, h3, h4 {
+        page-break-after: avoid;
+      }
+    }
+    p {
+      margin: 1em 0;
+    }
+    a {
+      color: #1a1a1a;
+    }
+    a:visited {
+      color: #1a1a1a;
+    }
+    img {
+      max-width: 100%;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      margin-top: 1.4em;
+    }
+    h5, h6 {
+      font-size: 1em;
+      font-style: italic;
+    }
+    h6 {
+      font-weight: normal;
+    }
+    ol, ul {
+      padding-left: 1.7em;
+      margin-top: 1em;
+    }
+    li > ol, li > ul {
+      margin-top: 0;
+    }
+    blockquote {
+      margin: 1em 0 1em 1.7em;
+      padding-left: 1em;
+      border-left: 2px solid #e6e6e6;
+      color: #606060;
+    }
+    code {
+      font-family: Menlo, Monaco, 'Lucida Console', Consolas, monospace;
+      font-size: 85%;
+      margin: 0;
+    }
+    pre {
+      margin: 1em 0;
+      overflow: auto;
+    }
+    pre code {
+      padding: 0;
+      overflow: visible;
+      overflow-wrap: normal;
+    }
+    .sourceCode {
+     background-color: transparent;
+     overflow: visible;
+    }
+    hr {
+      background-color: #1a1a1a;
+      border: none;
+      height: 1px;
+      margin: 1em 0;
+    }
+    table {
+      margin: 1em 0;
+      border-collapse: collapse;
+      width: 100%;
+      overflow-x: auto;
+      display: block;
+      font-variant-numeric: lining-nums tabular-nums;
+    }
+    table caption {
+      margin-bottom: 0.75em;
+    }
+    tbody {
+      margin-top: 0.5em;
+      border-top: 1px solid #1a1a1a;
+      border-bottom: 1px solid #1a1a1a;
+    }
+    th {
+      border-top: 1px solid #1a1a1a;
+      padding: 0.25em 0.5em 0.25em 0.5em;
+    }
+    td {
+      padding: 0.125em 0.5em 0.25em 0.5em;
+    }
+    header {
+      margin-bottom: 4em;
+      text-align: center;
+    }
+    #TOC li {
+      list-style: none;
+    }
+    #TOC ul {
+      padding-left: 1.3em;
+    }
+    #TOC > ul {
+      padding-left: 0;
+    }
+    #TOC a:not(:hover) {
+      text-decoration: none;
+    }
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    span.underline{text-decoration: underline;}
+    div.column{display: inline-block; vertical-align: top; width: 50%;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    ul.task-list{list-style: none;}
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+  </style>
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<h2 id="name">NAME</h2>
+<p>podman-container-restore - Restores one or more containers from a
+checkpoint</p>
+<h2 id="synopsis">SYNOPSIS</h2>
+<p><strong>podman container restore</strong> [<em>options</em>]
+<em>name</em> [...]</p>
+<h2 id="description">DESCRIPTION</h2>
+<p><strong>podman container restore</strong> restores a container from a
+container checkpoint or checkpoint image. The <em>container IDs</em>,
+<em>image IDs</em> or <em>names</em> are used as input.</p>
+<h2 id="options">OPTIONS</h2>
+<h4 id="all--a"><strong>--all</strong>, <strong>-a</strong></h4>
+<p>Restore all checkpointed <em>containers</em>.<br />
+The default is <strong>false</strong>.<br />
+<em>IMPORTANT: This OPTION does not need a container name or ID as input
+argument.</em></p>
+<h4 id="file-locks"><strong>--file-locks</strong></h4>
+<p>Restore a <em>container</em> with file locks. This option is required
+to restore file locks from a checkpoint image. If the checkpoint image
+does not contain file locks, this option is ignored. Defaults to not
+restoring file locks.<br />
+The default is <strong>false</strong>.</p>
+<h4 id="ignore-rootfs"><strong>--ignore-rootfs</strong></h4>
+<p>If a <em>container</em> is restored from a checkpoint tar.gz file it
+is possible that it also contains all root file-system changes. With
+<strong>--ignore-rootfs</strong> it is possible to explicitly disable
+applying these root file-system changes to the restored
+<em>container</em>.<br />
+The default is <strong>false</strong>.<br />
+<em>IMPORTANT: This OPTION is only available in combination with
+<strong>--import, -i</strong>.</em></p>
+<h4 id="ignore-static-ip"><strong>--ignore-static-ip</strong></h4>
+<p>If the <em>container</em> was started with <strong>--ip</strong> the
+restored <em>container</em> also tries to use that IP address and
+restore fails if that IP address is already in use. This can happen, if
+a <em>container</em> is restored multiple times from an exported
+checkpoint with <strong>--name, -n</strong>.</p>
+<p>Using <strong>--ignore-static-ip</strong> tells Podman to ignore the
+IP address if it was configured with <strong>--ip</strong> during
+<em>container</em> creation.</p>
+<p>The default is <strong>false</strong>.</p>
+<h4 id="ignore-static-mac"><strong>--ignore-static-mac</strong></h4>
+<p>If the <em>container</em> was started with
+<strong>--mac-address</strong> the restored <em>container</em> also
+tries to use that MAC address and restore fails if that MAC address is
+already in use. This can happen, if a <em>container</em> is restored
+multiple times from an exported checkpoint with <strong>--name,
+-n</strong>.</p>
+<p>Using <strong>--ignore-static-mac</strong> tells Podman to ignore the
+MAC address if it was configured with <strong>--mac-address</strong>
+during <em>container</em> creation.</p>
+<p>The default is <strong>false</strong>.</p>
+<h4 id="ignore-volumes"><strong>--ignore-volumes</strong></h4>
+<p>This option must be used in combination with the <strong>--import,
+-i</strong> option. When restoring <em>containers</em> from a checkpoint
+tar.gz file with this option, the content of associated volumes will not
+be restored.<br />
+The default is <strong>false</strong>.</p>
+<h4 id="import--ifile"><strong>--import</strong>,
+<strong>-i</strong>=<em>file</em></h4>
+<p>Import a checkpoint tar.gz file, which was exported by Podman. This
+can be used to import a checkpointed <em>container</em> from another
+host.<br />
+<em>IMPORTANT: This OPTION does not need a container name or ID as input
+argument.</em></p>
+<p>During the import of a checkpoint file Podman will select the same
+container runtime which was used during checkpointing. This is
+especially important if a specific (non-default) container runtime was
+specified during container creation. Podman will also abort the restore
+if the container runtime specified during restore does not much the
+container runtime used for container creation.</p>
+<h4
+id="import-previousfile"><strong>--import-previous</strong>=<em>file</em></h4>
+<p>Import a pre-checkpoint tar.gz file which was exported by Podman.
+This option must be used with <strong>-i</strong> or
+<strong>--import</strong>. It only works on <code>runc 1.0-rc3</code> or
+<code>higher</code>. <em>IMPORTANT: This OPTION is not supported on the
+remote client, including Mac and Windows (excluding WSL2)
+machines.</em></p>
+<h4 id="keep--k"><strong>--keep</strong>, <strong>-k</strong></h4>
+<p>Keep all temporary log and statistics files created by
+<code>CRIU</code> during checkpointing as well as restoring. These files
+are not deleted if restoring fails for further debugging. If restoring
+succeeds these files are theoretically not needed, but if these files
+are needed Podman can keep the files for further analysis. This includes
+the checkpoint directory with all files created during checkpointing.
+The size required by the checkpoint directory is roughly the same as the
+amount of memory required by the processes in the checkpointed
+<em>container</em>.<br />
+Without the <strong>--keep</strong>, <strong>-k</strong> option the
+checkpoint will be consumed and cannot be used again.<br />
+The default is <strong>false</strong>.</p>
+<h4 id="latest--l"><strong>--latest</strong>, <strong>-l</strong></h4>
+<p>Instead of providing the <em>container ID</em> or <em>name</em>, use
+the last created <em>container</em>. If other tools than Podman are used
+to run <em>containers</em> such as <code>CRI-O</code>, the last started
+<em>container</em> could be from either tool.<br />
+The default is <strong>false</strong>.<br />
+<em>IMPORTANT: This OPTION is not available with the remote Podman
+client, including Mac and Windows (excluding WSL2) machines. This OPTION
+does not need a container name or ID as input argument.</em></p>
+<h4 id="name--nname"><strong>--name</strong>,
+<strong>-n</strong>=<em>name</em></h4>
+<p>If a <em>container</em> is restored from a checkpoint tar.gz file it
+is possible to rename it with <strong>--name, -n</strong>. This way it
+is possible to restore a <em>container</em> from a checkpoint multiple
+times with different names.</p>
+<p>If the <strong>--name, -n</strong> option is used, Podman will not
+attempt to assign the same IP address to the <em>container</em> it was
+using before checkpointing as each IP address can only be used once and
+the restored <em>container</em> will have another IP address. This also
+means that <strong>--name, -n</strong> cannot be used in combination
+with <strong>--tcp-established</strong>.<br />
+<em>IMPORTANT: This OPTION is only available for a checkpoint image or
+in combination with <strong>--import, -i</strong>.</em></p>
+<h4 id="podname"><strong>--pod</strong>=<em>name</em></h4>
+<p>Restore a container into the pod <em>name</em>. The destination pod
+for this restore has to have the same namespaces shared as the pod this
+container was checkpointed from (see <strong><a
+href="podman-pod-create.html#--share">podman pod create
+--share</a></strong>).<br />
+<em>IMPORTANT: This OPTION is only available for a checkpoint image or
+in combination with <strong>--import, -i</strong>.</em></p>
+<p>This option requires at least CRIU 3.16.</p>
+<h4 id="print-stats"><strong>--print-stats</strong></h4>
+<p>Print out statistics about restoring the container(s). The output is
+rendered in a JSON array and contains information about how much time
+different restore operations required. Many of the restore statistics
+are created by CRIU and just passed through to Podman. The following
+information is provided in the JSON array:</p>
+<ul>
+<li><p><strong>podman_restore_duration</strong>: Overall time (in
+microseconds) needed to restore all checkpoints.</p></li>
+<li><p><strong>runtime_restore_duration</strong>: Time (in microseconds)
+the container runtime needed to restore the checkpoint.</p></li>
+<li><p><strong>forking_time</strong>: Time (in microseconds) CRIU needed
+to create (fork) all processes in the restored container (measured by
+CRIU).</p></li>
+<li><p><strong>restore_time</strong>: Time (in microseconds) CRIU needed
+to restore all processes in the container (measured by CRIU).</p></li>
+<li><p><strong>pages_restored</strong>: Number of memory pages restored
+(measured by CRIU).</p></li>
+</ul>
+<p>The default is <strong>false</strong>.</p>
+<h4 id="publish--pport"><strong>--publish</strong>,
+<strong>-p</strong>=<em>port</em></h4>
+<p>Replaces the ports that the <em>container</em> publishes, as
+configured during the initial <em>container</em> start, with a new set
+of port forwarding rules.</p>
+<p>For more details please see <strong><a
+href="podman-run.html#--publish">podman run --publish</a></strong>.</p>
+<h4 id="tcp-established"><strong>--tcp-established</strong></h4>
+<p>Restore a <em>container</em> with established TCP connections. If the
+checkpoint image contains established TCP connections, this option is
+required during restore. If the checkpoint image does not contain
+established TCP connections this option is ignored. Defaults to not
+restoring <em>containers</em> with established TCP connections.<br />
+The default is <strong>false</strong>.</p>
+<h2 id="example">EXAMPLE</h2>
+<p>Restores the container "mywebserver".</p>
+<pre><code># podman container restore mywebserver</code></pre>
+<p>Import a checkpoint file and a pre-checkpoint file.</p>
+<pre><code># podman container restore --import-previous pre-checkpoint.tar.gz --import checkpoint.tar.gz</code></pre>
+<p>Start the container "mywebserver". Make a checkpoint of the container
+and export it. Restore the container with other port ranges from the
+exported file.</p>
+<pre><code>$ podman run --rm -p 2345:80 -d webserver
+# podman container checkpoint -l --export=dump.tar
+# podman container restore -p 5432:8080 --import=dump.tar</code></pre>
+<p>Start a container with the name "foobar-1". Create a checkpoint image
+"foobar-checkpoint". Restore the container from the checkpoint image
+with a different name.</p>
+<pre><code># podman run --name foobar-1 -d webserver
+# podman container checkpoint --create-image foobar-checkpoint foobar-1
+# podman inspect foobar-checkpoint
+# podman container restore --name foobar-2 foobar-checkpoint
+# podman container restore --name foobar-3 foobar-checkpoint</code></pre>
+<h2 id="see-also">SEE ALSO</h2>
+<p><strong><a href="podman.html">podman(1)</a></strong>, <strong><a
+href="podman-container-checkpoint.html">podman-container-checkpoint(1)</a></strong>,
+<strong><a href="podman-run.html">podman-run(1)</a></strong>, <strong><a
+href="podman-pod-create.html">podman-pod-create(1)</a></strong>,
+<strong>criu(8)</strong></p>
+<h2 id="history">HISTORY</h2>
+<p>September 2018, Originally compiled by Adrian Reber <a
+href="mailto:areber@redhat.com" class="email">areber@redhat.com</a></p>
+</body>
+</html>

@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>podman-cp(1)</title>
+  <style>
+    html {
+      line-height: 1.5;
+      font-family: Georgia, serif;
+      font-size: 20px;
+      color: #1a1a1a;
+      background-color: #fdfdfd;
+    }
+    body {
+      margin: 0 auto;
+      max-width: 36em;
+      padding-left: 50px;
+      padding-right: 50px;
+      padding-top: 50px;
+      padding-bottom: 50px;
+      hyphens: auto;
+      overflow-wrap: break-word;
+      text-rendering: optimizeLegibility;
+      font-kerning: normal;
+    }
+    @media (max-width: 600px) {
+      body {
+        font-size: 0.9em;
+        padding: 1em;
+      }
+      h1 {
+        font-size: 1.8em;
+      }
+    }
+    @media print {
+      body {
+        background-color: transparent;
+        color: black;
+        font-size: 12pt;
+      }
+      p, h2, h3 {
+        orphans: 3;
+        widows: 3;
+      }
+      h2, h3, h4 {
+        page-break-after: avoid;
+      }
+    }
+    p {
+      margin: 1em 0;
+    }
+    a {
+      color: #1a1a1a;
+    }
+    a:visited {
+      color: #1a1a1a;
+    }
+    img {
+      max-width: 100%;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      margin-top: 1.4em;
+    }
+    h5, h6 {
+      font-size: 1em;
+      font-style: italic;
+    }
+    h6 {
+      font-weight: normal;
+    }
+    ol, ul {
+      padding-left: 1.7em;
+      margin-top: 1em;
+    }
+    li > ol, li > ul {
+      margin-top: 0;
+    }
+    blockquote {
+      margin: 1em 0 1em 1.7em;
+      padding-left: 1em;
+      border-left: 2px solid #e6e6e6;
+      color: #606060;
+    }
+    code {
+      font-family: Menlo, Monaco, 'Lucida Console', Consolas, monospace;
+      font-size: 85%;
+      margin: 0;
+    }
+    pre {
+      margin: 1em 0;
+      overflow: auto;
+    }
+    pre code {
+      padding: 0;
+      overflow: visible;
+      overflow-wrap: normal;
+    }
+    .sourceCode {
+     background-color: transparent;
+     overflow: visible;
+    }
+    hr {
+      background-color: #1a1a1a;
+      border: none;
+      height: 1px;
+      margin: 1em 0;
+    }
+    table {
+      margin: 1em 0;
+      border-collapse: collapse;
+      width: 100%;
+      overflow-x: auto;
+      display: block;
+      font-variant-numeric: lining-nums tabular-nums;
+    }
+    table caption {
+      margin-bottom: 0.75em;
+    }
+    tbody {
+      margin-top: 0.5em;
+      border-top: 1px solid #1a1a1a;
+      border-bottom: 1px solid #1a1a1a;
+    }
+    th {
+      border-top: 1px solid #1a1a1a;
+      padding: 0.25em 0.5em 0.25em 0.5em;
+    }
+    td {
+      padding: 0.125em 0.5em 0.25em 0.5em;
+    }
+    header {
+      margin-bottom: 4em;
+      text-align: center;
+    }
+    #TOC li {
+      list-style: none;
+    }
+    #TOC ul {
+      padding-left: 1.3em;
+    }
+    #TOC > ul {
+      padding-left: 0;
+    }
+    #TOC a:not(:hover) {
+      text-decoration: none;
+    }
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    span.underline{text-decoration: underline;}
+    div.column{display: inline-block; vertical-align: top; width: 50%;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    ul.task-list{list-style: none;}
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+  </style>
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<h2 id="name">NAME</h2>
+<p>podman-cp - Copy files/folders between a container and the local
+filesystem</p>
+<h2 id="synopsis">SYNOPSIS</h2>
+<p><strong>podman cp</strong> [<em>options</em>]
+[<em>container</em>:]<em>src_path</em>
+[<em>container</em>:]<em>dest_path</em></p>
+<p><strong>podman container cp</strong> [<em>options</em>]
+[<em>container</em>:]<em>src_path</em>
+[<em>container</em>:]<em>dest_path</em></p>
+<h2 id="description">DESCRIPTION</h2>
+<p><strong>podman cp</strong> allows copying the contents of
+<strong>src_path</strong> to the <strong>dest_path</strong>. Files can
+be copied from a container to the local machine and vice versa or
+between two containers. If <code>-</code> is specified for either the
+<code>SRC_PATH</code> or <code>DEST_PATH</code>, one can also stream a
+tar archive from <code>STDIN</code> or to <code>STDOUT</code>.</p>
+<p>The containers can be either running or stopped and the
+<em>src_path</em> or <em>dest_path</em> can be a file or directory.</p>
+<p><em>IMPORTANT: The <strong>podman cp</strong> command assumes
+container paths are relative to the container's root directory
+(<code>/</code>), which means supplying the initial forward slash is
+optional and therefore sees
+<code>compassionate_darwin:/tmp/foo/myfile.txt</code> and
+<code>compassionate_darwin:tmp/foo/myfile.txt</code> as
+identical.</em></p>
+<p>Local machine paths can be an absolute or relative value. The command
+interprets a local machine's relative paths as relative to the current
+working directory where <strong>podman cp</strong> is run.</p>
+<p>Assuming a path separator of <code>/</code>, a first argument of
+<strong>src_path</strong> and second argument of
+<strong>dest_path</strong>, the behavior is as follows:</p>
+<p><strong>src_path</strong> specifies a file: -
+<strong>dest_path</strong> does not exist - the file is saved to a file
+created at <strong>dest_path</strong> (note that parent directory must
+exist). - <strong>dest_path</strong> exists and is a file - the
+destination is overwritten with the source file's contents. -
+<strong>dest_path</strong> exists and is a directory - the file is
+copied into this directory using the base name from
+<strong>src_path</strong>.</p>
+<p><strong>src_path</strong> specifies a directory: -
+<strong>dest_path</strong> does not exist - <strong>dest_path</strong>
+is created as a directory and the contents of the source directory are
+copied into this directory. - <strong>dest_path</strong> exists and is a
+file - Error condition: cannot copy a directory to a file. -
+<strong>dest_path</strong> exists and is a directory -
+<strong>src_path</strong> ends with <code>/</code> - the source
+directory is copied into this directory. - <strong>src_path</strong>
+ends with <code>/.</code> (i.e., slash followed by dot) - the content of
+the source directory is copied into this directory.</p>
+<p>The command requires <strong>src_path</strong> and
+<strong>dest_path</strong> to exist according to the above rules.</p>
+<p>If <strong>src_path</strong> is local and is a symbolic link, the
+symbolic target, is copied by default.</p>
+<p>A <em>colon</em> ( : ) is used as a delimiter between a container and
+its path, it can also be used when specifying paths to a
+<strong>src_path</strong> or <strong>dest_path</strong> on a local
+machine, for example, <code>file:name.txt</code>.</p>
+<p><em>IMPORTANT: while using a </em>colon* ( : ) in a local machine
+path, one must be explicit with a relative or absolute path, for
+example: <code>/path/to/file:name.txt</code> or
+<code>./file:name.txt</code>*</p>
+<p>Using <code>-</code> as the <strong>src_path</strong> streams the
+contents of <code>STDIN</code> as a tar archive. The command extracts
+the content of the tar to the <code>DEST_PATH</code> in the container.
+In this case, <strong>dest_path</strong> must specify a directory. Using
+<code>-</code> as the <strong>dest_path</strong> streams the contents of
+the resource (can be a directory) as a tar archive to
+<code>STDOUT</code>.</p>
+<p>Note that <code>podman cp</code> ignores permission errors when
+copying from a running rootless container. The TTY devices inside a
+rootless container are owned by the host's root user and hence cannot be
+read inside the container's user namespace.</p>
+<p>Further note that <code>podman cp</code> does not support globbing
+(e.g., <code>cp dir/*.txt</code>). If you want to copy multiple files
+from the host to the container you may use xargs(1) or find(1) (or
+similar tools for chaining commands) in conjunction with
+<code>podman cp</code>. If you want to copy multiple files from the
+container to the host, you may use <code>podman mount CONTAINER</code>
+and operate on the returned mount point instead (see ALTERNATIVES
+below).</p>
+<h2 id="options">OPTIONS</h2>
+<h4 id="archive--a"><strong>--archive</strong>, <strong>-a</strong></h4>
+<p>Archive mode (copy all uid/gid information). When set to true, files
+copied to a container will have changed ownership to the primary UID/GID
+of the container. When set to false, maintain uid/gid from archive
+sources instead of changing them to the primary uid/gid of the
+destination container. The default is <strong>true</strong>.</p>
+<h4 id="overwrite"><strong>--overwrite</strong></h4>
+<p>Allow directories to be overwritten with non-directories and vice
+versa. By default, <code>podman cp</code> errors out when attempting to
+overwrite, for instance, a regular file with a directory. Use this
+option, if you want to allow this behavior.</p>
+<h2 id="alternatives">ALTERNATIVES</h2>
+<p>Podman has much stronger capabilities than just
+<code>podman cp</code> to achieve copying files between the host and
+containers.</p>
+<p>Using standard <strong><a
+href="podman-mount.html">podman-mount(1)</a></strong> and <strong><a
+href="podman-unmount.html">podman-unmount(1)</a></strong> takes
+advantage of the entire linux tool chain, rather than just cp.</p>
+<p>copying contents out of a container or into a container, can be
+achieved with a few simple commands. For example:</p>
+<p>To copy the <code>/etc/foobar</code> directory out of a container and
+onto <code>/tmp</code> on the host, the following commands can be
+executed:</p>
+<pre><code>mnt=$(podman mount CONTAINERID)
+cp -R ${mnt}/etc/foobar /tmp
+podman umount CONTAINERID</code></pre>
+<p>To untar a tar ball into a container, following commands can be
+executed:</p>
+<pre><code>mnt=$(podman mount CONTAINERID)
+tar xf content.tgz -C ${mnt}
+podman umount CONTAINERID</code></pre>
+<p>To install a package into a container that does not have dnf
+installed, following commands can be executed:</p>
+<pre><code>mnt=$(podman mount CONTAINERID)
+dnf install --installroot=${mnt} httpd
+chroot ${mnt} rm -rf /var/log/dnf /var/cache/dnf
+podman umount CONTAINERID</code></pre>
+<p>By using <code>podman mount</code> and <code>podman unmount</code>,
+one can use all of the standard linux tools for moving files into and
+out of containers, not just the cp command.</p>
+<h2 id="examples">EXAMPLES</h2>
+<ul>
+<li><p>Copy a file from host to a container.</p>
+<pre><code>podman cp /myapp/app.conf containerID:/myapp/app.conf</code></pre></li>
+<li><p>Copy a file from a container to a directory on another
+container.</p>
+<pre><code>podman cp containerID1:/myfile.txt containerID2:/tmp</code></pre></li>
+<li><p>Copy a directory on a container to a directory on the host.</p>
+<pre><code>podman cp containerID:/myapp/ /myapp/</code></pre></li>
+<li><p>Copy the contents of a directory on a container to a directory on
+the host.</p>
+<pre><code>podman cp containerID:/home/myuser/. /home/myuser/</code></pre></li>
+<li><p>Copy a directory on a container into a directory on another.</p>
+<pre><code>podman cp containerA:/myapp containerB:/yourapp</code></pre></li>
+<li><p>Stream a tar archive from <code>STDIN</code> to a container.</p>
+<pre><code>podman cp - containerID:/myfiles.tar.gz &lt; myfiles.tar.gz</code></pre></li>
+</ul>
+<h2 id="see-also">SEE ALSO</h2>
+<p><strong><a href="podman.html">podman(1)</a></strong>, <strong><a
+href="podman-mount.html">podman-mount(1)</a></strong>, <strong><a
+href="podman-unmount.html">podman-unmount(1)</a></strong></p>
+</body>
+</html>

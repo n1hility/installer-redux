@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>podman-network-ls(1)</title>
+  <style>
+    html {
+      line-height: 1.5;
+      font-family: Georgia, serif;
+      font-size: 20px;
+      color: #1a1a1a;
+      background-color: #fdfdfd;
+    }
+    body {
+      margin: 0 auto;
+      max-width: 36em;
+      padding-left: 50px;
+      padding-right: 50px;
+      padding-top: 50px;
+      padding-bottom: 50px;
+      hyphens: auto;
+      overflow-wrap: break-word;
+      text-rendering: optimizeLegibility;
+      font-kerning: normal;
+    }
+    @media (max-width: 600px) {
+      body {
+        font-size: 0.9em;
+        padding: 1em;
+      }
+      h1 {
+        font-size: 1.8em;
+      }
+    }
+    @media print {
+      body {
+        background-color: transparent;
+        color: black;
+        font-size: 12pt;
+      }
+      p, h2, h3 {
+        orphans: 3;
+        widows: 3;
+      }
+      h2, h3, h4 {
+        page-break-after: avoid;
+      }
+    }
+    p {
+      margin: 1em 0;
+    }
+    a {
+      color: #1a1a1a;
+    }
+    a:visited {
+      color: #1a1a1a;
+    }
+    img {
+      max-width: 100%;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      margin-top: 1.4em;
+    }
+    h5, h6 {
+      font-size: 1em;
+      font-style: italic;
+    }
+    h6 {
+      font-weight: normal;
+    }
+    ol, ul {
+      padding-left: 1.7em;
+      margin-top: 1em;
+    }
+    li > ol, li > ul {
+      margin-top: 0;
+    }
+    blockquote {
+      margin: 1em 0 1em 1.7em;
+      padding-left: 1em;
+      border-left: 2px solid #e6e6e6;
+      color: #606060;
+    }
+    code {
+      font-family: Menlo, Monaco, 'Lucida Console', Consolas, monospace;
+      font-size: 85%;
+      margin: 0;
+    }
+    pre {
+      margin: 1em 0;
+      overflow: auto;
+    }
+    pre code {
+      padding: 0;
+      overflow: visible;
+      overflow-wrap: normal;
+    }
+    .sourceCode {
+     background-color: transparent;
+     overflow: visible;
+    }
+    hr {
+      background-color: #1a1a1a;
+      border: none;
+      height: 1px;
+      margin: 1em 0;
+    }
+    table {
+      margin: 1em 0;
+      border-collapse: collapse;
+      width: 100%;
+      overflow-x: auto;
+      display: block;
+      font-variant-numeric: lining-nums tabular-nums;
+    }
+    table caption {
+      margin-bottom: 0.75em;
+    }
+    tbody {
+      margin-top: 0.5em;
+      border-top: 1px solid #1a1a1a;
+      border-bottom: 1px solid #1a1a1a;
+    }
+    th {
+      border-top: 1px solid #1a1a1a;
+      padding: 0.25em 0.5em 0.25em 0.5em;
+    }
+    td {
+      padding: 0.125em 0.5em 0.25em 0.5em;
+    }
+    header {
+      margin-bottom: 4em;
+      text-align: center;
+    }
+    #TOC li {
+      list-style: none;
+    }
+    #TOC ul {
+      padding-left: 1.3em;
+    }
+    #TOC > ul {
+      padding-left: 0;
+    }
+    #TOC a:not(:hover) {
+      text-decoration: none;
+    }
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    span.underline{text-decoration: underline;}
+    div.column{display: inline-block; vertical-align: top; width: 50%;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    ul.task-list{list-style: none;}
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+  </style>
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<h2 id="name">NAME</h2>
+<p>podman-network-ls - Display a summary of networks</p>
+<h2 id="synopsis">SYNOPSIS</h2>
+<p><strong>podman network ls</strong> [<em>options</em>]</p>
+<h2 id="description">DESCRIPTION</h2>
+<p>Displays a list of existing podman networks.</p>
+<h2 id="options">OPTIONS</h2>
+<h4 id="filter--ffiltervalue"><strong>--filter</strong>,
+<strong>-f</strong>=<em>filter=value</em></h4>
+<p>Provide filter values.</p>
+<p>The <em>filters</em> argument format is of <code>key=value</code>. If
+there is more than one <em>filter</em>, then pass multiple OPTIONS:
+<strong>--filter</strong> <em>foo=bar</em> <strong>--filter</strong>
+<em>bif=baz</em>.</p>
+<p>Supported filters:</p>
+<table>
+<colgroup>
+<col style="width: 9%" />
+<col style="width: 90%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th><strong>Filter</strong></th>
+<th><strong>Description</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>driver</td>
+<td>Filter by driver type.</td>
+</tr>
+<tr class="even">
+<td>id</td>
+<td>Filter by full or partial network ID.</td>
+</tr>
+<tr class="odd">
+<td>label</td>
+<td>Filter by network with (or without, in the case of label!=[...] is
+used) the specified labels.</td>
+</tr>
+<tr class="even">
+<td>name</td>
+<td>Filter by network name (accepts <code>regex</code>).</td>
+</tr>
+<tr class="odd">
+<td>until</td>
+<td>Filter by networks created before given timestamp.</td>
+</tr>
+<tr class="even">
+<td>dangling</td>
+<td>Filter by networks with no containers attached.</td>
+</tr>
+</tbody>
+</table>
+<p>The <code>driver</code> filter accepts values: <code>bridge</code>,
+<code>macvlan</code>, <code>ipvlan</code>.</p>
+<p>The <code>label</code> <em>filter</em> accepts two formats. One is
+the <code>label</code>=<em>key</em> or
+<code>label</code>=<em>key</em>=<em>value</em>, which shows images with
+the specified labels. The other format is the
+<code>label!</code>=<em>key</em> or
+<code>label!</code>=<em>key</em>=<em>value</em>, which shows images
+without the specified labels.</p>
+<p>The <code>until</code> <em>filter</em> can be Unix timestamps, date
+formatted timestamps, or Go duration strings (e.g. 10m, 1h30m) computed
+relative to the machine&#x2019;s time.</p>
+<p>The <code>dangling</code> <em>filter</em> accepts values
+<code>true</code> or <code>false</code>.</p>
+<h4 id="formatformat"><strong>--format</strong>=<em>format</em></h4>
+<p>Change the default output format. This can be of a supported type
+like 'json' or a Go template. Valid placeholders for the Go template are
+listed below:</p>
+<table>
+<thead>
+<tr class="header">
+<th><strong>Placeholder</strong></th>
+<th><strong>Description</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>.ID</td>
+<td>Network ID</td>
+</tr>
+<tr class="even">
+<td>.Name</td>
+<td>Network name</td>
+</tr>
+<tr class="odd">
+<td>.Driver</td>
+<td>Network driver</td>
+</tr>
+<tr class="even">
+<td>.Labels</td>
+<td>Network labels</td>
+</tr>
+<tr class="odd">
+<td>.Options</td>
+<td>Network options</td>
+</tr>
+<tr class="even">
+<td>.IPAMOptions</td>
+<td>Network ipam options</td>
+</tr>
+<tr class="odd">
+<td>.Created</td>
+<td>Timestamp when the network was created</td>
+</tr>
+<tr class="even">
+<td>.Internal</td>
+<td>Network is internal (boolean)</td>
+</tr>
+<tr class="odd">
+<td>.IPv6Enabled</td>
+<td>Network has ipv6 subnet (boolean)</td>
+</tr>
+<tr class="even">
+<td>.DNSEnabled</td>
+<td>Network has dns enabled (boolean)</td>
+</tr>
+<tr class="odd">
+<td>.NetworkInterface</td>
+<td>Name of the network interface on the host</td>
+</tr>
+<tr class="even">
+<td>.Subnets</td>
+<td>List of subnets on this network</td>
+</tr>
+</tbody>
+</table>
+<h4 id="no-trunc"><strong>--no-trunc</strong></h4>
+<p>Do not truncate the network ID.</p>
+<h4 id="noheading"><strong>--noheading</strong></h4>
+<p>Omit the table headings from the listing of networks.</p>
+<h4 id="quiet--q"><strong>--quiet</strong>, <strong>-q</strong></h4>
+<p>The <code>quiet</code> option will restrict the output to only the
+network names.</p>
+<h2 id="example">EXAMPLE</h2>
+<p>Display networks</p>
+<pre><code>$ podman network ls
+NETWORK ID    NAME         DRIVER
+88a7120ee19d  podman       bridge
+6dd508dbf8cd  podman6  bridge
+8e35c2cd3bf6  podman5  macvlan</code></pre>
+<p>Display only network names</p>
+<pre><code>$ podman network ls -q
+podman
+podman2
+outside
+podman9</code></pre>
+<p>Display name of network which support bridge plugin</p>
+<pre><code>$ podman network ls --filter driver=bridge --format {{.Name}}
+podman
+podman2
+podman9</code></pre>
+<p>List networks with their subnets</p>
+<pre><code>$ podman network ls --format &quot;{{.Name}}: {{range .Subnets}}{{.Subnet}} {{end}}&quot;
+podman: 10.88.0.0/16
+podman3: 10.89.30.0/24 fde4:f86f:4aab:e68f::/64
+macvlan:</code></pre>
+<h2 id="see-also">SEE ALSO</h2>
+<p><strong><a href="podman.html">podman(1)</a></strong>, <strong><a
+href="podman-network.html">podman-network(1)</a></strong>, <strong><a
+href="podman-network-inspect.html">podman-network-inspect(1)</a></strong>,
+<strong><a
+href="podman-network-create.html">podman-network-create(1)</a></strong></p>
+<h2 id="history">HISTORY</h2>
+<p>August 2021, Updated with the new network format by Paul Holzinger <a
+href="mailto:pholzing@redhat.com"
+class="email">pholzing@redhat.com</a></p>
+<p>August 2019, Originally compiled by Brent Baude <a
+href="mailto:bbaude@redhat.com" class="email">bbaude@redhat.com</a></p>
+</body>
+</html>

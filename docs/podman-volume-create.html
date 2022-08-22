@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>podman-volume-create(1)</title>
+  <style>
+    html {
+      line-height: 1.5;
+      font-family: Georgia, serif;
+      font-size: 20px;
+      color: #1a1a1a;
+      background-color: #fdfdfd;
+    }
+    body {
+      margin: 0 auto;
+      max-width: 36em;
+      padding-left: 50px;
+      padding-right: 50px;
+      padding-top: 50px;
+      padding-bottom: 50px;
+      hyphens: auto;
+      overflow-wrap: break-word;
+      text-rendering: optimizeLegibility;
+      font-kerning: normal;
+    }
+    @media (max-width: 600px) {
+      body {
+        font-size: 0.9em;
+        padding: 1em;
+      }
+      h1 {
+        font-size: 1.8em;
+      }
+    }
+    @media print {
+      body {
+        background-color: transparent;
+        color: black;
+        font-size: 12pt;
+      }
+      p, h2, h3 {
+        orphans: 3;
+        widows: 3;
+      }
+      h2, h3, h4 {
+        page-break-after: avoid;
+      }
+    }
+    p {
+      margin: 1em 0;
+    }
+    a {
+      color: #1a1a1a;
+    }
+    a:visited {
+      color: #1a1a1a;
+    }
+    img {
+      max-width: 100%;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      margin-top: 1.4em;
+    }
+    h5, h6 {
+      font-size: 1em;
+      font-style: italic;
+    }
+    h6 {
+      font-weight: normal;
+    }
+    ol, ul {
+      padding-left: 1.7em;
+      margin-top: 1em;
+    }
+    li > ol, li > ul {
+      margin-top: 0;
+    }
+    blockquote {
+      margin: 1em 0 1em 1.7em;
+      padding-left: 1em;
+      border-left: 2px solid #e6e6e6;
+      color: #606060;
+    }
+    code {
+      font-family: Menlo, Monaco, 'Lucida Console', Consolas, monospace;
+      font-size: 85%;
+      margin: 0;
+    }
+    pre {
+      margin: 1em 0;
+      overflow: auto;
+    }
+    pre code {
+      padding: 0;
+      overflow: visible;
+      overflow-wrap: normal;
+    }
+    .sourceCode {
+     background-color: transparent;
+     overflow: visible;
+    }
+    hr {
+      background-color: #1a1a1a;
+      border: none;
+      height: 1px;
+      margin: 1em 0;
+    }
+    table {
+      margin: 1em 0;
+      border-collapse: collapse;
+      width: 100%;
+      overflow-x: auto;
+      display: block;
+      font-variant-numeric: lining-nums tabular-nums;
+    }
+    table caption {
+      margin-bottom: 0.75em;
+    }
+    tbody {
+      margin-top: 0.5em;
+      border-top: 1px solid #1a1a1a;
+      border-bottom: 1px solid #1a1a1a;
+    }
+    th {
+      border-top: 1px solid #1a1a1a;
+      padding: 0.25em 0.5em 0.25em 0.5em;
+    }
+    td {
+      padding: 0.125em 0.5em 0.25em 0.5em;
+    }
+    header {
+      margin-bottom: 4em;
+      text-align: center;
+    }
+    #TOC li {
+      list-style: none;
+    }
+    #TOC ul {
+      padding-left: 1.3em;
+    }
+    #TOC > ul {
+      padding-left: 0;
+    }
+    #TOC a:not(:hover) {
+      text-decoration: none;
+    }
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    span.underline{text-decoration: underline;}
+    div.column{display: inline-block; vertical-align: top; width: 50%;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    ul.task-list{list-style: none;}
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+  </style>
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<h2 id="name">NAME</h2>
+<p>podman-volume-create - Create a new volume</p>
+<h2 id="synopsis">SYNOPSIS</h2>
+<p><strong>podman volume create</strong> [<em>options</em>]
+[<em>name</em>]</p>
+<h2 id="description">DESCRIPTION</h2>
+<p>Creates an empty volume and prepares it to be used by containers. The
+volume can be created with a specific name, if a name is not given a
+random name is generated. You can add metadata to the volume by using
+the <strong>--label</strong> flag and driver options can be set using
+the <strong>--opt</strong> flag.</p>
+<h2 id="options">OPTIONS</h2>
+<h4 id="driverdriver"><strong>--driver</strong>=<em>driver</em></h4>
+<p>Specify the volume driver name (default <strong>local</strong>).
+Setting this to a value other than <strong>local</strong> Podman
+attempts to create the volume using a volume plugin with the given name.
+Such plugins must be defined in the <strong>volume_plugins</strong>
+section of the <strong><a
+href="https://github.com/containers/common/blob/main/docs/containers.conf.5.md">containers.conf(5)</a></strong>
+configuration file.</p>
+<h4 id="help"><strong>--help</strong></h4>
+<p>Print usage statement</p>
+<h4 id="label--llabel"><strong>--label</strong>,
+<strong>-l</strong>=<em>label</em></h4>
+<p>Set metadata for a volume (e.g., --label mykey=value).</p>
+<h4 id="opt--ooption"><strong>--opt</strong>,
+<strong>-o</strong>=<em>option</em></h4>
+<p>Set driver specific options. For the default driver,
+<strong>local</strong>, this allows a volume to be configured to mount a
+filesystem on the host. For the <code>local</code> driver the following
+options are supported: <code>type</code>, <code>device</code>,
+<code>o</code>, and <code>[no]copy</code>. The <code>type</code> option
+sets the type of the filesystem to be mounted, and is equivalent to the
+<code>-t</code> flag to <strong>mount(8)</strong>. The
+<code>device</code> option sets the device to be mounted, and is
+equivalent to the <code>device</code> argument to
+<strong>mount(8)</strong>. The <code>copy</code> option enables copying
+files from the container image path where the mount is created to the
+newly created volume on the first run. <code>copy</code> is the
+default.</p>
+<p>The <code>o</code> option sets options for the mount, and is
+equivalent to the <code>-o</code> flag to <strong>mount(8)</strong> with
+these exceptions:</p>
+<ul>
+<li>The <code>o</code> option supports <code>uid</code> and
+<code>gid</code> options to set the UID and GID of the created volume
+that are not normally supported by <strong>mount(8)</strong>.</li>
+<li>The <code>o</code> option supports the <code>size</code> option to
+set the maximum size of the created volume, the <code>inodes</code>
+option to set the maximum number of inodes for the volume and
+<code>noquota</code> to completely disable quota support even for
+tracking of disk usage. Currently these flags are only supported on
+"xfs" file system mounted with the <code>prjquota</code> flag described
+in the <strong>xfs_quota(8)</strong> man page.</li>
+<li>The <code>o</code> option supports using volume options other than
+the UID/GID options with the <strong>local</strong> driver and requires
+root privileges.</li>
+<li>The <code>o</code> options supports the <code>timeout</code> option
+which allows users to set a driver specific timeout in seconds before
+volume creation fails. For example, <strong>--opts=o=timeout=10</strong>
+sets a driver timeout of 10 seconds.</li>
+</ul>
+<p>When not using the <strong>local</strong> driver, the given options
+are passed directly to the volume plugin. In this case, supported
+options are dictated by the plugin in question, not Podman.</p>
+<h2 id="examples">EXAMPLES</h2>
+<pre><code>$ podman volume create myvol
+
+$ podman volume create
+
+$ podman volume create --label foo=bar myvol
+
+# podman volume create --opt device=tmpfs --opt type=tmpfs --opt o=nodev,noexec myvol
+
+# podman volume create --opt device=tmpfs --opt type=tmpfs --opt o=uid=1000,gid=1000 testvol</code></pre>
+<h2 id="quotas">QUOTAS</h2>
+<p>podman volume create uses <code>XFS project quota controls</code> for
+controlling the size and the number of inodes of builtin volumes. The
+directory used to store the volumes must be an<code>XFS</code> file
+system and be mounted with the <code>pquota</code> option.</p>
+<p>Example /etc/fstab entry:</p>
+<pre><code>/dev/podman/podman-var /var xfs defaults,x-systemd.device-timeout=0,pquota 1 2</code></pre>
+<p>Podman generates project ids for each builtin volume, but these
+project ids need to be unique for the XFS file system. These project ids
+by default are generated randomly, with a potential for overlap with
+other quotas on the same file system.</p>
+<p>The xfs_quota tool can be used to assign a project id to the storage
+driver directory, e.g.:</p>
+<pre><code>echo 100000:/var/lib/containers/storage/overlay &gt;&gt; /etc/projects
+echo 200000:/var/lib/containers/storage/volumes &gt;&gt; /etc/projects
+echo storage:100000 &gt;&gt; /etc/projid
+echo volumes:200000 &gt;&gt; /etc/projid
+xfs_quota -x -c &#39;project -s storage volumes&#39; /&lt;xfs mount point&gt;</code></pre>
+<p>In the example above we are configuring the overlay storage driver
+for newly created containers as well as volumes to use project ids with
+a <strong>start offset</strong>. All containers will be assigned larger
+project ids (e.g. &gt;= 100000). All volume assigned project ids larger
+project ids starting with 200000. This prevents xfs_quota management
+conflicts with containers/storage.</p>
+<h2 id="see-also">SEE ALSO</h2>
+<p><strong><a href="podman.html">podman(1)</a></strong>, <strong><a
+href="https://github.com/containers/common/blob/main/docs/containers.conf.5.md">containers.conf(5)</a></strong>,
+<strong><a href="podman-volume.html">podman-volume(1)</a></strong>,
+<strong>mount(8)</strong>, <strong>xfs_quota(8)</strong>,
+<strong>xfs_quota(8)</strong>, <strong>projects(5)</strong>,
+<strong>projid(5)</strong></p>
+<h2 id="history">HISTORY</h2>
+<p>January 2020, updated with information on volume plugins by Matthew
+Heon <a href="mailto:mheon@redhat.com"
+class="email">mheon@redhat.com</a> November 2018, Originally compiled by
+Urvashi Mohnani <a href="mailto:umohnani@redhat.com"
+class="email">umohnani@redhat.com</a></p>
+</body>
+</html>

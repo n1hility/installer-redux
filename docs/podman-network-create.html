@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>podman-network-create(1)</title>
+  <style>
+    html {
+      line-height: 1.5;
+      font-family: Georgia, serif;
+      font-size: 20px;
+      color: #1a1a1a;
+      background-color: #fdfdfd;
+    }
+    body {
+      margin: 0 auto;
+      max-width: 36em;
+      padding-left: 50px;
+      padding-right: 50px;
+      padding-top: 50px;
+      padding-bottom: 50px;
+      hyphens: auto;
+      overflow-wrap: break-word;
+      text-rendering: optimizeLegibility;
+      font-kerning: normal;
+    }
+    @media (max-width: 600px) {
+      body {
+        font-size: 0.9em;
+        padding: 1em;
+      }
+      h1 {
+        font-size: 1.8em;
+      }
+    }
+    @media print {
+      body {
+        background-color: transparent;
+        color: black;
+        font-size: 12pt;
+      }
+      p, h2, h3 {
+        orphans: 3;
+        widows: 3;
+      }
+      h2, h3, h4 {
+        page-break-after: avoid;
+      }
+    }
+    p {
+      margin: 1em 0;
+    }
+    a {
+      color: #1a1a1a;
+    }
+    a:visited {
+      color: #1a1a1a;
+    }
+    img {
+      max-width: 100%;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      margin-top: 1.4em;
+    }
+    h5, h6 {
+      font-size: 1em;
+      font-style: italic;
+    }
+    h6 {
+      font-weight: normal;
+    }
+    ol, ul {
+      padding-left: 1.7em;
+      margin-top: 1em;
+    }
+    li > ol, li > ul {
+      margin-top: 0;
+    }
+    blockquote {
+      margin: 1em 0 1em 1.7em;
+      padding-left: 1em;
+      border-left: 2px solid #e6e6e6;
+      color: #606060;
+    }
+    code {
+      font-family: Menlo, Monaco, 'Lucida Console', Consolas, monospace;
+      font-size: 85%;
+      margin: 0;
+    }
+    pre {
+      margin: 1em 0;
+      overflow: auto;
+    }
+    pre code {
+      padding: 0;
+      overflow: visible;
+      overflow-wrap: normal;
+    }
+    .sourceCode {
+     background-color: transparent;
+     overflow: visible;
+    }
+    hr {
+      background-color: #1a1a1a;
+      border: none;
+      height: 1px;
+      margin: 1em 0;
+    }
+    table {
+      margin: 1em 0;
+      border-collapse: collapse;
+      width: 100%;
+      overflow-x: auto;
+      display: block;
+      font-variant-numeric: lining-nums tabular-nums;
+    }
+    table caption {
+      margin-bottom: 0.75em;
+    }
+    tbody {
+      margin-top: 0.5em;
+      border-top: 1px solid #1a1a1a;
+      border-bottom: 1px solid #1a1a1a;
+    }
+    th {
+      border-top: 1px solid #1a1a1a;
+      padding: 0.25em 0.5em 0.25em 0.5em;
+    }
+    td {
+      padding: 0.125em 0.5em 0.25em 0.5em;
+    }
+    header {
+      margin-bottom: 4em;
+      text-align: center;
+    }
+    #TOC li {
+      list-style: none;
+    }
+    #TOC ul {
+      padding-left: 1.3em;
+    }
+    #TOC > ul {
+      padding-left: 0;
+    }
+    #TOC a:not(:hover) {
+      text-decoration: none;
+    }
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    span.underline{text-decoration: underline;}
+    div.column{display: inline-block; vertical-align: top; width: 50%;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    ul.task-list{list-style: none;}
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+  </style>
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<h2 id="name">NAME</h2>
+<p>podman-network-create - Create a Podman network</p>
+<h2 id="synopsis">SYNOPSIS</h2>
+<p><strong>podman network create</strong> [<em>options</em>]
+[<em>name</em>]</p>
+<h2 id="description">DESCRIPTION</h2>
+<p>Create a network configuration for use with Podman. By default,
+Podman creates a bridge connection. A <em>Macvlan</em> connection can be
+created with the <em>-d macvlan</em> option. A parent device for macvlan
+can be designated with the <em>-o
+parent=<code>&lt;device&gt;</code></em> option.</p>
+<p>If no options are provided, Podman will assign a free subnet and name
+for your network.</p>
+<p>Upon completion of creating the network, Podman will display the name
+of the newly added network.</p>
+<h2 id="options">OPTIONS</h2>
+<h4 id="disable-dns"><strong>--disable-dns</strong></h4>
+<p>Disables the DNS plugin for this network which if enabled, can
+perform container to container name resolution.</p>
+<h4 id="driver--d"><strong>--driver</strong>, <strong>-d</strong></h4>
+<p>Driver to manage the network. Currently <code>bridge</code>,
+<code>macvlan</code> and <code>ipvlan</code> are supported. Defaults to
+<code>bridge</code>. As rootless the <code>macvlan</code> and
+<code>ipvlan</code> driver have no access to the host network interfaces
+because rootless networking requires a separate network namespace.</p>
+<p>Special considerations for the <em>netavark</em> backend: - The
+<code>macvlan</code> driver requires the <code>--subnet</code> option,
+DHCP is currently not supported. - The <code>ipvlan</code> driver is not
+currently supported.</p>
+<h4 id="gateway"><strong>--gateway</strong></h4>
+<p>Define a gateway for the subnet. If you want to provide a gateway
+address, you must also provide a <em>subnet</em> option. Can be
+specified multiple times. The argument order of the
+<strong>--subnet</strong>, <strong>--gateway</strong> and
+<strong>--ip-range</strong> options must match.</p>
+<h4 id="internal"><strong>--internal</strong></h4>
+<p>Restrict external access of this network. Note when using this
+option, the dnsname plugin will be automatically disabled.</p>
+<h4 id="ip-range"><strong>--ip-range</strong></h4>
+<p>Allocate container IP from a range. The range must be a complete
+subnet and in CIDR notation. The <em>ip-range</em> option must be used
+with a <em>subnet</em> option. Can be specified multiple times. The
+argument order of the <strong>--subnet</strong>,
+<strong>--gateway</strong> and <strong>--ip-range</strong> options must
+match.</p>
+<h4
+id="ipam-driverdriver"><strong>--ipam-driver</strong>=<em>driver</em></h4>
+<p>Set the ipam driver (IP Address Management Driver) for the network.
+When unset podman will choose an ipam driver automatically based on the
+network driver. Valid values are: - <code>host-local</code>: IP
+addresses are assigned locally. - <code>dhcp</code>: IP addresses are
+assigned from a dhcp server on your network. This driver is not yet
+supported with netavark. For CNI the <em>dhcp</em> plugin needs to be
+activated before. - <code>none</code>: No ip addresses are assigned to
+the interfaces.</p>
+<p>You can see the driver in the <strong>podman network inspect</strong>
+output under the <code>ipam_options</code> field.</p>
+<h4 id="ipv6"><strong>--ipv6</strong></h4>
+<p>Enable IPv6 (Dual Stack) networking. If not subnets are given it will
+allocate a ipv4 and ipv6 subnet.</p>
+<h4 id="label"><strong>--label</strong></h4>
+<p>Set metadata for a network (e.g., --label mykey=value).</p>
+<h4 id="opt--ooption"><strong>--opt</strong>,
+<strong>-o</strong>=<em>option</em></h4>
+<p>Set driver specific options.</p>
+<p>All drivers accept the <code>mtu</code> option. The <code>mtu</code>
+option sets the Maximum Transmission Unit (MTU) and takes an integer
+value.</p>
+<p>Additionally the <code>bridge</code> driver supports the following
+options: - <code>vlan</code>: This option assign VLAN tag and enables
+vlan_filtering. Defaults to none. - <code>isolate</code>: This option
+isolates networks by blocking traffic between those that have this
+option enabled.</p>
+<p>The <code>macvlan</code> and <code>ipvlan</code> driver support the
+following options: - <code>parent</code>: The host device which should
+be used for the macvlan interface. Defaults to the default route
+interface. - <code>mode</code>: This option sets the specified
+ip/macvlan mode on the interface. - Supported values for
+<code>macvlan</code> are <code>bridge</code>, <code>private</code>,
+<code>vepa</code>, <code>passthru</code>. Defaults to
+<code>bridge</code>. - Supported values for <code>ipvlan</code> are
+<code>l2</code>, <code>l3</code>, <code>l3s</code>. Defaults to
+<code>l2</code>.</p>
+<h4 id="subnet"><strong>--subnet</strong></h4>
+<p>The subnet in CIDR notation. Can be specified multiple times to
+allocate more than one subnet for this network. The argument order of
+the <strong>--subnet</strong>, <strong>--gateway</strong> and
+<strong>--ip-range</strong> options must match. This is useful to set a
+static ipv4 and ipv6 subnet.</p>
+<h2 id="example">EXAMPLE</h2>
+<p>Create a network with no options.</p>
+<pre><code>$ podman network create
+podman2</code></pre>
+<p>Create a network named <em>newnet</em> that uses
+<em>192.5.0.0/16</em> for its subnet.</p>
+<pre><code>$ podman network create --subnet 192.5.0.0/16 newnet
+newnet</code></pre>
+<p>Create an IPv6 network named <em>newnetv6</em> with a subnet of
+<em>2001:db8::/64</em>.</p>
+<pre><code>$ podman network create --subnet 2001:db8::/64 --ipv6 newnetv6
+newnetv6</code></pre>
+<p>Create a network named <em>newnet</em> that uses
+<em>192.168.33.0/24</em> and defines a gateway as
+<em>192.168.133.3</em>.</p>
+<pre><code>$ podman network create --subnet 192.168.33.0/24 --gateway 192.168.33.3 newnet
+newnet</code></pre>
+<p>Create a network that uses a *192.168.55.0/24** subnet and has an IP
+address range of <em>192.168.55.129 - 192.168.55.254</em>.</p>
+<pre><code>$ podman network create --subnet 192.168.55.0/24 --ip-range 192.168.55.128/25
+podman5</code></pre>
+<p>Create a network with a static ipv4 and ipv6 subnet and set a
+gateway.</p>
+<pre><code>$ podman network create --subnet 192.168.55.0/24 --gateway 192.168.55.3 --subnet fd52:2a5a:747e:3acd::/64 --gateway fd52:2a5a:747e:3acd::10
+podman4</code></pre>
+<p>Create a Macvlan based network using the host interface eth0. Macvlan
+networks can only be used as root.</p>
+<pre><code># podman network create -d macvlan -o parent=eth0 --subnet 192.5.0.0/16 newnet
+newnet</code></pre>
+<h2 id="see-also">SEE ALSO</h2>
+<p><strong><a href="podman.html">podman(1)</a></strong>, <strong><a
+href="podman-network.html">podman-network(1)</a></strong>, <strong><a
+href="podman-network-inspect.html">podman-network-inspect(1)</a></strong>,
+<strong><a
+href="podman-network-ls.html">podman-network-ls(1)</a></strong></p>
+<h2 id="history">HISTORY</h2>
+<p>August 2021, Updated with the new network format by Paul Holzinger <a
+href="mailto:pholzing@redhat.com"
+class="email">pholzing@redhat.com</a></p>
+<p>August 2019, Originally compiled by Brent Baude <a
+href="mailto:bbaude@redhat.com" class="email">bbaude@redhat.com</a></p>
+</body>
+</html>

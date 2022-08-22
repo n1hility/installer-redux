@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>podman-manifest-push(1)</title>
+  <style>
+    html {
+      line-height: 1.5;
+      font-family: Georgia, serif;
+      font-size: 20px;
+      color: #1a1a1a;
+      background-color: #fdfdfd;
+    }
+    body {
+      margin: 0 auto;
+      max-width: 36em;
+      padding-left: 50px;
+      padding-right: 50px;
+      padding-top: 50px;
+      padding-bottom: 50px;
+      hyphens: auto;
+      overflow-wrap: break-word;
+      text-rendering: optimizeLegibility;
+      font-kerning: normal;
+    }
+    @media (max-width: 600px) {
+      body {
+        font-size: 0.9em;
+        padding: 1em;
+      }
+      h1 {
+        font-size: 1.8em;
+      }
+    }
+    @media print {
+      body {
+        background-color: transparent;
+        color: black;
+        font-size: 12pt;
+      }
+      p, h2, h3 {
+        orphans: 3;
+        widows: 3;
+      }
+      h2, h3, h4 {
+        page-break-after: avoid;
+      }
+    }
+    p {
+      margin: 1em 0;
+    }
+    a {
+      color: #1a1a1a;
+    }
+    a:visited {
+      color: #1a1a1a;
+    }
+    img {
+      max-width: 100%;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      margin-top: 1.4em;
+    }
+    h5, h6 {
+      font-size: 1em;
+      font-style: italic;
+    }
+    h6 {
+      font-weight: normal;
+    }
+    ol, ul {
+      padding-left: 1.7em;
+      margin-top: 1em;
+    }
+    li > ol, li > ul {
+      margin-top: 0;
+    }
+    blockquote {
+      margin: 1em 0 1em 1.7em;
+      padding-left: 1em;
+      border-left: 2px solid #e6e6e6;
+      color: #606060;
+    }
+    code {
+      font-family: Menlo, Monaco, 'Lucida Console', Consolas, monospace;
+      font-size: 85%;
+      margin: 0;
+    }
+    pre {
+      margin: 1em 0;
+      overflow: auto;
+    }
+    pre code {
+      padding: 0;
+      overflow: visible;
+      overflow-wrap: normal;
+    }
+    .sourceCode {
+     background-color: transparent;
+     overflow: visible;
+    }
+    hr {
+      background-color: #1a1a1a;
+      border: none;
+      height: 1px;
+      margin: 1em 0;
+    }
+    table {
+      margin: 1em 0;
+      border-collapse: collapse;
+      width: 100%;
+      overflow-x: auto;
+      display: block;
+      font-variant-numeric: lining-nums tabular-nums;
+    }
+    table caption {
+      margin-bottom: 0.75em;
+    }
+    tbody {
+      margin-top: 0.5em;
+      border-top: 1px solid #1a1a1a;
+      border-bottom: 1px solid #1a1a1a;
+    }
+    th {
+      border-top: 1px solid #1a1a1a;
+      padding: 0.25em 0.5em 0.25em 0.5em;
+    }
+    td {
+      padding: 0.125em 0.5em 0.25em 0.5em;
+    }
+    header {
+      margin-bottom: 4em;
+      text-align: center;
+    }
+    #TOC li {
+      list-style: none;
+    }
+    #TOC ul {
+      padding-left: 1.3em;
+    }
+    #TOC > ul {
+      padding-left: 0;
+    }
+    #TOC a:not(:hover) {
+      text-decoration: none;
+    }
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    span.underline{text-decoration: underline;}
+    div.column{display: inline-block; vertical-align: top; width: 50%;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    ul.task-list{list-style: none;}
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+  </style>
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<h2 id="name">NAME</h2>
+<p>podman-manifest-push - Push a manifest list or image index to a
+registry</p>
+<h2 id="synopsis">SYNOPSIS</h2>
+<p><strong>podman manifest push</strong> [<em>options</em>]
+<em>listnameorindexname</em> [<em>destination</em>]</p>
+<h2 id="description">DESCRIPTION</h2>
+<p>Pushes a manifest list or image index to a registry.</p>
+<h2 id="return-value">RETURN VALUE</h2>
+<p>The list image's ID and the digest of the image's manifest.</p>
+<h2 id="options">OPTIONS</h2>
+<h4 id="all"><strong>--all</strong></h4>
+<p>Push the images mentioned in the manifest list or image index, in
+addition to the list or index itself. (Default true)</p>
+<h4 id="authfilepath"><strong>--authfile</strong>=<em>path</em></h4>
+<p>Path of the authentication file. Default is
+${XDG_RUNTIME_DIR}/containers/auth.json, which is set using
+<code>podman login</code>. If the authorization state is not found
+there, $HOME/.docker/config.json is checked, which is set using
+<code>docker login</code>.</p>
+<p>Note: You can also override the default path of the authentication
+file by setting the REGISTRY_AUTH_FILE environment variable.
+<code>export REGISTRY_AUTH_FILE=path</code></p>
+<h4 id="cert-dirpath"><strong>--cert-dir</strong>=<em>path</em></h4>
+<p>Use certificates at <em>path</em> (*.crt, *.cert, *.key) to connect
+to the registry. (Default: /etc/containers/certs.d) Please refer to
+containers-certs.d(5) for details. (This option is not available with
+the remote Podman client, including Mac and Windows (excluding WSL2)
+machines)</p>
+<h4
+id="compression-formatgzip-zstd-zstdchunked"><strong>--compression-format</strong>=<strong>gzip</strong>
+| <em>zstd</em> | <em>zstd:chunked</em></h4>
+<p>Specifies the compression format to use. Supported values are:
+<code>gzip</code>, <code>zstd</code> and <code>zstd:chunked</code>. The
+default is <code>gzip</code> unless overridden in the containers.conf
+file.</p>
+<h4 id="credscreds"><strong>--creds</strong>=<em>creds</em></h4>
+<p>The [username[:password]] to use to authenticate with the registry if
+required. If one or both values are not supplied, a command line prompt
+will appear and the value can be entered. The password is entered
+without echo.</p>
+<h4
+id="digestfiledigestfile"><strong>--digestfile</strong>=<em>Digestfile</em></h4>
+<p>After copying the image, write the digest of the resulting image to
+the file.</p>
+<h4 id="format--fformat"><strong>--format</strong>,
+<strong>-f</strong>=<em>format</em></h4>
+<p>Manifest list type (oci or v2s2) to use when pushing the list
+(default is oci).</p>
+<h4 id="quiet--q"><strong>--quiet</strong>, <strong>-q</strong></h4>
+<p>When writing the manifest, suppress progress output</p>
+<h4 id="remove-signatures"><strong>--remove-signatures</strong></h4>
+<p>Don't copy signatures when pushing images.</p>
+<h4 id="rm"><strong>--rm</strong></h4>
+<p>Delete the manifest list or image index from local storage if pushing
+succeeds.</p>
+<h4
+id="sign-byfingerprint"><strong>--sign-by</strong>=<em>fingerprint</em></h4>
+<p>Sign the pushed images with a &#x201C;simple signing&#x201D; signature using the
+specified key. (This option is not available with the remote Podman
+client, including Mac and Windows (excluding WSL2) machines)</p>
+<h4
+id="sign-by-sigstore-private-keypath"><strong>--sign-by-sigstore-private-key</strong>=<em>path</em></h4>
+<p>Sign the pushed images with a sigstore signature using a private key
+at the specified path. (This option is not available with the remote
+Podman client, including Mac and Windows (excluding WSL2) machines)</p>
+<h4
+id="sign-passphrase-filepath"><strong>--sign-passphrase-file</strong>=<em>path</em></h4>
+<p>If signing the image (using either <strong>--sign-by</strong> or
+<strong>--sign-by-sigstore-private-key</strong>), read the passphrase to
+use from the specified path.</p>
+<h4 id="tls-verify"><strong>--tls-verify</strong></h4>
+<p>Require HTTPS and verify certificates when talking to container
+registries. (defaults to true)</p>
+<h2 id="destination">DESTINATION</h2>
+<p>The DESTINATION is a location to store container images The Image
+"DESTINATION" uses a "transport":"details" format. If a transport is not
+given, podman push will attempt to push to a registry.</p>
+<p>Multiple transports are supported:</p>
+<p><strong>dir:</strong>_path_ An existing local directory <em>path</em>
+storing the manifest, layer tarballs and signatures as individual files.
+This is a non-standardized format, primarily useful for debugging or
+noninvasive container inspection.</p>
+<pre><code>$ podman manifest push mylist:v1.11 dir:/tmp/mylist</code></pre>
+<p><strong>docker://</strong>_docker-reference_ An image in a registry
+implementing the "Docker Registry HTTP API V2". By default, uses the
+authorization state in
+<code>$XDG_RUNTIME_DIR/containers/auth.json</code>, which is set using
+<code>(podman login)</code>. If the authorization state is not found
+there, <code>$HOME/.docker/config.json</code> is checked, which is set
+using <code>(docker login)</code>.</p>
+<pre><code>$ podman manifest push mylist:v1.11 docker://registry.example.org/mylist:v1.11</code></pre>
+<p><strong>docker-archive:</strong>_path_[<strong>:</strong>_docker-reference_]
+An image is stored in the <code>docker save</code> formatted file.
+<em>docker-reference</em> is only used when creating such a file, and it
+must not contain a digest.</p>
+<pre><code>$ podman manifest push mylist:v1.11 docker-archive:/tmp/mylist</code></pre>
+<p><strong>docker-daemon:</strong>_docker-reference_ An image in
+<em>docker-reference</em> format stored in the docker daemon internal
+storage. <em>docker-reference</em> must contain a tag.</p>
+<pre><code>$ podman manifest push mylist:v1.11 docker-daemon:registry.example.org/mylist:v1.11</code></pre>
+<p><strong>oci-archive:</strong>_path_<strong>:</strong>_tag_ An image
+<em>tag</em> in a directory compliant with "Open Container Image Layout
+Specification" at <em>path</em>.</p>
+<pre><code>$ podman manifest push mylist:v1.11 oci-archive:/tmp/mylist</code></pre>
+<h2 id="example">EXAMPLE</h2>
+<pre><code>podman manifest push mylist:v1.11 docker://registry.example.org/mylist:v1.11</code></pre>
+<h2 id="see-also">SEE ALSO</h2>
+<p><strong><a href="podman.html">podman(1)</a></strong>, <strong><a
+href="podman-manifest.html">podman-manifest(1)</a></strong></p>
+</body>
+</html>

@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>podman-container-checkpoint(1)</title>
+  <style>
+    html {
+      line-height: 1.5;
+      font-family: Georgia, serif;
+      font-size: 20px;
+      color: #1a1a1a;
+      background-color: #fdfdfd;
+    }
+    body {
+      margin: 0 auto;
+      max-width: 36em;
+      padding-left: 50px;
+      padding-right: 50px;
+      padding-top: 50px;
+      padding-bottom: 50px;
+      hyphens: auto;
+      overflow-wrap: break-word;
+      text-rendering: optimizeLegibility;
+      font-kerning: normal;
+    }
+    @media (max-width: 600px) {
+      body {
+        font-size: 0.9em;
+        padding: 1em;
+      }
+      h1 {
+        font-size: 1.8em;
+      }
+    }
+    @media print {
+      body {
+        background-color: transparent;
+        color: black;
+        font-size: 12pt;
+      }
+      p, h2, h3 {
+        orphans: 3;
+        widows: 3;
+      }
+      h2, h3, h4 {
+        page-break-after: avoid;
+      }
+    }
+    p {
+      margin: 1em 0;
+    }
+    a {
+      color: #1a1a1a;
+    }
+    a:visited {
+      color: #1a1a1a;
+    }
+    img {
+      max-width: 100%;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      margin-top: 1.4em;
+    }
+    h5, h6 {
+      font-size: 1em;
+      font-style: italic;
+    }
+    h6 {
+      font-weight: normal;
+    }
+    ol, ul {
+      padding-left: 1.7em;
+      margin-top: 1em;
+    }
+    li > ol, li > ul {
+      margin-top: 0;
+    }
+    blockquote {
+      margin: 1em 0 1em 1.7em;
+      padding-left: 1em;
+      border-left: 2px solid #e6e6e6;
+      color: #606060;
+    }
+    code {
+      font-family: Menlo, Monaco, 'Lucida Console', Consolas, monospace;
+      font-size: 85%;
+      margin: 0;
+    }
+    pre {
+      margin: 1em 0;
+      overflow: auto;
+    }
+    pre code {
+      padding: 0;
+      overflow: visible;
+      overflow-wrap: normal;
+    }
+    .sourceCode {
+     background-color: transparent;
+     overflow: visible;
+    }
+    hr {
+      background-color: #1a1a1a;
+      border: none;
+      height: 1px;
+      margin: 1em 0;
+    }
+    table {
+      margin: 1em 0;
+      border-collapse: collapse;
+      width: 100%;
+      overflow-x: auto;
+      display: block;
+      font-variant-numeric: lining-nums tabular-nums;
+    }
+    table caption {
+      margin-bottom: 0.75em;
+    }
+    tbody {
+      margin-top: 0.5em;
+      border-top: 1px solid #1a1a1a;
+      border-bottom: 1px solid #1a1a1a;
+    }
+    th {
+      border-top: 1px solid #1a1a1a;
+      padding: 0.25em 0.5em 0.25em 0.5em;
+    }
+    td {
+      padding: 0.125em 0.5em 0.25em 0.5em;
+    }
+    header {
+      margin-bottom: 4em;
+      text-align: center;
+    }
+    #TOC li {
+      list-style: none;
+    }
+    #TOC ul {
+      padding-left: 1.3em;
+    }
+    #TOC > ul {
+      padding-left: 0;
+    }
+    #TOC a:not(:hover) {
+      text-decoration: none;
+    }
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    span.underline{text-decoration: underline;}
+    div.column{display: inline-block; vertical-align: top; width: 50%;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    ul.task-list{list-style: none;}
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+  </style>
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<h2 id="name">NAME</h2>
+<p>podman-container-checkpoint - Checkpoints one or more running
+containers</p>
+<h2 id="synopsis">SYNOPSIS</h2>
+<p><strong>podman container checkpoint</strong> [<em>options</em>]
+<em>container</em> [<em>container</em> ...]</p>
+<h2 id="description">DESCRIPTION</h2>
+<p><strong>podman container checkpoint</strong> checkpoints all the
+processes in one or more <em>containers</em>. A <em>container</em> can
+be restored from a checkpoint with <strong><a
+href="podman-container-restore.html">podman-container-restore</a></strong>.
+The <em>container IDs</em> or <em>names</em> are used as input.</p>
+<p><em>IMPORTANT: If the container is using <strong>systemd</strong> as
+<strong>entrypoint</strong> checkpointing the container might not be
+possible.</em></p>
+<h2 id="options">OPTIONS</h2>
+<h4 id="all--a"><strong>--all</strong>, <strong>-a</strong></h4>
+<p>Checkpoint all running <em>containers</em>.<br />
+The default is <strong>false</strong>.<br />
+<em>IMPORTANT: This OPTION does not need a container name or ID as input
+argument.</em></p>
+<h4 id="compress--czstd-none-gzip"><strong>--compress</strong>,
+<strong>-c</strong>=<strong>zstd</strong> | <em>none</em> |
+<em>gzip</em></h4>
+<p>Specify the compression algorithm used for the checkpoint archive
+created with the <strong>--export, -e</strong> OPTION. Possible
+algorithms are <strong>zstd</strong>, <em>none</em> and
+<em>gzip</em>.<br />
+One possible reason to use <em>none</em> is to enable faster creation of
+checkpoint archives. Not compressing the checkpoint archive can result
+in faster checkpoint archive creation.<br />
+The default is <strong>zstd</strong>.</p>
+<h4
+id="create-imageimage"><strong>--create-image</strong>=<em>image</em></h4>
+<p>Create a checkpoint image from a running container. This is a
+standard OCI image created in the local image store. It consists of a
+single layer that contains all of the checkpoint files. The content of
+this image layer is in the same format as a checkpoint created with
+<strong>--export</strong>. A checkpoint image can be pushed to a
+standard container registry and pulled on a different system to enable
+container migration. In addition, the image can be exported with
+<strong>podman image save</strong> and inspected with <strong>podman
+inspect</strong>. Inspecting a checkpoint image would display additional
+information, stored as annotations, about the host environment used to
+do the checkpoint:</p>
+<ul>
+<li><p><strong>io.podman.annotations.checkpoint.name</strong>:
+Human-readable name of the original container.</p></li>
+<li><p><strong>io.podman.annotations.checkpoint.rawImageName</strong>:
+Unprocessed name of the image used to create the original container (as
+specified by the user).</p></li>
+<li><p><strong>io.podman.annotations.checkpoint.rootfsImageID</strong>:
+ID of the image used to create the original container.</p></li>
+<li><p><strong>io.podman.annotations.checkpoint.rootfsImageName</strong>:
+Image name used to create the original container.</p></li>
+<li><p><strong>io.podman.annotations.checkpoint.podman.version</strong>:
+Version of Podman used to create the checkpoint.</p></li>
+<li><p><strong>io.podman.annotations.checkpoint.criu.version</strong>:
+Version of CRIU used to create the checkpoint.</p></li>
+<li><p><strong>io.podman.annotations.checkpoint.runtime.name</strong>:
+Container runtime (e.g., runc, crun) used to create the
+checkpoint.</p></li>
+<li><p><strong>io.podman.annotations.checkpoint.runtime.version</strong>:
+Version of the container runtime used to create the checkpoint.</p></li>
+<li><p><strong>io.podman.annotations.checkpoint.conmon.version</strong>:
+Version of conmon used with the original container.</p></li>
+<li><p><strong>io.podman.annotations.checkpoint.host.arch</strong>: CPU
+architecture of the host on which the checkpoint was created.</p></li>
+<li><p><strong>io.podman.annotations.checkpoint.host.kernel</strong>:
+Version of Linux kernel of the host where the checkpoint was
+created.</p></li>
+<li><p><strong>io.podman.annotations.checkpoint.cgroups.version</strong>:
+cgroup version used by the host where the checkpoint was
+created.</p></li>
+<li><p><strong>io.podman.annotations.checkpoint.distribution.version</strong>:
+Version of host distribution on which the checkpoint was
+created.</p></li>
+<li><p><strong>io.podman.annotations.checkpoint.distribution.name</strong>:
+Name of host distribution on which the checkpoint was created.</p></li>
+</ul>
+<h4 id="export--earchive"><strong>--export</strong>,
+<strong>-e</strong>=<em>archive</em></h4>
+<p>Export the checkpoint to a tar.gz file. The exported checkpoint can
+be used to import the <em>container</em> on another system and thus
+enabling container live migration. This checkpoint archive also includes
+all changes to the <em>container's</em> root file-system, if not
+explicitly disabled using <strong>--ignore-rootfs</strong>.</p>
+<h4 id="file-locks"><strong>--file-locks</strong></h4>
+<p>Checkpoint a <em>container</em> with file locks. If an application
+running in the container is using file locks, this OPTION is required
+during checkpoint and restore. Otherwise checkpointing
+<em>containers</em> with file locks is expected to fail. If file locks
+are not used, this option is ignored.<br />
+The default is <strong>false</strong>.</p>
+<h4 id="ignore-rootfs"><strong>--ignore-rootfs</strong></h4>
+<p>If a checkpoint is exported to a tar.gz file it is possible with the
+help of <strong>--ignore-rootfs</strong> to explicitly disable including
+changes to the root file-system into the checkpoint archive file.<br />
+The default is <strong>false</strong>.<br />
+<em>IMPORTANT: This OPTION only works in combination with
+<strong>--export, -e</strong>.</em></p>
+<h4 id="ignore-volumes"><strong>--ignore-volumes</strong></h4>
+<p>This OPTION must be used in combination with the <strong>--export,
+-e</strong> OPTION. When this OPTION is specified, the content of
+volumes associated with the <em>container</em> will not be included into
+the checkpoint tar.gz file.<br />
+The default is <strong>false</strong>.</p>
+<h4 id="keep--k"><strong>--keep</strong>, <strong>-k</strong></h4>
+<p>Keep all temporary log and statistics files created by CRIU during
+checkpointing. These files are not deleted if checkpointing fails for
+further debugging. If checkpointing succeeds these files are
+theoretically not needed, but if these files are needed Podman can keep
+the files for further analysis.<br />
+The default is <strong>false</strong>.</p>
+<h4 id="latest--l"><strong>--latest</strong>, <strong>-l</strong></h4>
+<p>Instead of providing the <em>container ID</em> or <em>name</em>, use
+the last created <em>container</em>. If other methods than Podman are
+used to run <em>containers</em> such as <code>CRI-O</code>, the last
+started <em>container</em> could be from either of those methods.<br />
+The default is <strong>false</strong>.<br />
+<em>IMPORTANT: This OPTION is not available with the remote Podman
+client, including Mac and Windows (excluding WSL2) machines. This OPTION
+does not need a container name or ID as input argument.</em></p>
+<h4 id="leave-running--r"><strong>--leave-running</strong>,
+<strong>-R</strong></h4>
+<p>Leave the <em>container</em> running after checkpointing instead of
+stopping it.<br />
+The default is <strong>false</strong>.</p>
+<h4 id="pre-checkpoint--p"><strong>--pre-checkpoint</strong>,
+<strong>-P</strong></h4>
+<p>Dump the <em>container's</em> memory information only, leaving the
+<em>container</em> running. Later operations will supersede prior dumps.
+It only works on <code>runc 1.0-rc3</code> or <code>higher</code>.<br />
+The default is <strong>false</strong>.</p>
+<p>The functionality to only checkpoint the memory of the container and
+in a second checkpoint only write out the memory pages which have
+changed since the first checkpoint relies on the Linux kernel's
+soft-dirty bit, which is not available on all systems as it depends on
+the system architecture and the configuration of the Linux kernel.
+Podman will verify if the current system supports this functionality and
+return an error if the current system does not support it.</p>
+<h4 id="print-stats"><strong>--print-stats</strong></h4>
+<p>Print out statistics about checkpointing the container(s). The output
+is rendered in a JSON array and contains information about how much time
+different checkpoint operations required. Many of the checkpoint
+statistics are created by CRIU and just passed through to Podman. The
+following information is provided in the JSON array:</p>
+<ul>
+<li><p><strong>podman_checkpoint_duration</strong>: Overall time (in
+microseconds) needed to create all checkpoints.</p></li>
+<li><p><strong>runtime_checkpoint_duration</strong>: Time (in
+microseconds) the container runtime needed to create the
+checkpoint.</p></li>
+<li><p><strong>freezing_time</strong>: Time (in microseconds) CRIU
+needed to pause (freeze) all processes in the container (measured by
+CRIU).</p></li>
+<li><p><strong>frozen_time</strong>: Time (in microseconds) all
+processes in the container were paused (measured by CRIU).</p></li>
+<li><p><strong>memdump_time</strong>: Time (in microseconds) needed to
+extract all required memory pages from all container processes (measured
+by CRIU).</p></li>
+<li><p><strong>memwrite_time</strong>: Time (in microseconds) needed to
+write all required memory pages to the corresponding checkpoint image
+files (measured by CRIU).</p></li>
+<li><p><strong>pages_scanned</strong>: Number of memory pages scanned to
+determine if they need to be checkpointed (measured by CRIU).</p></li>
+<li><p><strong>pages_written</strong>: Number of memory pages actually
+written to the checkpoint image files (measured by CRIU).</p></li>
+</ul>
+<p>The default is <strong>false</strong>.</p>
+<h4 id="tcp-established"><strong>--tcp-established</strong></h4>
+<p>Checkpoint a <em>container</em> with established TCP connections. If
+the checkpoint image contains established TCP connections, this OPTION
+is required during restore. Defaults to not checkpointing
+<em>containers</em> with established TCP connections.<br />
+The default is <strong>false</strong>.</p>
+<h4 id="with-previous"><strong>--with-previous</strong></h4>
+<p>Check out the <em>container</em> with previous criu image files in
+pre-dump. It only works on <code>runc 1.0-rc3</code> or
+<code>higher</code>.<br />
+The default is <strong>false</strong>.<br />
+<em>IMPORTANT: This OPTION is not available with
+<strong>--pre-checkpoint</strong></em>.</p>
+<p>This option requires that the option
+<strong>--pre-checkpoint</strong> has been used before on the same
+container. Without an existing pre-checkpoint, this option will
+fail.</p>
+<p>Also see <strong>--pre-checkpoint</strong> for additional information
+about <strong>--pre-checkpoint</strong> availability on different
+systems.</p>
+<h2 id="examples">EXAMPLES</h2>
+<p>Make a checkpoint for the container "mywebserver".</p>
+<pre><code># podman container checkpoint mywebserver</code></pre>
+<p>Create a checkpoint image for the container "mywebserver".</p>
+<pre><code># podman container checkpoint --create-image mywebserver-checkpoint-1 mywebserver</code></pre>
+<p>Dumps the container's memory information of the latest container into
+an archive.</p>
+<pre><code># podman container checkpoint -P -e pre-checkpoint.tar.gz -l</code></pre>
+<p>Keep the container's memory information from an older dump and add
+the new container's memory information.</p>
+<pre><code># podman container checkpoint --with-previous -e checkpoint.tar.gz -l</code></pre>
+<p>Dump the container's memory information of the latest container into
+an archive with the specified compress method.</p>
+<pre><code># podman container checkpoint -l --compress=none --export=dump.tar
+# podman container checkpoint -l --compress=gzip --export=dump.tar.gz</code></pre>
+<h2 id="see-also">SEE ALSO</h2>
+<p><strong><a href="podman.html">podman(1)</a></strong>, <strong><a
+href="podman-container-restore.html">podman-container-restore(1)</a></strong>,
+<strong>criu(8)</strong></p>
+<h2 id="history">HISTORY</h2>
+<p>September 2018, Originally compiled by Adrian Reber <a
+href="mailto:areber@redhat.com" class="email">areber@redhat.com</a></p>
+</body>
+</html>

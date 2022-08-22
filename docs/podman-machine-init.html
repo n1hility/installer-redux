@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>podman-machine-init(1)</title>
+  <style>
+    html {
+      line-height: 1.5;
+      font-family: Georgia, serif;
+      font-size: 20px;
+      color: #1a1a1a;
+      background-color: #fdfdfd;
+    }
+    body {
+      margin: 0 auto;
+      max-width: 36em;
+      padding-left: 50px;
+      padding-right: 50px;
+      padding-top: 50px;
+      padding-bottom: 50px;
+      hyphens: auto;
+      overflow-wrap: break-word;
+      text-rendering: optimizeLegibility;
+      font-kerning: normal;
+    }
+    @media (max-width: 600px) {
+      body {
+        font-size: 0.9em;
+        padding: 1em;
+      }
+      h1 {
+        font-size: 1.8em;
+      }
+    }
+    @media print {
+      body {
+        background-color: transparent;
+        color: black;
+        font-size: 12pt;
+      }
+      p, h2, h3 {
+        orphans: 3;
+        widows: 3;
+      }
+      h2, h3, h4 {
+        page-break-after: avoid;
+      }
+    }
+    p {
+      margin: 1em 0;
+    }
+    a {
+      color: #1a1a1a;
+    }
+    a:visited {
+      color: #1a1a1a;
+    }
+    img {
+      max-width: 100%;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      margin-top: 1.4em;
+    }
+    h5, h6 {
+      font-size: 1em;
+      font-style: italic;
+    }
+    h6 {
+      font-weight: normal;
+    }
+    ol, ul {
+      padding-left: 1.7em;
+      margin-top: 1em;
+    }
+    li > ol, li > ul {
+      margin-top: 0;
+    }
+    blockquote {
+      margin: 1em 0 1em 1.7em;
+      padding-left: 1em;
+      border-left: 2px solid #e6e6e6;
+      color: #606060;
+    }
+    code {
+      font-family: Menlo, Monaco, 'Lucida Console', Consolas, monospace;
+      font-size: 85%;
+      margin: 0;
+    }
+    pre {
+      margin: 1em 0;
+      overflow: auto;
+    }
+    pre code {
+      padding: 0;
+      overflow: visible;
+      overflow-wrap: normal;
+    }
+    .sourceCode {
+     background-color: transparent;
+     overflow: visible;
+    }
+    hr {
+      background-color: #1a1a1a;
+      border: none;
+      height: 1px;
+      margin: 1em 0;
+    }
+    table {
+      margin: 1em 0;
+      border-collapse: collapse;
+      width: 100%;
+      overflow-x: auto;
+      display: block;
+      font-variant-numeric: lining-nums tabular-nums;
+    }
+    table caption {
+      margin-bottom: 0.75em;
+    }
+    tbody {
+      margin-top: 0.5em;
+      border-top: 1px solid #1a1a1a;
+      border-bottom: 1px solid #1a1a1a;
+    }
+    th {
+      border-top: 1px solid #1a1a1a;
+      padding: 0.25em 0.5em 0.25em 0.5em;
+    }
+    td {
+      padding: 0.125em 0.5em 0.25em 0.5em;
+    }
+    header {
+      margin-bottom: 4em;
+      text-align: center;
+    }
+    #TOC li {
+      list-style: none;
+    }
+    #TOC ul {
+      padding-left: 1.3em;
+    }
+    #TOC > ul {
+      padding-left: 0;
+    }
+    #TOC a:not(:hover) {
+      text-decoration: none;
+    }
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    span.underline{text-decoration: underline;}
+    div.column{display: inline-block; vertical-align: top; width: 50%;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    ul.task-list{list-style: none;}
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+  </style>
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<h2 id="name">NAME</h2>
+<p>podman-machine-init - Initialize a new virtual machine</p>
+<h2 id="synopsis">SYNOPSIS</h2>
+<p><strong>podman machine init</strong> [<em>options</em>]
+[<em>name</em>]</p>
+<h2 id="description">DESCRIPTION</h2>
+<p>Initialize a new virtual machine for Podman.</p>
+<p>Rootless only.</p>
+<p>Podman on MacOS and Windows requires a virtual machine. This is
+because containers are Linux - containers do not run on any other OS
+because containers' core functionality are tied to the Linux kernel.
+Podman machine must be used to manage MacOS and Windows machines, but
+can be optionally used on Linux.</p>
+<p><strong>podman machine init</strong> initializes a new Linux virtual
+machine where containers are run. SSH keys are automatically generated
+to access the VM, and system connections to the root account and a user
+account inside the VM are added.</p>
+<p>By default, the VM distribution is <a
+href="https://getfedora.org/en/coreos?stream=testing">Fedora CoreOS</a>.
+Fedora CoreOS upgrades come out every 14 days and are detected and
+installed automatically. The VM will be rebooted during the upgrade. For
+more information on updates and advanced configuration, please see the
+FCOS update docs <a
+href="https://docs.fedoraproject.org/en-US/fedora-coreos/auto-updates/">here</a>
+and <a
+href="https://coreos.github.io/zincati/usage/updates-strategy/">here</a>.</p>
+<h2 id="options">OPTIONS</h2>
+<h4 id="cpusnumber"><strong>--cpus</strong>=<em>number</em></h4>
+<p>Number of CPUs.</p>
+<h4
+id="disk-sizenumber"><strong>--disk-size</strong>=<em>number</em></h4>
+<p>Size of the disk for the guest VM in GB.</p>
+<h4 id="help"><strong>--help</strong></h4>
+<p>Print usage statement.</p>
+<h4 id="ignition-path"><strong>--ignition-path</strong></h4>
+<p>Fully qualified path of the ignition file.</p>
+<p>If an ignition file is provided, the file will be copied into the
+user's CONF_DIR and renamed. Additionally, no SSH keys will be generated
+nor will a system connection be made. It is assumed that the user will
+do these things manually or handle otherwise.</p>
+<h4 id="image-path"><strong>--image-path</strong></h4>
+<p>Fully qualified path or URL to the VM image. Can also be set to
+<code>testing</code>, <code>next</code>, or <code>stable</code> to pull
+down default image. Defaults to <code>testing</code>.</p>
+<h4 id="memory--mnumber"><strong>--memory</strong>,
+<strong>-m</strong>=<em>number</em></h4>
+<p>Memory (in MB).</p>
+<h4 id="now"><strong>--now</strong></h4>
+<p>Start the virtual machine immediately after it has been
+initialized.</p>
+<h4 id="rootful"><strong>--rootful</strong></h4>
+<p>Whether this machine should prefer rootful (<code>true</code>) or
+rootless (<code>false</code>) container execution. This option will also
+determine the remote connection default if there is no existing remote
+connection configurations.</p>
+<p>API forwarding, if available, will follow this setting.</p>
+<h4 id="timezone"><strong>--timezone</strong></h4>
+<p>Set the timezone for the machine and containers. Valid values are
+<code>local</code> or a <code>timezone</code> such as
+<code>America/Chicago</code>. A value of <code>local</code>, which is
+the default, means to use the timezone of the machine host.</p>
+<h4 id="volume--vsourcetargetoptions"><strong>--volume</strong>,
+<strong>-v</strong>=<em>source:target[:options]</em></h4>
+<p>Mounts a volume from source to target.</p>
+<p>Create a mount. If /host-dir:/machine-dir is specified as the
+<code>*source:target*</code>, Podman mounts <em>host-dir</em> in the
+host to <em>machine-dir</em> in the Podman machine.</p>
+<p>Additional options may be specified as a comma-separated string.
+Recognized options are: * <strong>ro</strong>: mount volume read-only *
+<strong>rw</strong>: mount volume read/write (default) *
+<strong>security_model=[model]</strong>: specify 9p security model (see
+below)</p>
+<p>The 9p security model [determines]
+https://wiki.qemu.org/Documentation/9psetup#Starting_the_Guest_directly
+if and how the 9p filesystem translates some filesystem operations
+before actual storage on the host. The default value of
+<em>mapped-xattr</em> specifies that 9p store symlinks and some file
+attributes as extended attributes on the host. This is suitable when the
+host and the guest do not need to interoperate on the shared filesystem,
+but has caveats for actual shared access; notably, symlinks on the host
+are not usable on the guest and vice versa. If interoperability is
+required, then choose <em>none</em> instead, but keep in mind that the
+guest will not be able to do things that the user running the virtual
+machine cannot do, e.g. create files owned by another user. Using
+<em>none</em> is almost certainly the best choice for read-only
+volumes.</p>
+<p>Example:
+<code>-v "$HOME/git:$HOME/git:ro,security_model=none"</code></p>
+<p>Default volume mounts are defined in <em>containers.conf</em>. Unless
+changed, the default values is <code>$HOME:$HOME</code>.</p>
+<h4 id="volume-driver"><strong>--volume-driver</strong></h4>
+<p>Driver to use for mounting volumes from the host, such as
+<code>virtfs</code>.</p>
+<h2 id="examples">EXAMPLES</h2>
+<pre><code>$ podman machine init
+$ podman machine init myvm
+$ podman machine init --rootful
+$ podman machine init --disk-size 50
+$ podman machine init --memory=1024 myvm
+$ podman machine init -v /Users:/mnt/Users</code></pre>
+<h2 id="see-also">SEE ALSO</h2>
+<p><strong><a href="podman.html">podman(1)</a></strong>, <strong><a
+href="podman-machine.html">podman-machine(1)</a></strong></p>
+<h2 id="history">HISTORY</h2>
+<p>March 2021, Originally compiled by Ashley Cui <a
+href="mailto:acui@redhat.com" class="email">acui@redhat.com</a></p>
+</body>
+</html>

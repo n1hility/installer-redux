@@ -1,0 +1,2048 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>podman-create(1)</title>
+  <style>
+    html {
+      line-height: 1.5;
+      font-family: Georgia, serif;
+      font-size: 20px;
+      color: #1a1a1a;
+      background-color: #fdfdfd;
+    }
+    body {
+      margin: 0 auto;
+      max-width: 36em;
+      padding-left: 50px;
+      padding-right: 50px;
+      padding-top: 50px;
+      padding-bottom: 50px;
+      hyphens: auto;
+      overflow-wrap: break-word;
+      text-rendering: optimizeLegibility;
+      font-kerning: normal;
+    }
+    @media (max-width: 600px) {
+      body {
+        font-size: 0.9em;
+        padding: 1em;
+      }
+      h1 {
+        font-size: 1.8em;
+      }
+    }
+    @media print {
+      body {
+        background-color: transparent;
+        color: black;
+        font-size: 12pt;
+      }
+      p, h2, h3 {
+        orphans: 3;
+        widows: 3;
+      }
+      h2, h3, h4 {
+        page-break-after: avoid;
+      }
+    }
+    p {
+      margin: 1em 0;
+    }
+    a {
+      color: #1a1a1a;
+    }
+    a:visited {
+      color: #1a1a1a;
+    }
+    img {
+      max-width: 100%;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      margin-top: 1.4em;
+    }
+    h5, h6 {
+      font-size: 1em;
+      font-style: italic;
+    }
+    h6 {
+      font-weight: normal;
+    }
+    ol, ul {
+      padding-left: 1.7em;
+      margin-top: 1em;
+    }
+    li > ol, li > ul {
+      margin-top: 0;
+    }
+    blockquote {
+      margin: 1em 0 1em 1.7em;
+      padding-left: 1em;
+      border-left: 2px solid #e6e6e6;
+      color: #606060;
+    }
+    code {
+      font-family: Menlo, Monaco, 'Lucida Console', Consolas, monospace;
+      font-size: 85%;
+      margin: 0;
+    }
+    pre {
+      margin: 1em 0;
+      overflow: auto;
+    }
+    pre code {
+      padding: 0;
+      overflow: visible;
+      overflow-wrap: normal;
+    }
+    .sourceCode {
+     background-color: transparent;
+     overflow: visible;
+    }
+    hr {
+      background-color: #1a1a1a;
+      border: none;
+      height: 1px;
+      margin: 1em 0;
+    }
+    table {
+      margin: 1em 0;
+      border-collapse: collapse;
+      width: 100%;
+      overflow-x: auto;
+      display: block;
+      font-variant-numeric: lining-nums tabular-nums;
+    }
+    table caption {
+      margin-bottom: 0.75em;
+    }
+    tbody {
+      margin-top: 0.5em;
+      border-top: 1px solid #1a1a1a;
+      border-bottom: 1px solid #1a1a1a;
+    }
+    th {
+      border-top: 1px solid #1a1a1a;
+      padding: 0.25em 0.5em 0.25em 0.5em;
+    }
+    td {
+      padding: 0.125em 0.5em 0.25em 0.5em;
+    }
+    header {
+      margin-bottom: 4em;
+      text-align: center;
+    }
+    #TOC li {
+      list-style: none;
+    }
+    #TOC ul {
+      padding-left: 1.3em;
+    }
+    #TOC > ul {
+      padding-left: 0;
+    }
+    #TOC a:not(:hover) {
+      text-decoration: none;
+    }
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    span.underline{text-decoration: underline;}
+    div.column{display: inline-block; vertical-align: top; width: 50%;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    ul.task-list{list-style: none;}
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+  </style>
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<h2 id="name">NAME</h2>
+<p>podman-create - Create a new container</p>
+<h2 id="synopsis">SYNOPSIS</h2>
+<p><strong>podman create</strong> [<em>options</em>] <em>image</em>
+[<em>command</em> [<em>arg</em> ...]]</p>
+<p><strong>podman container create</strong> [<em>options</em>]
+<em>image</em> [<em>command</em> [<em>arg</em> ...]]</p>
+<h2 id="description">DESCRIPTION</h2>
+<p>Creates a writable container layer over the specified image and
+prepares it for running the specified command. The container ID is then
+printed to STDOUT. This is similar to <strong>podman run -d</strong>
+except the container is never started. You can then use the
+<strong>podman start</strong> <em>container</em> command to start the
+container at any point.</p>
+<p>The initial status of the container created with <strong>podman
+create</strong> is 'created'.</p>
+<p>Default settings for flags are defined in
+<code>containers.conf</code>. Most settings for remote connections use
+the server's containers.conf, except when documented in man pages.</p>
+<h2 id="image">IMAGE</h2>
+<p>The image is specified using transport:path format. If no transport
+is specified, the <code>docker</code> (container registry) transport
+will be used by default. For remote Podman, including Mac and Windows
+(excluding WSL2) machines, <code>docker</code> is the only allowed
+transport.</p>
+<p><strong>dir:</strong>_path_ An existing local directory <em>path</em>
+storing the manifest, layer tarballs and signatures as individual files.
+This is a non-standardized format, primarily useful for debugging or
+noninvasive container inspection.</p>
+<pre><code>$ podman save --format docker-dir fedora -o /tmp/fedora
+$ podman create dir:/tmp/fedora echo hello</code></pre>
+<p><strong>docker://</strong>_docker-reference_ (Default) An image
+reference stored in a remote container image registry. Example:
+"quay.io/podman/stable:latest". The reference can include a path to a
+specific registry; if it does not, the registries listed in
+registries.conf will be queried to find a matching image. By default,
+credentials from <code>podman login</code> (stored at
+$XDG_RUNTIME_DIR/containers/auth.json by default) will be used to
+authenticate; otherwise it falls back to using credentials in
+$HOME/.docker/config.json.</p>
+<pre><code>$ podman create registry.fedoraproject.org/fedora:latest echo hello</code></pre>
+<p><strong>docker-archive:</strong>_path_[<strong>:</strong>_docker-reference_]
+An image stored in the <code>docker save</code> formatted file.
+<em>docker-reference</em> is only used when creating such a file, and it
+must not contain a digest.</p>
+<pre><code>$ podman save --format docker-archive fedora -o /tmp/fedora
+$ podman create docker-archive:/tmp/fedora echo hello</code></pre>
+<p><strong>docker-daemon:</strong>_docker-reference_ An image in
+<em>docker-reference</em> format stored in the docker daemon internal
+storage. The <em>docker-reference</em> can also be an image ID
+(docker-daemon:algo:digest).</p>
+<pre><code>$ sudo docker pull fedora
+$ sudo podman create docker-daemon:docker.io/library/fedora echo hello</code></pre>
+<p><strong>oci-archive:</strong>_path_<strong>:</strong>_tag_ An image
+in a directory compliant with the "Open Container Image Layout
+Specification" at the specified <em>path</em> and specified with a
+<em>tag</em>.</p>
+<pre><code>$ podman save --format oci-archive fedora -o /tmp/fedora
+$ podman create oci-archive:/tmp/fedora echo hello</code></pre>
+<h2 id="options">OPTIONS</h2>
+<h4
+id="add-hosthostip"><strong>--add-host</strong>=<em>host:ip</em></h4>
+<p>Add a custom host-to-IP mapping (host:ip)</p>
+<p>Add a line to /etc/hosts. The format is hostname:ip. The
+<strong>--add-host</strong> option can be set multiple times. Conflicts
+with the <strong>--no-hosts</strong> option.</p>
+<h4
+id="annotationkeyvalue"><strong>--annotation</strong>=<em>key=value</em></h4>
+<p>Add an annotation to the container. The format is key=value. The
+<strong>--annotation</strong> option can be set multiple times.</p>
+<h4 id="archarch"><strong>--arch</strong>=<em>ARCH</em></h4>
+<p>Override the architecture, defaults to hosts, of the image to be
+pulled. For example, <code>arm</code>.</p>
+<h4 id="attach--alocation"><strong>--attach</strong>,
+<strong>-a</strong>=<em>location</em></h4>
+<p>Attach to STDIN, STDOUT or STDERR.</p>
+<p>In foreground mode (the default when <strong>-d</strong> is not
+specified), <strong>podman run</strong> can start the process in the
+container and attach the console to the process's standard input,
+output, and standard error. It can even pretend to be a TTY (this is
+what most command line executables expect) and pass along signals. The
+<strong>-a</strong> option can be set for each of stdin, stdout, and
+stderr.</p>
+<h4 id="authfilepath"><strong>--authfile</strong>=<em>path</em></h4>
+<p>Path of the authentication file. Default is
+${XDG_RUNTIME_DIR}/containers/auth.json</p>
+<p>Note: You can also override the default path of the authentication
+file by setting the REGISTRY_AUTH_FILE environment variable.
+<code>export REGISTRY_AUTH_FILE=path</code></p>
+<h4
+id="blkio-weightweight"><strong>--blkio-weight</strong>=<em>weight</em></h4>
+<p>Block IO relative weight. The <em>weight</em> is a value between
+<strong>10</strong> and <strong>1000</strong>.</p>
+<h4
+id="blkio-weight-devicedeviceweight"><strong>--blkio-weight-device</strong>=<em>device:weight</em></h4>
+<p>Block IO relative device weight.</p>
+<h4
+id="cap-addcapability"><strong>--cap-add</strong>=<em>capability</em></h4>
+<p>Add Linux capabilities.</p>
+<h4
+id="cap-dropcapability"><strong>--cap-drop</strong>=<em>capability</em></h4>
+<p>Drop Linux capabilities.</p>
+<h4
+id="cgroup-confkeyvalue"><strong>--cgroup-conf</strong>=<em>KEY=VALUE</em></h4>
+<p>When running on cgroup v2, specify the cgroup file to write to and
+its value. For example
+<strong>--cgroup-conf=memory.high=1073741824</strong> sets the
+memory.high limit to 1GB.</p>
+<h4
+id="cgroup-parentpath"><strong>--cgroup-parent</strong>=<em>path</em></h4>
+<p>Path to cgroups under which the cgroup for the container will be
+created. If the path is not absolute, the path is considered to be
+relative to the cgroups path of the init process. Cgroups will be
+created if they do not already exist.</p>
+<h4 id="cgroupnsmode"><strong>--cgroupns</strong>=<em>mode</em></h4>
+<p>Set the cgroup namespace mode for the container.</p>
+<ul>
+<li><strong>host</strong>: use the host's cgroup namespace inside the
+container.</li>
+<li><strong>container:</strong>_id_: join the namespace of the specified
+container.</li>
+<li><strong>private</strong>: create a new cgroup namespace.</li>
+<li><strong>ns:</strong>_path_: join the namespace at the specified
+path.</li>
+</ul>
+<p>If the host uses cgroups v1, the default is set to
+<strong>host</strong>. On cgroups v2, the default is
+<strong>private</strong>.</p>
+<h4 id="cgroupshow"><strong>--cgroups</strong>=<em>how</em></h4>
+<p>Determines whether the container will create CGroups.</p>
+<p>Default is <strong>enabled</strong>.</p>
+<p>The <strong>enabled</strong> option will create a new cgroup under
+the cgroup-parent. The <strong>disabled</strong> option will force the
+container to not create CGroups, and thus conflicts with CGroup options
+(<strong>--cgroupns</strong> and <strong>--cgroup-parent</strong>). The
+<strong>no-conmon</strong> option disables a new CGroup only for the
+<strong>conmon</strong> process. The <strong>split</strong> option
+splits the current CGroup in two sub-cgroups: one for conmon and one for
+the container payload. It is not possible to set
+<strong>--cgroup-parent</strong> with <strong>split</strong>.</p>
+<h4 id="chrootdirspath"><strong>--chrootdirs</strong>=<em>path</em></h4>
+<p>Path to a directory inside the container that should be treated as a
+<code>chroot</code> directory. Any Podman managed file (e.g.,
+/etc/resolv.conf, /etc/hosts, etc/hostname) that is mounted into the
+root directory will be mounted into that location as well. Multiple
+directories should be separated with a comma.</p>
+<h4 id="cidfileid"><strong>--cidfile</strong>=<em>id</em></h4>
+<p>Write the container ID to the file</p>
+<h4
+id="conmon-pidfilefile"><strong>--conmon-pidfile</strong>=<em>file</em></h4>
+<p>Write the pid of the <strong>conmon</strong> process to a file. As
+<strong>conmon</strong> runs in a separate process than Podman, this is
+necessary when using systemd to restart Podman containers. (This option
+is not available with the remote Podman client, including Mac and
+Windows (excluding WSL2) machines)</p>
+<h4
+id="cpu-periodlimit"><strong>--cpu-period</strong>=<em>limit</em></h4>
+<p>Set the CPU period for the Completely Fair Scheduler (CFS), which is
+a duration in microseconds. Once the container's CPU quota is used up,
+it will not be scheduled to run until the current period ends. Defaults
+to 100000 microseconds.</p>
+<p>On some systems, changing the CPU limits may not be allowed for
+non-root users. For more details, see
+https://github.com/containers/podman/blob/main/troubleshooting.md#26-running-containers-with-cpu-limits-fails-with-a-permissions-error</p>
+<h4 id="cpu-quotalimit"><strong>--cpu-quota</strong>=<em>limit</em></h4>
+<p>Limit the CPU Completely Fair Scheduler (CFS) quota.</p>
+<p>Limit the container's CPU usage. By default, containers run with the
+full CPU resource. The limit is a number in microseconds. If a number is
+provided, the container will be allowed to use that much CPU time until
+the CPU period ends (controllable via
+<strong>--cpu-period</strong>).</p>
+<p>On some systems, changing the CPU limits may not be allowed for
+non-root users. For more details, see
+https://github.com/containers/podman/blob/main/troubleshooting.md#26-running-containers-with-cpu-limits-fails-with-a-permissions-error</p>
+<h4
+id="cpu-rt-periodmicroseconds"><strong>--cpu-rt-period</strong>=<em>microseconds</em></h4>
+<p>Limit the CPU real-time period in microseconds.</p>
+<p>Limit the container's Real Time CPU usage. This option tells the
+kernel to restrict the container's Real Time CPU usage to the period
+specified.</p>
+<p>This option is not supported on cgroups V2 systems.</p>
+<h4
+id="cpu-rt-runtimemicroseconds"><strong>--cpu-rt-runtime</strong>=<em>microseconds</em></h4>
+<p>Limit the CPU real-time runtime in microseconds.</p>
+<p>Limit the containers Real Time CPU usage. This option tells the
+kernel to limit the amount of time in a given CPU period Real Time tasks
+may consume. Ex: Period of 1,000,000us and Runtime of 950,000us means
+that this container could consume 95% of available CPU and leave the
+remaining 5% to normal priority tasks.</p>
+<p>The sum of all runtimes across containers cannot exceed the amount
+allotted to the parent cgroup.</p>
+<p>This option is not supported on cgroups V2 systems.</p>
+<h4 id="cpu-shares--cshares"><strong>--cpu-shares</strong>,
+<strong>-c</strong>=<em>shares</em></h4>
+<p>CPU shares (relative weight).</p>
+<p>By default, all containers get the same proportion of CPU cycles.
+This proportion can be modified by changing the container's CPU share
+weighting relative to the combined weight of all the running containers.
+Default weight is <strong>1024</strong>.</p>
+<p>The proportion will only apply when CPU-intensive processes are
+running. When tasks in one container are idle, other containers can use
+the left-over CPU time. The actual amount of CPU time will vary
+depending on the number of containers running on the system.</p>
+<p>For example, consider three containers, one has a cpu-share of 1024
+and two others have a cpu-share setting of 512. When processes in all
+three containers attempt to use 100% of CPU, the first container would
+receive 50% of the total CPU time. If a fourth container is added with a
+cpu-share of 1024, the first container only gets 33% of the CPU. The
+remaining containers receive 16.5%, 16.5% and 33% of the CPU.</p>
+<p>On a multi-core system, the shares of CPU time are distributed over
+all CPU cores. Even if a container is limited to less than 100% of CPU
+time, it can use 100% of each individual CPU core.</p>
+<p>For example, consider a system with more than three cores. If the
+container <em>C0</em> is started with <strong>--cpu-shares=512</strong>
+running one process, and another container <em>C1</em> with
+<strong>--cpu-shares=1024</strong> running two processes, this can
+result in the following division of CPU shares:</p>
+<table>
+<thead>
+<tr class="header">
+<th>PID</th>
+<th>container</th>
+<th>CPU</th>
+<th>CPU share</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>100</td>
+<td>C0</td>
+<td>0</td>
+<td>100% of CPU0</td>
+</tr>
+<tr class="even">
+<td>101</td>
+<td>C1</td>
+<td>1</td>
+<td>100% of CPU1</td>
+</tr>
+<tr class="odd">
+<td>102</td>
+<td>C1</td>
+<td>2</td>
+<td>100% of CPU2</td>
+</tr>
+</tbody>
+</table>
+<h4 id="cpusnumber"><strong>--cpus</strong>=<em>number</em></h4>
+<p>Number of CPUs. The default is <em>0.0</em> which means no limit.
+This is shorthand for <strong>--cpu-period</strong> and
+<strong>--cpu-quota</strong>, so you may only set either
+<strong>--cpus</strong> or <strong>--cpu-period</strong> and
+<strong>--cpu-quota</strong>.</p>
+<p>On some systems, changing the CPU limits may not be allowed for
+non-root users. For more details, see
+https://github.com/containers/podman/blob/main/troubleshooting.md#26-running-containers-with-cpu-limits-fails-with-a-permissions-error</p>
+<h4
+id="cpuset-cpusnumber"><strong>--cpuset-cpus</strong>=<em>number</em></h4>
+<p>CPUs in which to allow execution. Can be specified as a
+comma-separated list (e.g. <strong>0,1</strong>), as a range (e.g.
+<strong>0-3</strong>), or any combination thereof (e.g.
+<strong>0-3,7,11-15</strong>).</p>
+<h4
+id="cpuset-memsnodes"><strong>--cpuset-mems</strong>=<em>nodes</em></h4>
+<p>Memory nodes (MEMs) in which to allow execution (0-3, 0,1). Only
+effective on NUMA systems.</p>
+<p>If there are four memory nodes on the system (0-3), use
+<strong>--cpuset-mems=0,1</strong> then processes in the container will
+only use memory from the first two memory nodes.</p>
+<h4
+id="devicehost-devicecontainer-devicepermissions"><strong>--device</strong>=<em>host-device[:container-device][:permissions]</em></h4>
+<p>Add a host device to the container. Optional <em>permissions</em>
+parameter can be used to specify device permissions, it is combination
+of <strong>r</strong> for read, <strong>w</strong> for write, and
+<strong>m</strong> for <strong>mknod</strong>(2).</p>
+<p>Example: <strong>--device=/dev/sdc:/dev/xvdc:rwm</strong>.</p>
+<p>Note: if <em>host-device</em> is a symbolic link then it will be
+resolved first. The container will only store the major and minor
+numbers of the host device.</p>
+<p>Note: if the user only has access rights via a group, accessing the
+device from inside a rootless container will fail. Use the
+<code>--group-add keep-groups</code> flag to pass the user's
+supplementary group access into the container.</p>
+<p>Podman may load kernel modules required for using the specified
+device. The devices that podman will load modules when necessary are:
+/dev/fuse.</p>
+<h4
+id="device-cgroup-ruletype-majorminor-mode"><strong>--device-cgroup-rule</strong>=<em>"type
+major:minor mode"</em></h4>
+<p>Add a rule to the cgroup allowed devices list. The rule is expected
+to be in the format specified in the Linux kernel documentation
+(Documentation/cgroup-v1/devices.txt): - type: a (all), c (char), or b
+(block); - major and minor: either a number, or * for all; - mode: a
+composition of r (read), w (write), and m (mknod(2)).</p>
+<h4
+id="device-read-bpspath"><strong>--device-read-bps</strong>=<em>path</em></h4>
+<p>Limit read rate (bytes per second) from a device (e.g.
+--device-read-bps=/dev/sda:1mb)</p>
+<h4
+id="device-read-iopspath"><strong>--device-read-iops</strong>=<em>path</em></h4>
+<p>Limit read rate (IO per second) from a device (e.g.
+--device-read-iops=/dev/sda:1000)</p>
+<h4
+id="device-write-bpspath"><strong>--device-write-bps</strong>=<em>path</em></h4>
+<p>Limit write rate (bytes per second) to a device (e.g.
+--device-write-bps=/dev/sda:1mb)</p>
+<h4
+id="device-write-iopspath"><strong>--device-write-iops</strong>=<em>path</em></h4>
+<p>Limit write rate (IO per second) to a device (e.g.
+--device-write-iops=/dev/sda:1000)</p>
+<h4
+id="disable-content-trust"><strong>--disable-content-trust</strong></h4>
+<p>This is a Docker specific option to disable image verification to a
+Docker registry and is not supported by Podman. This flag is a NOOP and
+provided solely for scripting compatibility.</p>
+<h4 id="dnsdns"><strong>--dns</strong>=<em>dns</em></h4>
+<p>Set custom DNS servers. Invalid if using <strong>--dns</strong> and
+<strong>--network</strong> that is set to 'none' or
+<code>container:&lt;name|id&gt;</code>.</p>
+<p>This option can be used to override the DNS configuration passed to
+the container. Typically this is necessary when the host DNS
+configuration is invalid for the container (e.g., 127.0.0.1). When this
+is the case the <strong>--dns</strong> flag is necessary for every
+run.</p>
+<p>The special value <strong>none</strong> can be specified to disable
+creation of <strong>/etc/resolv.conf</strong> in the container by
+Podman. The <strong>/etc/resolv.conf</strong> file in the image will be
+used without changes.</p>
+<h4 id="dns-optoption"><strong>--dns-opt</strong>=<em>option</em></h4>
+<p>Set custom DNS options. Invalid if using <strong>--dns-opt</strong>
+and <strong>--network</strong> that is set to 'none' or
+<code>container:&lt;name|id&gt;</code>.</p>
+<h4
+id="dns-searchdomain"><strong>--dns-search</strong>=<em>domain</em></h4>
+<p>Set custom DNS search domains. Invalid if using
+<strong>--dns-search</strong> and <strong>--network</strong> that is set
+to 'none' or <code>container:&lt;name|id&gt;</code>. (Use --dns-search=.
+if you don't wish to set the search domain)</p>
+<h4
+id="entrypointcommand-command-arg1-..."><strong>--entrypoint</strong>=<em>"command"</em>
+| <em>'["command", "arg1", ...]'</em></h4>
+<p>Overwrite the default ENTRYPOINT of the image.</p>
+<p>This option allows you to overwrite the default entrypoint of the
+image.</p>
+<p>The ENTRYPOINT of an image is similar to a COMMAND because it
+specifies what executable to run when the container starts, but it is
+(purposely) more difficult to override. The ENTRYPOINT gives a container
+its default nature or behavior, so that when you set an ENTRYPOINT you
+can run the container as if it were that binary, complete with default
+options, and you can pass in more options via the COMMAND. But,
+sometimes an operator may want to run something else inside the
+container, so you can override the default ENTRYPOINT at runtime by
+using a <strong>--entrypoint</strong> and a string to specify the new
+ENTRYPOINT.</p>
+<p>You need to specify multi option commands in the form of a json
+string.</p>
+<h4 id="env--eenv"><strong>--env</strong>,
+<strong>-e</strong>=<em>env</em></h4>
+<p>Set environment variables</p>
+<p>This option allows arbitrary environment variables that are available
+for the process to be launched inside of the container. If an
+environment variable is specified without a value, Podman will check the
+host environment for a value and set the variable only if it is set on
+the host. As a special case, if an environment variable ending in __*__
+is specified without a value, Podman will search the host environment
+for variables starting with the prefix and will add those variables to
+the container.</p>
+<p>See <a href="#environment"><strong>Environment</strong></a> note
+below for precedence and examples.</p>
+<h4 id="env-filefile"><strong>--env-file</strong>=<em>file</em></h4>
+<p>Read in a line delimited file of environment variables. See
+<strong>Environment</strong> note below for precedence.</p>
+<h4 id="env-host"><strong>--env-host</strong></h4>
+<p>Use host environment inside of the container. See
+<strong>Environment</strong> note below for precedence. (This option is
+not available with the remote Podman client, including Mac and Windows
+(excluding WSL2) machines)</p>
+<h4 id="exposeport"><strong>--expose</strong>=<em>port</em></h4>
+<p>Expose a port, or a range of ports (e.g.
+<strong>--expose=3300-3310</strong>) to set up port redirection on the
+host system.</p>
+<h4
+id="gidmapcontainer_gidhost_gidamount"><strong>--gidmap</strong>=<em>container_gid:host_gid:amount</em></h4>
+<p>Run the container in a new user namespace using the supplied GID
+mapping. This option conflicts with the <strong>--userns</strong> and
+<strong>--subgidname</strong> options. This option provides a way to map
+host GIDs to container GIDs in the same way as <strong>--uidmap</strong>
+maps host UIDs to container UIDs. For details see
+<strong>--uidmap</strong>.</p>
+<p>Note: the <strong>--gidmap</strong> flag cannot be called in
+conjunction with the <strong>--pod</strong> flag as a gidmap cannot be
+set on the container level when in a pod.</p>
+<h4
+id="group-addgroup-keep-groups"><strong>--group-add</strong>=<em>group</em>
+| <em>keep-groups</em></h4>
+<p>Assign additional groups to the primary user running within the
+container process.</p>
+<ul>
+<li><code>keep-groups</code> is a special flag that tells Podman to keep
+the supplementary group access.</li>
+</ul>
+<p>Allows container to use the user's supplementary group access. If
+file systems or devices are only accessible by the rootless user's
+group, this flag tells the OCI runtime to pass the group access into the
+container. Currently only available with the <code>crun</code> OCI
+runtime. Note: <code>keep-groups</code> is exclusive, you cannot add any
+other groups with this flag. (Not available for remote commands,
+including Mac and Windows (excluding WSL2) machines)</p>
+<h4
+id="health-cmdcommand-command-arg1-..."><strong>--health-cmd</strong>=<em>"command"</em>
+| <em>'["command", "arg1", ...]'</em></h4>
+<p>Set or alter a healthcheck command for a container. The command is a
+command to be executed inside your container that determines your
+container health. The command is required for other healthcheck options
+to be applied. A value of <strong>none</strong> disables existing
+healthchecks.</p>
+<p>Multiple options can be passed in the form of a JSON array;
+otherwise, the command will be interpreted as an argument to
+<strong>/bin/sh -c</strong>.</p>
+<h4
+id="health-intervalinterval"><strong>--health-interval</strong>=<em>interval</em></h4>
+<p>Set an interval for the healthchecks. An <em>interval</em> of
+<strong>disable</strong> results in no automatic timer setup. The
+default is <strong>30s</strong>.</p>
+<h4
+id="health-retriesretries"><strong>--health-retries</strong>=<em>retries</em></h4>
+<p>The number of retries allowed before a healthcheck is considered to
+be unhealthy. The default value is <strong>3</strong>.</p>
+<h4
+id="health-start-periodperiod"><strong>--health-start-period</strong>=<em>period</em></h4>
+<p>The initialization time needed for a container to bootstrap. The
+value can be expressed in time format like <strong>2m3s</strong>. The
+default value is <strong>0s</strong>.</p>
+<h4
+id="health-timeouttimeout"><strong>--health-timeout</strong>=<em>timeout</em></h4>
+<p>The maximum time allowed to complete the healthcheck before an
+interval is considered failed. Like start-period, the value can be
+expressed in a time format such as <strong>1m22s</strong>. The default
+value is <strong>30s</strong>.</p>
+<h4 id="help"><strong>--help</strong></h4>
+<p>Print usage statement</p>
+<h4 id="hostname--hname"><strong>--hostname</strong>,
+<strong>-h</strong>=<em>name</em></h4>
+<p>Container host name</p>
+<p>Sets the container host name that is available inside the container.
+Can only be used with a private UTS namespace <code>--uts=private</code>
+(default). If <code>--pod</code> is specified and the pod shares the UTS
+namespace (default) the pod's hostname will be used.</p>
+<h4 id="hostusername"><strong>--hostuser</strong>=<em>name</em></h4>
+<p>Add a user account to /etc/passwd from the host to the container. The
+Username or UID must exist on the host system.</p>
+<h4 id="http-proxy"><strong>--http-proxy</strong></h4>
+<p>By default proxy environment variables are passed into the container
+if set for the Podman process. This can be disabled by setting the
+<code>--http-proxy</code> option to <code>false</code>. The environment
+variables passed in include <code>http_proxy</code>,
+<code>https_proxy</code>, <code>ftp_proxy</code>, <code>no_proxy</code>,
+and also the upper case versions of those. This option is only needed
+when the host system must use a proxy but the container should not use
+any proxy. Proxy environment variables specified for the container in
+any other way will override the values that would have been passed
+through from the host. (Other ways to specify the proxy for the
+container include passing the values with the <code>--env</code> flag,
+or hard coding the proxy environment at container build time.) (This
+option is not available with the remote Podman client, including Mac and
+Windows (excluding WSL2) machines)</p>
+<p>For example, to disable passing these environment variables from host
+to container:</p>
+<p><code>--http-proxy=false</code></p>
+<p>Defaults to <code>true</code></p>
+<h4
+id="image-volumebind-tmpfs-ignore"><strong>--image-volume</strong>=<strong>bind</strong>
+| <em>tmpfs</em> | <em>ignore</em></h4>
+<p>Tells Podman how to handle the builtin image volumes. Default is
+<strong>bind</strong>.</p>
+<ul>
+<li><strong>bind</strong>: An anonymous named volume will be created and
+mounted into the container.</li>
+<li><strong>tmpfs</strong>: The volume is mounted onto the container as
+a tmpfs, which allows the users to create content that disappears when
+the container is stopped.</li>
+<li><strong>ignore</strong>: All volumes are just ignored and no action
+is taken.</li>
+</ul>
+<h4 id="init"><strong>--init</strong></h4>
+<p>Run an init inside the container that forwards signals and reaps
+processes. The container-init binary is mounted at
+<code>/run/podman-init</code>. Mounting over <code>/run</code> will
+hence break container execution.</p>
+<h4 id="init-ctrtype"><strong>--init-ctr</strong>=<em>type</em></h4>
+<p>(Pods only). When using pods, create an init style container, which
+is run after the infra container is started but before regular pod
+containers are started. Init containers are useful for running setup
+operations for the pod's applications.</p>
+<p>Valid values for <code>init-ctr</code> type are <em>always</em> or
+<em>once</em>. The <em>always</em> value means the container will run
+with each and every <code>pod start</code>, whereas the <em>once</em>
+value means the container will only run once when the pod is started and
+then the container is removed.</p>
+<p>Init containers are only run on pod <code>start</code>. Restarting a
+pod will not execute any init containers should they be present.
+Furthermore, init containers can only be created in a pod when that pod
+is not running.</p>
+<h4 id="init-pathpath"><strong>--init-path</strong>=<em>path</em></h4>
+<p>Path to the container-init binary.</p>
+<h4 id="interactive--i"><strong>--interactive</strong>,
+<strong>-i</strong></h4>
+<p>Keep STDIN open even if not attached. The default is
+<em>false</em>.</p>
+<h4 id="ipipv4"><strong>--ip</strong>=<em>ipv4</em></h4>
+<p>Specify a static IPv4 address for the container, for example
+<strong>10.88.64.128</strong>. This option can only be used if the
+container is joined to only a single network - i.e.,
+<strong>--network=network-name</strong> is used at most once - and if
+the container is not joining another container's network namespace via
+<strong>--network=container:<em>id</em></strong>. The address must be
+within the network's IP address pool (default
+<strong>10.88.0.0/16</strong>).</p>
+<p>To specify multiple static IP addresses per container, set multiple
+networks using the <strong>--network</strong> option with a static IP
+address specified for each using the <code>ip</code> mode for that
+option.</p>
+<h4 id="ip6ipv6"><strong>--ip6</strong>=<em>ipv6</em></h4>
+<p>Specify a static IPv6 address for the container, for example
+<strong>fd46:db93:aa76:ac37::10</strong>. This option can only be used
+if the container is joined to only a single network - i.e.,
+<strong>--network=network-name</strong> is used at most once - and if
+the container is not joining another container's network namespace via
+<strong>--network=container:<em>id</em></strong>. The address must be
+within the network's IPv6 address pool.</p>
+<p>To specify multiple static IPv6 addresses per container, set multiple
+networks using the <strong>--network</strong> option with a static IPv6
+address specified for each using the <code>ip6</code> mode for that
+option.</p>
+<h4 id="ipcipc"><strong>--ipc</strong>=<em>ipc</em></h4>
+<p>Set the IPC namespace mode for a container. The default is to create
+a private IPC namespace.</p>
+<ul>
+<li>"": Use Podman's default, defined in containers.conf.</li>
+<li><strong>container:</strong>_id_: reuses another container's shared
+memory, semaphores, and message queues</li>
+<li><strong>host</strong>: use the host's shared memory, semaphores, and
+message queues inside the container. Note: the host mode gives the
+container full access to local shared memory and is therefore considered
+insecure.</li>
+<li><strong>none</strong>: private IPC namespace, with /dev/shm not
+mounted.</li>
+<li><strong>ns:</strong>_path_: path to an IPC namespace to join.</li>
+<li><strong>private</strong>: private IPC namespace. =
+<strong>shareable</strong>: private IPC namespace with a possibility to
+share it with other containers.</li>
+</ul>
+<h4 id="label--llabel"><strong>--label</strong>,
+<strong>-l</strong>=<em>label</em></h4>
+<p>Add metadata to a container (e.g., --label com.example.key=value)</p>
+<h4 id="label-filefile"><strong>--label-file</strong>=<em>file</em></h4>
+<p>Read in a line-delimited file of labels.</p>
+<h4
+id="link-local-ipip"><strong>--link-local-ip</strong>=<em>ip</em></h4>
+<p>Not implemented.</p>
+<h4
+id="log-driverdriver"><strong>--log-driver</strong>=<em>driver</em></h4>
+<p>Logging driver for the container. Currently available options are
+<strong>k8s-file</strong>, <strong>journald</strong>,
+<strong>none</strong> and <strong>passthrough</strong>, with
+<strong>json-file</strong> aliased to <strong>k8s-file</strong> for
+scripting compatibility. (Default <strong>journald</strong>).</p>
+<p>The podman info command below will display the default log-driver for
+the system.</p>
+<pre><code>$ podman info --format &#39;{{ .Host.LogDriver }}&#39;
+journald</code></pre>
+<p>The <strong>passthrough</strong> driver passes down the standard
+streams (stdin, stdout, stderr) to the container. It is not allowed with
+the remote Podman client, including Mac and Windows (excluding WSL2)
+machines, and on a tty, since it is vulnerable to attacks via
+TIOCSTI.</p>
+<h4
+id="log-optnamevalue"><strong>--log-opt</strong>=<em>name=value</em></h4>
+<p>Set custom logging configuration. The following <em>name</em>s are
+supported:</p>
+<ul>
+<li><p><strong>path</strong>: specify a path to the log file (e.g.
+<strong>--log-opt
+path=/var/log/container/mycontainer.json</strong>);</p></li>
+<li><p><strong>max-size</strong>: specify a max size of the log file
+(e.g. <strong>--log-opt max-size=10mb</strong>);</p></li>
+<li><p><strong>tag</strong>: specify a custom log tag for the container
+(e.g. <strong>--log-opt tag="{{.ImageName}}"</strong>.</p></li>
+</ul>
+<p>It supports the same keys as <strong>podman inspect
+--format</strong>.</p>
+<p>This option is currently supported only by the
+<strong>journald</strong> log driver.</p>
+<h4
+id="mac-addressaddress"><strong>--mac-address</strong>=<em>address</em></h4>
+<p>Container network interface MAC address (e.g. 92:d0:c6:0a:29:33) This
+option can only be used if the container is joined to only a single
+network - i.e., <strong>--network=<em>network-name</em></strong> is used
+at most once - and if the container is not joining another container's
+network namespace via
+<strong>--network=container:<em>id</em></strong>.</p>
+<p>Remember that the MAC address in an Ethernet network must be unique.
+The IPv6 link-local address will be based on the device's MAC address
+according to RFC4862.</p>
+<p>To specify multiple static MAC addresses per container, set multiple
+networks using the <strong>--network</strong> option with a static MAC
+address specified for each using the <code>mac</code> mode for that
+option.</p>
+<h4 id="memory--mlimit"><strong>--memory</strong>,
+<strong>-m</strong>=<em>limit</em></h4>
+<p>Memory limit (format: <code>&lt;number&gt;[&lt;unit&gt;]</code>,
+where unit = b (bytes), k (kibibytes), m (mebibytes), or g
+(gibibytes))</p>
+<p>Allows you to constrain the memory available to a container. If the
+host supports swap memory, then the <strong>-m</strong> memory setting
+can be larger than physical RAM. If a limit of 0 is specified (not using
+<strong>-m</strong>), the container's memory is not limited. The actual
+limit may be rounded up to a multiple of the operating system's page
+size (the value would be very large, that's millions of trillions).</p>
+<h4
+id="memory-reservationlimit"><strong>--memory-reservation</strong>=<em>limit</em></h4>
+<p>Memory soft limit (format: <code>&lt;number&gt;[&lt;unit&gt;]</code>,
+where unit = b (bytes), k (kibibytes), m (mebibytes), or g
+(gibibytes))</p>
+<p>After setting memory reservation, when the system detects memory
+contention or low memory, containers are forced to restrict their
+consumption to their reservation. So you should always set the value
+below <strong>--memory</strong>, otherwise the hard limit will take
+precedence. By default, memory reservation will be the same as memory
+limit.</p>
+<h4
+id="memory-swaplimit"><strong>--memory-swap</strong>=<em>limit</em></h4>
+<p>A limit value equal to memory plus swap. Must be used with the
+<strong>-m</strong> (<strong>--memory</strong>) flag. The swap
+<code>LIMIT</code> should always be larger than <strong>-m</strong>
+(<strong>--memory</strong>) value. By default, the swap
+<code>LIMIT</code> will be set to double the value of --memory.</p>
+<p>The format of <code>LIMIT</code> is
+<code>&lt;number&gt;[&lt;unit&gt;]</code>. Unit can be <code>b</code>
+(bytes), <code>k</code> (kibibytes), <code>m</code> (mebibytes), or
+<code>g</code> (gibibytes). If you don't specify a unit, <code>b</code>
+is used. Set LIMIT to <code>-1</code> to enable unlimited swap.</p>
+<h4
+id="memory-swappinessnumber"><strong>--memory-swappiness</strong>=<em>number</em></h4>
+<p>Tune a container's memory swappiness behavior. Accepts an integer
+between <em>0</em> and <em>100</em>.</p>
+<p>This flag is not supported on cgroups V2 systems.</p>
+<h4
+id="mounttypetypetype-specific-option..."><strong>--mount</strong>=<em>type=TYPE,TYPE-SPECIFIC-OPTION[,...]</em></h4>
+<p>Attach a filesystem mount to the container</p>
+<p>Current supported mount TYPEs are <strong>bind</strong>,
+<strong>volume</strong>, <strong>image</strong>, <strong>tmpfs</strong>
+and <strong>devpts</strong>. <sup><a href="#Footnote1">[1]</a></sup></p>
+<pre><code>   e.g.
+
+   type=bind,source=/path/on/host,destination=/path/in/container
+
+   type=bind,src=/path/on/host,dst=/path/in/container,relabel=shared
+
+   type=bind,src=/path/on/host,dst=/path/in/container,relabel=shared,U=true
+
+   type=volume,source=vol1,destination=/path/in/container,ro=true
+
+   type=tmpfs,tmpfs-size=512M,destination=/path/in/container
+
+   type=image,source=fedora,destination=/fedora-image,rw=true
+
+   type=devpts,destination=/dev/pts
+
+   Common Options:
+
+      &#xB7; src, source: mount source spec for bind and volume. Mandatory for bind.
+
+      &#xB7; dst, destination, target: mount destination spec.
+
+   Options specific to volume:
+
+      &#xB7; ro, readonly: true or false (default).
+
+      . U, chown: true or false (default). Change recursively the owner and group of the source volume based on the UID and GID of the container.
+
+      &#xB7; idmap: true or false (default).  If specified, create an idmapped mount to the target user namespace in the container.
+
+   Options specific to image:
+
+      &#xB7; rw, readwrite: true or false (default).
+
+   Options specific to bind:
+
+      &#xB7; ro, readonly: true or false (default).
+
+      &#xB7; bind-propagation: shared, slave, private, unbindable, rshared, rslave, runbindable, or rprivate(default). See also mount(2).
+
+      . bind-nonrecursive: do not set up a recursive bind mount. By default it is recursive.
+
+      . relabel: shared, private.
+
+      &#xB7; idmap: true or false (default).  If specified, create an idmapped mount to the target user namespace in the container.
+
+      . U, chown: true or false (default). Change recursively the owner and group of the source volume based on the UID and GID of the container.
+
+   Options specific to tmpfs:
+
+      &#xB7; ro, readonly: true or false (default).
+
+      &#xB7; tmpfs-size: Size of the tmpfs mount in bytes. Unlimited by default in Linux.
+
+      &#xB7; tmpfs-mode: File mode of the tmpfs in octal. (e.g. 700 or 0700.) Defaults to 1777 in Linux.
+
+      &#xB7; tmpcopyup: Enable copyup from the image directory at the same location to the tmpfs. Used by default.
+
+      &#xB7; notmpcopyup: Disable copying files from the image to the tmpfs.
+
+      . U, chown: true or false (default). Change recursively the owner and group of the source volume based on the UID and GID of the container.
+
+   Options specific to devpts:
+
+      &#xB7; uid: UID of the file owner (default 0).
+
+      &#xB7; gid: GID of the file owner (default 0).
+
+      &#xB7; mode: permission mask for the file (default 600).
+
+      &#xB7; max: maximum number of PTYs (default 1048576).</code></pre>
+<h4 id="namename"><strong>--name</strong>=<em>name</em></h4>
+<p>Assign a name to the container</p>
+<p>The operator can identify a container in three ways: UUID long
+identifier
+(&#x201C;f78375b1c487e03c9438c729345e54db9d20cfa2ac1fc3494b6eb60872e74778&#x201D;)
+UUID short identifier (&#x201C;f78375b1c487&#x201D;) Name (&#x201C;jonah&#x201D;)</p>
+<p>podman generates a UUID for each container, and if a name is not
+assigned to the container with <strong>--name</strong> then it will
+generate a random string name. The name is useful any place you need to
+identify a container. This works for both background and foreground
+containers.</p>
+<h4 id="networkmode---net"><strong>--network</strong>=<em>mode</em>,
+<strong>--net</strong></h4>
+<p>Set the network mode for the container. Invalid if using
+<strong>--dns</strong>, <strong>--dns-opt</strong>, or
+<strong>--dns-search</strong> with <strong>--network</strong> set to
+<strong>none</strong> or <strong>container:</strong>_id_. If used
+together with <strong>--pod</strong>, the container will not join the
+pod's network namespace.</p>
+<p>Valid <em>mode</em> values are:</p>
+<ul>
+<li><strong>bridge[:OPTIONS,...]</strong>: Create a network stack on the
+default bridge. This is the default for rootful containers. It is
+possible to specify these additional options:
+<ul>
+<li><strong>alias=name</strong>: Add network-scoped alias for the
+container.</li>
+<li><strong>ip=IPv4</strong>: Specify a static ipv4 address for this
+container.</li>
+<li><strong>ip=IPv6</strong>: Specify a static ipv6 address for this
+container.</li>
+<li><strong>mac=MAC</strong>: Specify a static mac address for this
+container.</li>
+<li><strong>interface_name</strong>: Specify a name for the created
+network interface inside the container.</li>
+</ul>
+For example to set a static ipv4 address and a static mac address, use
+<code>--network bridge:ip=10.88.0.10,mac=44:33:22:11:00:99</code>.</li>
+<li>&lt;network name or ID&gt;[:OPTIONS,...]: Connect to a user-defined
+network; this is the network name or ID from a network created by
+<strong><a href="podman-network-create.html">podman network
+create</a></strong>. Using the network name implies the bridge network
+mode. It is possible to specify the same options described under the
+bridge mode above. You can use the <strong>--network</strong> option
+multiple times to specify additional networks.</li>
+<li><strong>none</strong>: Create a network namespace for the container
+but do not configure network interfaces for it, thus the container has
+no network connectivity.</li>
+<li><strong>container:</strong>_id_: Reuse another container's network
+stack.</li>
+<li><strong>host</strong>: Do not create a network namespace, the
+container will use the host's network. Note: The host mode gives the
+container full access to local system services such as D-bus and is
+therefore considered insecure.</li>
+<li><strong>ns:</strong>_path_: Path to a network namespace to
+join.</li>
+<li><strong>private</strong>: Create a new namespace for the container.
+This will use the <strong>bridge</strong> mode for rootful containers
+and <strong>slirp4netns</strong> for rootless ones.</li>
+<li><strong>slirp4netns[:OPTIONS,...]</strong>: use
+<strong>slirp4netns</strong>(1) to create a user network stack. This is
+the default for rootless containers. It is possible to specify these
+additional options, they can also be set with
+<code>network_cmd_options</code> in containers.conf:
+<ul>
+<li><strong>allow_host_loopback=true|false</strong>: Allow the
+slirp4netns to reach the host loopback IP (<code>10.0.2.2</code>).
+Default is false.</li>
+<li><strong>mtu=MTU</strong>: Specify the MTU to use for this network.
+(Default is <code>65520</code>).</li>
+<li><strong>cidr=CIDR</strong>: Specify ip range to use for this
+network. (Default is <code>10.0.2.0/24</code>).</li>
+<li><strong>enable_ipv6=true|false</strong>: Enable IPv6. Default is
+true. (Required for <code>outbound_addr6</code>).</li>
+<li><strong>outbound_addr=INTERFACE</strong>: Specify the outbound
+interface slirp should bind to (ipv4 traffic only).</li>
+<li><strong>outbound_addr=IPv4</strong>: Specify the outbound ipv4
+address slirp should bind to.</li>
+<li><strong>outbound_addr6=INTERFACE</strong>: Specify the outbound
+interface slirp should bind to (ipv6 traffic only).</li>
+<li><strong>outbound_addr6=IPv6</strong>: Specify the outbound ipv6
+address slirp should bind to.</li>
+<li><strong>port_handler=rootlesskit</strong>: Use rootlesskit for port
+forwarding. Default. Note: Rootlesskit changes the source IP address of
+incoming packets to an IP address in the container network namespace,
+usually <code>10.0.2.100</code>. If your application requires the real
+source IP address, e.g. web server logs, use the slirp4netns port
+handler. The rootlesskit port handler is also used for rootless
+containers when connected to user-defined networks.</li>
+<li><strong>port_handler=slirp4netns</strong>: Use the slirp4netns port
+forwarding, it is slower than rootlesskit but preserves the correct
+source IP address. This port handler cannot be used for user-defined
+networks.</li>
+</ul></li>
+</ul>
+<h4
+id="network-aliasalias"><strong>--network-alias</strong>=<em>alias</em></h4>
+<p>Add a network-scoped alias for the container, setting the alias for
+all networks that the container joins. To set a name only for a specific
+network, use the alias option as described under the
+<strong>--network</strong> option. If the network has DNS enabled
+(<code>podman network inspect -f {{.DNSEnabled}} &lt;name&gt;</code>),
+these aliases can be used for name resolution on the given network. This
+option can be specified multiple times. NOTE: When using CNI a container
+will only have access to aliases on the first network that it joins.
+This limitation does not exist with netavark/aardvark-dns.</p>
+<h4 id="no-healthcheck"><strong>--no-healthcheck</strong></h4>
+<p>Disable any defined healthchecks for container.</p>
+<h4 id="no-hosts"><strong>--no-hosts</strong></h4>
+<p>Do not create <em>/etc/hosts</em> for the container. By default,
+Podman will manage <em>/etc/hosts</em>, adding the container's own IP
+address and any hosts from <strong>--add-host</strong>.
+<strong>--no-hosts</strong> disables this, and the image's
+<em>/etc/hosts</em> will be preserved unmodified.</p>
+<p>This option conflicts with <strong>--add-host</strong>.</p>
+<h4 id="oom-kill-disable"><strong>--oom-kill-disable</strong></h4>
+<p>Whether to disable OOM Killer for the container or not.</p>
+<p>This flag is not supported on cgroups V2 systems.</p>
+<h4
+id="oom-score-adjnum"><strong>--oom-score-adj</strong>=<em>num</em></h4>
+<p>Tune the host's OOM preferences for containers (accepts values from
+<strong>-1000</strong> to <strong>1000</strong>).</p>
+<h4 id="osos"><strong>--os</strong>=<em>OS</em></h4>
+<p>Override the OS, defaults to hosts, of the image to be pulled. For
+example, <code>windows</code>.</p>
+<h4
+id="passwd-entryentry"><strong>--passwd-entry</strong>=<em>ENTRY</em></h4>
+<p>Customize the entry that is written to the <code>/etc/passwd</code>
+file within the container when <code>--passwd</code> is used.</p>
+<p>The variables $USERNAME, $UID, $GID, $NAME, $HOME are automatically
+replaced with their value at runtime.</p>
+<h4
+id="personalitypersona"><strong>--personality</strong>=<em>persona</em></h4>
+<p>Personality sets the execution domain via Linux personality(2).</p>
+<h4 id="pidpid"><strong>--pid</strong>=<em>pid</em></h4>
+<p>Set the PID mode for the container Default is to create a private PID
+namespace for the container - <code>container:&lt;name|id&gt;</code>:
+join another container's PID namespace - <code>host</code>: use the
+host's PID namespace for the container. Note: the host mode gives the
+container full access to local PID and is therefore considered insecure.
+- <code>ns</code>: join the specified PID namespace -
+<code>private</code>: create a new namespace for the container
+(default)</p>
+<h4 id="pidfilepath"><strong>--pidfile</strong>=<em>path</em></h4>
+<p>When the pidfile location is specified, the container process' PID
+will be written to the pidfile. (This option is not available with the
+remote Podman client, including Mac and Windows (excluding WSL2)
+machines) If the pidfile option is not specified, the container process'
+PID will be written to /run/containers/storage/<span
+class="math inline"><em>s</em><em>t</em><em>o</em><em>r</em><em>a</em><em>g</em><em>e</em>&#x2005;&#x2212;&#x2005;<em>d</em><em>r</em><em>i</em><em>v</em><em>e</em><em>r</em>&#x2005;&#x2212;&#x2005;<em>c</em><em>o</em><em>n</em><em>t</em><em>a</em><em>i</em><em>n</em><em>e</em><em>r</em><em>s</em>/</span>CID/userdata/pidfile.</p>
+<p>After the container is started, the location for the pidfile can be
+discovered with the following <code>podman inspect</code> command:</p>
+<pre><code>$ podman inspect --format &#39;{{ .PidFile }}&#39; $CID
+/run/containers/storage/${storage-driver}-containers/$CID/userdata/pidfile</code></pre>
+<h4
+id="pids-limitlimit"><strong>--pids-limit</strong>=<em>limit</em></h4>
+<p>Tune the container's pids limit. Set to <strong>-1</strong> to have
+unlimited pids for the container. The default is <strong>4096</strong>
+on systems that support "pids" cgroup controller.</p>
+<h4
+id="platformosarch"><strong>--platform</strong>=<em>OS/ARCH</em></h4>
+<p>Specify the platform for selecting the image. (Conflicts with --arch
+and --os) The <code>--platform</code> option can be used to override the
+current architecture and operating system.</p>
+<h4 id="podname"><strong>--pod</strong>=<em>name</em></h4>
+<p>Run container in an existing pod. If you want Podman to make the pod
+for you, preference the pod name with <code>new:</code>. To make a pod
+with more granular options, use the <code>podman pod create</code>
+command before creating a container.</p>
+<h4
+id="pod-id-filepath"><strong>--pod-id-file</strong>=<em>path</em></h4>
+<p>Run container in an existing pod and read the pod's ID from the
+specified file. If a container is run within a pod, and the pod has an
+infra-container, the infra-container will be started before the
+container is.</p>
+<h4 id="privileged"><strong>--privileged</strong></h4>
+<p>Give extended privileges to this container. The default is
+<em>false</em>.</p>
+<p>By default, Podman containers are &#x201C;unprivileged&#x201D; (=false) and cannot,
+for example, modify parts of the operating system. This is because by
+default a container is not allowed to access any devices. A &#x201C;privileged&#x201D;
+container is given access to all devices.</p>
+<p>When the operator executes a privileged container, Podman enables
+access to all devices on the host, turns off graphdriver mount options,
+as well as turning off most of the security measures protecting the host
+from the container.</p>
+<p>Rootless containers cannot have more privileges than the account that
+launched them.</p>
+<h4
+id="publish--piphostportcontainerportprotocol"><strong>--publish</strong>,
+<strong>-p</strong>=<em>[[ip:][hostPort]:]containerPort[/protocol]</em></h4>
+<p>Publish a container's port, or range of ports, to the host.</p>
+<p>Both <em>hostPort</em> and <em>containerPort</em> can be specified as
+a range of ports. When specifying ranges for both, the number of
+container ports in the range must match the number of host ports in the
+range.</p>
+<p>If host IP is set to 0.0.0.0 or not set at all, the port will be
+bound on all IPs on the host.</p>
+<p>By default, Podman will publish TCP ports. To publish a UDP port
+instead, give <code>udp</code> as protocol. To publish both TCP and UDP
+ports, set <code>--publish</code> twice, with <code>tcp</code>, and
+<code>udp</code> as protocols respectively. Rootful containers can also
+publish ports using the <code>sctp</code> protocol.</p>
+<p>Host port does not have to be specified (e.g.
+<code>podman run -p 127.0.0.1::80</code>). If it is not, the container
+port will be randomly assigned a port on the host.</p>
+<p>Use <strong>podman port</strong> to see the actual mapping:
+<code>podman port $CONTAINER $CONTAINERPORT</code>.</p>
+<p><strong>Note:</strong> If a container will be run within a pod, it is
+not necessary to publish the port for the containers in the pod. The
+port must only be published by the pod itself. Pod network stacks act
+like the network stack on the host - you have a variety of containers in
+the pod, and programs in the container, all sharing a single interface
+and IP address, and associated ports. If one container binds to a port,
+no other container can use that port within the pod while it is in use.
+Containers in the pod can also communicate over localhost by having one
+container bind to localhost in the pod, and another connect to that
+port.</p>
+<h4 id="publish-all--p"><strong>--publish-all</strong>,
+<strong>-P</strong></h4>
+<p>Publish all exposed ports to random ports on the host interfaces. The
+default is <em>false</em>.</p>
+<p>When set to true publish all exposed ports to the host interfaces.
+The default is false. If the operator uses -P (or -p) then Podman will
+make the exposed port accessible on the host and the ports will be
+available to any client that can reach the host. When using -P, Podman
+will bind any exposed port to a random port on the host within an
+<em>ephemeral port range</em> defined by
+<code>/proc/sys/net/ipv4/ip_local_port_range</code>. To find the mapping
+between the host ports and the exposed ports, use
+<code>podman port</code>.</p>
+<h4 id="pullpolicy"><strong>--pull</strong>=<em>policy</em></h4>
+<p>Pull image policy. The default is <strong>missing</strong>.</p>
+<ul>
+<li><strong>always</strong>: Always pull the image and throw an error if
+the pull fails.</li>
+<li><strong>missing</strong>: Pull the image only if it could not be
+found in the local containers storage. Throw an error if no image could
+be found and the pull fails.</li>
+<li><strong>never</strong>: Never pull the image but use the one from
+the local containers storage. Throw an error if no image could be
+found.</li>
+<li><strong>newer</strong>: Pull if the image on the registry is newer
+than the one in the local containers storage. An image is considered to
+be newer when the digests are different. Comparing the time stamps is
+prone to errors. Pull errors are suppressed if a local image was
+found.</li>
+</ul>
+<h4 id="quiet--q"><strong>--quiet</strong>, <strong>-q</strong></h4>
+<p>Suppress output information when pulling images</p>
+<h4 id="read-only"><strong>--read-only</strong></h4>
+<p>Mount the container's root filesystem as read-only.</p>
+<p>By default a container will have its root filesystem writable
+allowing processes to write files anywhere. By specifying the
+<strong>--read-only</strong> flag, the container will have its root
+filesystem mounted as read-only prohibiting any writes.</p>
+<h4 id="read-only-tmpfs"><strong>--read-only-tmpfs</strong></h4>
+<p>If container is running in <strong>--read-only</strong> mode, then
+mount a read-write tmpfs on <em>/run</em>, <em>/tmp</em>, and
+<em>/var/tmp</em>. The default is <strong>true</strong>.</p>
+<h4 id="replace"><strong>--replace</strong></h4>
+<p>If another container with the same name already exists, replace and
+remove it. The default is <strong>false</strong>.</p>
+<h4
+id="requirescontainer"><strong>--requires</strong>=<em>container</em></h4>
+<p>Specify one or more requirements. A requirement is a dependency
+container that will be started before this container. Containers can be
+specified by name or ID, with multiple containers being separated by
+commas.</p>
+<h4 id="restartpolicy"><strong>--restart</strong>=<em>policy</em></h4>
+<p>Restart policy to follow when containers exit. Restart policy will
+not take effect if a container is stopped via the
+<code>podman kill</code> or <code>podman stop</code> commands.</p>
+<p>Valid values are:</p>
+<ul>
+<li><code>no</code> : Do not restart containers on exit</li>
+<li><code>on-failure[:max_retries]</code> : Restart containers when they
+exit with a non-0 exit code, retrying indefinitely or until the optional
+max_retries count is hit</li>
+<li><code>always</code> : Restart containers when they exit, regardless
+of status, retrying indefinitely</li>
+<li><code>unless-stopped</code> : Identical to
+<strong>always</strong></li>
+</ul>
+<p>Please note that restart will not restart containers after a system
+reboot. If this functionality is required in your environment, you can
+invoke Podman from a systemd unit file, or create an init script for
+whichever init system is in use. To generate systemd unit files, please
+see <em>podman generate systemd</em></p>
+<h4 id="rm"><strong>--rm</strong></h4>
+<p>Automatically remove the container when it exits. The default is
+<em>false</em>.</p>
+<h4 id="rootfs"><strong>--rootfs</strong></h4>
+<p>If specified, the first argument refers to an exploded container on
+the file system.</p>
+<p>This is useful to run a container without requiring any image
+management, the rootfs of the container is assumed to be managed
+externally.</p>
+<p><code>Overlay Rootfs Mounts</code></p>
+<p>The <code>:O</code> flag tells Podman to mount the directory from the
+rootfs path as storage using the <code>overlay file system</code>. The
+container processes can modify content within the mount point which is
+stored in the container storage in a separate directory. In overlay
+terms, the source directory will be the lower, and the container storage
+directory will be the upper. Modifications to the mount point are
+destroyed when the container finishes executing, similar to a tmpfs
+mount point being unmounted.</p>
+<h4
+id="sdnotifycontainer-conmon-ignore"><strong>--sdnotify</strong>=<strong>container</strong>
+| <em>conmon</em> | <em>ignore</em></h4>
+<p>Determines how to use the NOTIFY_SOCKET, as passed with systemd and
+Type=notify.</p>
+<p>Default is <strong>container</strong>, which means allow the OCI
+runtime to proxy the socket into the container to receive ready
+notification. Podman will set the MAINPID to conmon's pid. The
+<strong>conmon</strong> option sets MAINPID to conmon's pid, and sends
+READY when the container has started. The socket is never passed to the
+runtime or the container. The <strong>ignore</strong> option removes
+NOTIFY_SOCKET from the environment for itself and child processes, for
+the case where some other process above Podman uses NOTIFY_SOCKET and
+Podman should not use it.</p>
+<h4
+id="seccomp-policypolicy"><strong>--seccomp-policy</strong>=<em>policy</em></h4>
+<p>Specify the policy to select the seccomp profile. If set to
+<em>image</em>, Podman will look for a "io.containers.seccomp.profile"
+label in the container-image config and use its value as a seccomp
+profile. Otherwise, Podman will follow the <em>default</em> policy by
+applying the default profile unless specified otherwise via
+<em>--security-opt seccomp</em> as described below.</p>
+<p>Note that this feature is experimental and may change in the
+future.</p>
+<h4
+id="secretsecretoptopt-..."><strong>--secret</strong>=<em>secret[,opt=opt
+...]</em></h4>
+<p>Give the container access to a secret. Can be specified multiple
+times.</p>
+<p>A secret is a blob of sensitive data which a container needs at
+runtime but should not be stored in the image or in source control, such
+as usernames and passwords, TLS certificates and keys, SSH keys or other
+important generic strings or binary content (up to 500 kb in size).</p>
+<p>When secrets are specified as type <code>mount</code>, the secrets
+are copied and mounted into the container when a container is created.
+When secrets are specified as type <code>env</code>, the secret will be
+set as an environment variable within the container. Secrets are written
+in the container at the time of container creation, and modifying the
+secret using <code>podman secret</code> commands after the container is
+created will not affect the secret inside the container.</p>
+<p>Secrets and its storage are managed using the
+<code>podman secret</code> command.</p>
+<p>Secret Options</p>
+<ul>
+<li><code>type=mount|env</code> : How the secret will be exposed to the
+container. Default mount.</li>
+<li><code>target=target</code> : Target of secret. Defaults to secret
+name.</li>
+<li><code>uid=0</code> : UID of secret. Defaults to 0. Mount secret type
+only.</li>
+<li><code>gid=0</code> : GID of secret. Defaults to 0. Mount secret type
+only.</li>
+<li><code>mode=0</code> : Mode of secret. Defaults to 0444. Mount secret
+type only.</li>
+</ul>
+<h4
+id="security-optoption"><strong>--security-opt</strong>=<em>option</em></h4>
+<p>Security Options</p>
+<ul>
+<li><p><code>apparmor=unconfined</code> : Turn off apparmor confinement
+for the container</p></li>
+<li><p><code>apparmor=your-profile</code> : Set the apparmor confinement
+profile for the container</p></li>
+<li><p><code>label=user:USER</code> : Set the label user for the
+container processes</p></li>
+<li><p><code>label=role:ROLE</code> : Set the label role for the
+container processes</p></li>
+<li><p><code>label=type:TYPE</code> : Set the label process type for the
+container processes</p></li>
+<li><p><code>label=level:LEVEL</code> : Set the label level for the
+container processes</p></li>
+<li><p><code>label=filetype:TYPE</code> : Set the label file type for
+the container files</p></li>
+<li><p><code>label=disable</code> : Turn off label separation for the
+container</p></li>
+</ul>
+<p>Note: Labeling can be disabled for all containers by setting
+label=false in the <strong>containers.conf</strong>
+(<code>/etc/containers/containers.conf</code> or
+<code>$HOME/.config/containers/containers.conf</code>) file.</p>
+<ul>
+<li><p><code>mask=/path/1:/path/2</code> : The paths to mask separated
+by a colon. A masked path cannot be accessed inside the
+container.</p></li>
+<li><p><code>no-new-privileges</code> : Disable container processes from
+gaining additional privileges</p></li>
+<li><p><code>seccomp=unconfined</code> : Turn off seccomp confinement
+for the container.</p></li>
+<li><p><code>seccomp=profile.json</code> : JSON file to be used as a
+seccomp filter. Note that the <code>io.podman.annotations.seccomp</code>
+annotation is set with the specified value as shown in
+<code>podman inspect</code>.</p></li>
+<li><p><code>proc-opts=OPTIONS</code> : Comma-separated list of options
+to use for the /proc mount. More details for the possible mount options
+are specified in the <strong>proc(5)</strong> man page.</p></li>
+<li><p><strong>unmask</strong>=<em>ALL</em> or <em>/path/1:/path/2</em>,
+or shell expanded paths (/proc/*): Paths to unmask separated by a colon.
+If set to <strong>ALL</strong>, it will unmask all the paths that are
+masked or made read-only by default. The default masked paths are
+<strong>/proc/acpi, /proc/kcore, /proc/keys, /proc/latency_stats,
+/proc/sched_debug, /proc/scsi, /proc/timer_list, /proc/timer_stats,
+/sys/firmware, and /sys/fs/selinux.</strong> The default paths that are
+read-only are <strong>/proc/asound, /proc/bus, /proc/fs, /proc/irq,
+/proc/sys, /proc/sysrq-trigger, /sys/fs/cgroup</strong>.</p></li>
+</ul>
+<p>Note: Labeling can be disabled for all containers by setting
+label=false in the <strong>containers.conf</strong>
+(<code>/etc/containers/containers.conf</code> or
+<code>$HOME/.config/containers/containers.conf</code>) file.</p>
+<h4 id="shm-sizesize"><strong>--shm-size</strong>=<em>size</em></h4>
+<p>Size of <code>/dev/shm</code> (format:
+<code>&lt;number&gt;[&lt;unit&gt;]</code>, where unit = b (bytes), k
+(kibibytes), m (mebibytes), or g (gibibytes)) If you omit the unit, the
+system uses bytes. If you omit the size entirely, the system uses
+<code>64m</code>. When size is <code>0</code>, there is no limit on the
+amount of memory used for IPC by the container.</p>
+<h4
+id="stop-signalsignal"><strong>--stop-signal</strong>=<em>signal</em></h4>
+<p>Signal to stop a container. Default is <strong>SIGTERM</strong>.</p>
+<h4
+id="stop-timeoutseconds"><strong>--stop-timeout</strong>=<em>seconds</em></h4>
+<p>Timeout to stop a container. Default is <strong>10</strong>. Remote
+connections use local containers.conf for defaults</p>
+<h4 id="subgidnamename"><strong>--subgidname</strong>=<em>name</em></h4>
+<p>Name for GID map from the <code>/etc/subgid</code> file. Using this
+flag will run the container with user namespace enabled. This flag
+conflicts with <code>--userns</code> and <code>--gidmap</code>.</p>
+<h4 id="subuidnamename"><strong>--subuidname</strong>=<em>name</em></h4>
+<p>Name for UID map from the <code>/etc/subuid</code> file. Using this
+flag will run the container with user namespace enabled. This flag
+conflicts with <code>--userns</code> and <code>--uidmap</code>.</p>
+<h4 id="sysctlsysctl"><strong>--sysctl</strong>=<em>SYSCTL</em></h4>
+<p>Configure namespaced kernel parameters at runtime</p>
+<p>IPC Namespace - current sysctls allowed:</p>
+<p>kernel.msgmax, kernel.msgmnb, kernel.msgmni, kernel.sem,
+kernel.shmall, kernel.shmmax, kernel.shmmni, kernel.shm_rmid_forced
+Sysctls beginning with fs.mqueue.*</p>
+<p>Note: if you use the --ipc=host option these sysctls will not be
+allowed.</p>
+<p>Network Namespace - current sysctls allowed: Sysctls beginning with
+net.*</p>
+<p>Note: if you use the --network=host option these sysctls will not be
+allowed.</p>
+<h4
+id="systemdtrue-false-always"><strong>--systemd</strong>=<em>true</em> |
+<em>false</em> | <em>always</em></h4>
+<p>Run container in systemd mode. The default is <em>true</em>.</p>
+<p>The value <em>always</em> enforces the systemd mode is enforced
+without looking at the executable name. Otherwise, if set to true and
+the command you are running inside the container is
+<strong>systemd</strong>, <strong>/usr/sbin/init</strong>,
+<strong>/sbin/init</strong> or
+<strong>/usr/local/sbin/init</strong>.</p>
+<p>Running the container in systemd mode causes the following
+changes:</p>
+<ul>
+<li>Podman mounts tmpfs file systems on the following directories
+<ul>
+<li><em>/run</em></li>
+<li><em>/run/lock</em></li>
+<li><em>/tmp</em></li>
+<li><em>/sys/fs/cgroup/systemd</em></li>
+<li><em>/var/lib/journal</em></li>
+</ul></li>
+<li>Podman sets the default stop signal to
+<strong>SIGRTMIN+3</strong>.</li>
+<li>Podman sets <strong>container_uuid</strong> environment variable in
+the container to the first 32 characters of the container id.</li>
+</ul>
+<p>This allows systemd to run in a confined container without any
+modifications.</p>
+<p>Note: On <code>SELinux</code> systems, systemd attempts to write to
+the cgroup file system. Containers writing to the cgroup file system are
+denied by default. The <code>container_manage_cgroup</code> boolean must
+be enabled for this to be allowed on an SELinux separated system.</p>
+<p><code>setsebool -P container_manage_cgroup true</code></p>
+<h4 id="timeoutseconds"><strong>--timeout</strong>=<em>seconds</em></h4>
+<p>Maximum time a container is allowed to run before conmon sends it the
+kill signal. By default containers will run until they exit or are
+stopped by <code>podman stop</code>.</p>
+<h4 id="tls-verify"><strong>--tls-verify</strong></h4>
+<p>Require HTTPS and verify certificates when contacting registries
+(default: true). If explicitly set to true, then TLS verification will
+be used. If set to false, then TLS verification will not be used. If not
+specified, TLS verification will be used unless the target registry is
+listed as an insecure registry in registries.conf.</p>
+<h4 id="tmpfsfs"><strong>--tmpfs</strong>=<em>fs</em></h4>
+<p>Create a tmpfs mount.</p>
+<p>Mount a temporary filesystem (<strong>tmpfs</strong>) mount into a
+container, for example:</p>
+<pre><code>$ podman create -d --tmpfs /tmp:rw,size=787448k,mode=1777 my_image</code></pre>
+<p>This command mounts a <strong>tmpfs</strong> at <em>/tmp</em> within
+the container. The supported mount options are the same as the Linux
+default mount flags. If you do not specify any options, the system uses
+the following options: <strong>rw,noexec,nosuid,nodev</strong>.</p>
+<h4 id="tty--t"><strong>--tty</strong>, <strong>-t</strong></h4>
+<p>Allocate a pseudo-TTY. The default is <em>false</em>.</p>
+<p>When set to true Podman will allocate a pseudo-tty and attach to the
+standard input of the container. This can be used, for example, to run a
+throwaway interactive shell. The default is false.</p>
+<p>Note: The <strong>-t</strong> option is incompatible with a
+redirection of the Podman client standard input.</p>
+<h4 id="tztimezone"><strong>--tz</strong>=<em>timezone</em></h4>
+<p>Set timezone in container. This flag takes area-based timezones, GMT
+time, as well as <code>local</code>, which sets the timezone in the
+container to match the host machine. See
+<code>/usr/share/zoneinfo/</code> for valid timezones. Remote
+connections use local containers.conf for defaults</p>
+<h4
+id="uidmapcontainer_uidfrom_uidamount"><strong>--uidmap</strong>=<em>container_uid:from_uid:amount</em></h4>
+<p>Run the container in a new user namespace using the supplied UID
+mapping. This option conflicts with the <strong>--userns</strong> and
+<strong>--subuidname</strong> options. This option provides a way to map
+host UIDs to container UIDs. It can be passed several times to map
+different ranges.</p>
+<p>The <em>from_uid</em> value is based upon the user running the
+command, either rootful or rootless users. * rootful user:
+<em>container_uid</em>:<em>host_uid</em>:<em>amount</em> * rootless
+user:
+<em>container_uid</em>:<em>intermediate_uid</em>:<em>amount</em></p>
+<p>When <strong>podman create</strong> is called by a privileged user,
+the option <strong>--uidmap</strong> works as a direct mapping between
+host UIDs and container UIDs.</p>
+<p>host UID -&gt; container UID</p>
+<p>The <em>amount</em> specifies the number of consecutive UIDs that
+will be mapped. If for example <em>amount</em> is <strong>4</strong> the
+mapping would look like:</p>
+<table>
+<thead>
+<tr class="header">
+<th>host UID</th>
+<th>container UID</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><em>from_uid</em></td>
+<td><em>container_uid</em></td>
+</tr>
+<tr class="even">
+<td><em>from_uid</em> + 1</td>
+<td><em>container_uid</em> + 1</td>
+</tr>
+<tr class="odd">
+<td><em>from_uid</em> + 2</td>
+<td><em>container_uid</em> + 2</td>
+</tr>
+<tr class="even">
+<td><em>from_uid</em> + 3</td>
+<td><em>container_uid</em> + 3</td>
+</tr>
+</tbody>
+</table>
+<p>When <strong>podman create</strong> is called by an unprivileged user
+(i.e. running rootless), the value <em>from_uid</em> is interpreted as
+an "intermediate UID". In the rootless case, host UIDs are not mapped
+directly to container UIDs. Instead the mapping happens over two mapping
+steps:</p>
+<p>host UID -&gt; intermediate UID -&gt; container UID</p>
+<p>The <strong>--uidmap</strong> option only influences the second
+mapping step.</p>
+<p>The first mapping step is derived by Podman from the contents of the
+file <em>/etc/subuid</em> and the UID of the user calling Podman.</p>
+<p>First mapping step:</p>
+<table>
+<thead>
+<tr class="header">
+<th>host UID</th>
+<th>intermediate UID</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>UID for the user starting Podman</td>
+<td>0</td>
+</tr>
+<tr class="even">
+<td>1st subordinate UID for the user starting Podman</td>
+<td>1</td>
+</tr>
+<tr class="odd">
+<td>2nd subordinate UID for the user starting Podman</td>
+<td>2</td>
+</tr>
+<tr class="even">
+<td>3rd subordinate UID for the user starting Podman</td>
+<td>3</td>
+</tr>
+<tr class="odd">
+<td>nth subordinate UID for the user starting Podman</td>
+<td>n</td>
+</tr>
+</tbody>
+</table>
+<p>To be able to use intermediate UIDs greater than zero, the user needs
+to have subordinate UIDs configured in <em>/etc/subuid</em>. See
+<strong>subuid</strong>(5).</p>
+<p>The second mapping step is configured with
+<strong>--uidmap</strong>.</p>
+<p>If for example <em>amount</em> is <strong>5</strong> the second
+mapping step would look like:</p>
+<table>
+<thead>
+<tr class="header">
+<th>intermediate UID</th>
+<th>container UID</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><em>from_uid</em></td>
+<td><em>container_uid</em></td>
+</tr>
+<tr class="even">
+<td><em>from_uid</em> + 1</td>
+<td><em>container_uid</em> + 1</td>
+</tr>
+<tr class="odd">
+<td><em>from_uid</em> + 2</td>
+<td><em>container_uid</em> + 2</td>
+</tr>
+<tr class="even">
+<td><em>from_uid</em> + 3</td>
+<td><em>container_uid</em> + 3</td>
+</tr>
+<tr class="odd">
+<td><em>from_uid</em> + 4</td>
+<td><em>container_uid</em> + 4</td>
+</tr>
+</tbody>
+</table>
+<p>When running as rootless, Podman will use all the ranges configured
+in the <em>/etc/subuid</em> file.</p>
+<p>The current user ID is mapped to UID=0 in the rootless user
+namespace. Every additional range is added sequentially afterward:</p>
+<table>
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 33%" />
+<col style="width: 33%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>host</th>
+<th>rootless user namespace</th>
+<th>length</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>$UID</td>
+<td>0</td>
+<td>1</td>
+</tr>
+<tr class="even">
+<td>1</td>
+<td>$FIRST_RANGE_ID</td>
+<td><span
+class="math inline"><em>F</em><em>I</em><em>R</em><em>S</em><em>T</em><sub><em>R</em></sub><em>A</em><em>N</em><em>G</em><em>E</em><sub><em>L</em></sub><em>E</em><em>N</em><em>G</em><em>T</em><em>H</em>||1+</span>FIRST_RANGE_LENGTH</td>
+</tr>
+</tbody>
+</table>
+<p>Even if a user does not have any subordinate UIDs in
+<em>/etc/subuid</em>, <strong>--uidmap</strong> could still be used to
+map the normal UID of the user to a container UID by running
+<code>podman create --uidmap $container_uid:0:1 --user $container_uid ...</code>.</p>
+<p>Note: the <strong>--uidmap</strong> flag cannot be called in
+conjunction with the <strong>--pod</strong> flag as a uidmap cannot be
+set on the container level when in a pod.</p>
+<h4 id="ulimitoption"><strong>--ulimit</strong>=<em>option</em></h4>
+<p>Ulimit options. You can use <strong>host</strong> to copy the current
+configuration from the host.</p>
+<h4 id="umaskumask"><strong>--umask</strong>=<em>umask</em></h4>
+<p>Set the umask inside the container. Defaults to <code>0022</code>.
+Remote connections use local containers.conf for defaults</p>
+<h4 id="unsetenvenv"><strong>--unsetenv</strong>=<em>env</em></h4>
+<p>Unset default environment variables for the container. Default
+environment variables include variables provided natively by Podman,
+environment variables configured by the image, and environment variables
+from containers.conf.</p>
+<h4 id="unsetenv-all"><strong>--unsetenv-all</strong></h4>
+<p>Unset all default environment variables for the container. Default
+environment variables include variables provided natively by Podman,
+environment variables configured by the image, and environment variables
+from containers.conf.</p>
+<h4 id="user--uuser"><strong>--user</strong>,
+<strong>-u</strong>=<em>user</em></h4>
+<p>Sets the username or UID used and optionally the groupname or GID for
+the specified command.</p>
+<p>The following examples are all valid: --user [user | user:group | uid
+| uid:gid | user:gid | uid:group ]</p>
+<p>Without this argument the command will be run as root in the
+container.</p>
+<h4 id="usernsmode"><strong>--userns</strong>=<em>mode</em></h4>
+<p>Set the user namespace mode for the container. It defaults to the
+<strong>PODMAN_USERNS</strong> environment variable. An empty value ("")
+means user namespaces are disabled unless an explicit mapping is set
+with the <strong>--uidmap</strong> and <strong>--gidmap</strong>
+options.</p>
+<p>Rootless user --userns=Key mappings:</p>
+<table>
+<colgroup>
+<col style="width: 21%" />
+<col style="width: 32%" />
+<col style="width: 45%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Key</th>
+<th>Host User</th>
+<th>Container User</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>""</td>
+<td><span
+class="math inline"><em>U</em><em>I</em><em>D</em>|0(<em>D</em><em>e</em><em>f</em><em>a</em><em>u</em><em>l</em><em>t</em><em>U</em><em>s</em><em>e</em><em>r</em><em>a</em><em>c</em><em>c</em><em>o</em><em>u</em><em>n</em><em>t</em><em>m</em><em>a</em><em>p</em><em>p</em><em>e</em><em>d</em><em>t</em><em>o</em><em>r</em><em>o</em><em>o</em><em>t</em><em>u</em><em>s</em><em>e</em><em>r</em><em>i</em><em>n</em><em>c</em><em>o</em><em>n</em><em>t</em><em>a</em><em>i</em><em>n</em><em>e</em><em>r</em>.)<em>k</em><em>e</em><em>e</em><em>p</em>&#x2212;<em>i</em><em>d</em>|</span>UID</td>
+<td><span
+class="math inline"><em>U</em><em>I</em><em>D</em>(<em>M</em><em>a</em><em>p</em><em>u</em><em>s</em><em>e</em><em>r</em><em>a</em><em>c</em><em>c</em><em>o</em><em>u</em><em>n</em><em>t</em><em>t</em><em>o</em><em>s</em><em>a</em><em>m</em><em>e</em><em>U</em><em>I</em><em>D</em><em>w</em><em>i</em><em>t</em><em>h</em><em>i</em><em>n</em><em>c</em><em>o</em><em>n</em><em>t</em><em>a</em><em>i</em><em>n</em><em>e</em><em>r</em>.)<em>a</em><em>u</em><em>t</em><em>o</em>|</span>UID</td>
+</tr>
+<tr class="even">
+<td>nomap</td>
+<td>$UID</td>
+<td>nil (Host User UID is not mapped into container.)</td>
+</tr>
+</tbody>
+</table>
+<p>Valid <em>mode</em> values are:</p>
+<p><strong>auto</strong>[:<em>OPTIONS,...</em>]: automatically create a
+unique user namespace.</p>
+<p>The <code>--userns=auto</code> flag, requires that the user name
+<code>containers</code> and a range of subordinate user ids that the
+Podman container is allowed to use be specified in the /etc/subuid and
+/etc/subgid files.</p>
+<p>Example: <code>containers:2147483647:2147483648</code>.</p>
+<p>Podman allocates unique ranges of UIDs and GIDs from the
+<code>containers</code> subordinate user ids. The size of the ranges is
+based on the number of UIDs required in the image. The number of UIDs
+and GIDs can be overridden with the <code>size</code> option. The
+<code>auto</code> options currently does not work in rootless mode</p>
+<p>Valid <code>auto</code> options:</p>
+<ul>
+<li><em>gidmapping</em>=<em>CONTAINER_GID:HOST_GID:SIZE</em>: to force a
+GID mapping to be present in the user namespace.</li>
+<li><em>size</em>=<em>SIZE</em>: to specify an explicit size for the
+automatic user namespace. e.g. <code>--userns=auto:size=8192</code>. If
+<code>size</code> is not specified, <code>auto</code> will estimate a
+size for the user namespace.</li>
+<li><em>uidmapping</em>=<em>CONTAINER_UID:HOST_UID:SIZE</em>: to force a
+UID mapping to be present in the user namespace.</li>
+</ul>
+<p><strong>container:</strong>_id_: join the user namespace of the
+specified container.</p>
+<p><strong>host</strong>: run in the user namespace of the caller. The
+processes running in the container will have the same privileges on the
+host as any other process launched by the calling user (default).</p>
+<p><strong>keep-id</strong>: creates a user namespace where the current
+rootless user's UID:GID are mapped to the same values in the container.
+This option is not allowed for containers created by the root user.</p>
+<p><strong>nomap</strong>: creates a user namespace where the current
+rootless user's UID:GID are not mapped into the container. This option
+is not allowed for containers created by the root user.</p>
+<p><strong>ns:</strong>_namespace_: run the container in the given
+existing user namespace.</p>
+<p><strong>private</strong>: create a new namespace for the
+container.</p>
+<p>This option is incompatible with <strong>--gidmap</strong>,
+<strong>--uidmap</strong>, <strong>--subuidname</strong> and
+<strong>--subgidname</strong>.</p>
+<h4 id="utsmode"><strong>--uts</strong>=<em>mode</em></h4>
+<p>Set the UTS namespace mode for the container. The following values
+are supported:</p>
+<ul>
+<li><strong>host</strong>: use the host's UTS namespace inside the
+container.</li>
+<li><strong>private</strong>: create a new namespace for the container
+(default).</li>
+<li><strong>ns:[path]</strong>: run the container in the given existing
+UTS namespace.</li>
+<li><strong>container:[container]</strong>: join the UTS namespace of
+the specified container.</li>
+</ul>
+<h4 id="variantvariant"><strong>--variant</strong>=<em>VARIANT</em></h4>
+<p>Use <em>VARIANT</em> instead of the default architecture variant of
+the container image. Some images can use multiple variants of the arm
+architectures, such as arm/v5 and arm/v7.</p>
+<h4
+id="volume--vsource-volumehost-dircontainer-diroptions"><strong>--volume</strong>,
+<strong>-v</strong>=<em>[[SOURCE-VOLUME|HOST-DIR:]CONTAINER-DIR[:OPTIONS]]</em></h4>
+<p>Create a bind mount. If you specify,
+<code>-v /HOST-DIR:/CONTAINER-DIR</code>, Podman bind mounts
+<code>/HOST-DIR</code> in the host to <code>/CONTAINER-DIR</code> in the
+Podman container. Similarly,
+<code>-v SOURCE-VOLUME:/CONTAINER-DIR</code> will mount the volume in
+the host to the container. If no such named volume exists, Podman will
+create one. The <code>OPTIONS</code> are a comma-separated list and can
+be: <sup><a href="#Footnote1">[1]</a></sup> (Note when using the remote
+client, including Mac and Windows (excluding WSL2) machines, the volumes
+will be mounted from the remote server, not necessarily the client
+machine.)</p>
+<p>The <em>options</em> is a comma-separated list and can be:</p>
+<ul>
+<li><strong>rw</strong>|<strong>ro</strong></li>
+<li><strong>z</strong>|<strong>Z</strong></li>
+<li>[<strong>O</strong>]</li>
+<li>[<strong>U</strong>]</li>
+<li>[<strong>no</strong>]<strong>copy</strong></li>
+<li>[<strong>no</strong>]<strong>dev</strong></li>
+<li>[<strong>no</strong>]<strong>exec</strong></li>
+<li>[<strong>no</strong>]<strong>suid</strong></li>
+<li>[<strong>r</strong>]<strong>bind</strong></li>
+<li>[<strong>r</strong>]<strong>shared</strong>|[<strong>r</strong>]<strong>slave</strong>|[<strong>r</strong>]<strong>private</strong>[<strong>r</strong>]<strong>unbindable</strong></li>
+</ul>
+<p>The <code>CONTAINER-DIR</code> must be an absolute path such as
+<code>/src/docs</code>. The volume will be mounted into the container at
+this directory.</p>
+<p>Volumes may specify a source as well, as either a directory on the
+host or the name of a named volume. If no source is given, the volume
+will be created as an anonymously named volume with a randomly generated
+name, and will be removed when the container is removed via the
+<code>--rm</code> flag or <code>podman rm --volumes</code>.</p>
+<p>If a volume source is specified, it must be a path on the host or the
+name of a named volume. Host paths are allowed to be absolute or
+relative; relative paths are resolved relative to the directory Podman
+is run in. If the source does not exist, Podman will return an error.
+Users must pre-create the source files or directories.</p>
+<p>Any source that does not begin with a <code>.</code> or
+<code>/</code> will be treated as the name of a named volume. If a
+volume with that name does not exist, it will be created. Volumes
+created with names are not anonymous, and they are not removed by the
+<code>--rm</code> option and the <code>podman rm --volumes</code>
+command.</p>
+<p>You can specify multiple <strong>-v</strong> options to mount one or
+more volumes into a container.</p>
+<p><code>Write Protected Volume Mounts</code></p>
+<p>You can add <code>:ro</code> or <code>:rw</code> suffix to a volume
+to mount it read-only or read-write mode, respectively. By default, the
+volumes are mounted read-write. See examples.</p>
+<p><code>Chowning Volume Mounts</code></p>
+<p>By default, Podman does not change the owner and group of source
+volume directories mounted into containers. If a container is created in
+a new user namespace, the UID and GID in the container may correspond to
+another UID and GID on the host.</p>
+<p>The <code>:U</code> suffix tells Podman to use the correct host UID
+and GID based on the UID and GID within the container, to change
+recursively the owner and group of the source volume.</p>
+<p><strong>Warning</strong> use with caution since this will modify the
+host filesystem.</p>
+<p><code>Labeling Volume Mounts</code></p>
+<p>Labeling systems like SELinux require that proper labels are placed
+on volume content mounted into a container. Without a label, the
+security system might prevent the processes running inside the container
+from using the content. By default, Podman does not change the labels
+set by the OS.</p>
+<p>To change a label in the container context, you can add either of two
+suffixes <code>:z</code> or <code>:Z</code> to the volume mount. These
+suffixes tell Podman to relabel file objects on the shared volumes. The
+<code>z</code> option tells Podman that two containers share the volume
+content. As a result, Podman labels the content with a shared content
+label. Shared volume labels allow all containers to read/write content.
+The <code>Z</code> option tells Podman to label the content with a
+private unshared label. Only the current container can use a private
+volume.</p>
+<p>Note: Do not relabel system files and directories. Relabeling system
+content might cause other confined services on your machine to fail. For
+these types of containers we recommend disabling SELinux separation. The
+option <code>--security-opt label=disable</code> disables SELinux
+separation for containers used in the build. For example if a user
+wanted to volume mount their entire home directory into a container,
+they need to disable SELinux separation.</p>
+<pre><code>   $ podman create --security-opt label=disable -v $HOME:/home/user fedora touch /home/user/file</code></pre>
+<p><code>Overlay Volume Mounts</code></p>
+<p>The <code>:O</code> flag tells Podman to mount the directory from the
+host as a temporary storage using the <code>overlay file system</code>.
+The container processes can modify content within the mountpoint which
+is stored in the container storage in a separate directory. In overlay
+terms, the source directory will be the lower, and the container storage
+directory will be the upper. Modifications to the mount point are
+destroyed when the container finishes executing, similar to a tmpfs
+mount point being unmounted.</p>
+<p>Subsequent executions of the container will see the original source
+directory content, any changes from previous container executions no
+longer exist.</p>
+<p>One use case of the overlay mount is sharing the package cache from
+the host into the container to allow speeding up builds.</p>
+<p>Note:</p>
+<pre><code> - The `O` flag conflicts with other options listed above.</code></pre>
+<p>Content mounted into the container is labeled with the private label.
+On SELinux systems, labels in the source directory must be readable by
+the container label. Usually containers can read/execute
+<code>container_share_t</code> and can read/write
+<code>container_file_t</code>. If you cannot change the labels on a
+source volume, SELinux container separation must be disabled for the
+container to work. - The source directory mounted into the container
+with an overlay mount should not be modified, it can cause unexpected
+failures. It is recommended that you do not modify the directory until
+the container finishes running.</p>
+<p><code>Mounts propagation</code></p>
+<p>By default bind mounted volumes are <code>private</code>. That means
+any mounts done inside container will not be visible on host and vice
+versa. One can change this behavior by specifying a volume mount
+propagation property. Making a volume <code>shared</code> mounts done
+under that volume inside container will be visible on host and vice
+versa. Making a volume <code>slave</code> enables only one way mount
+propagation and that is mounts done on host under that volume will be
+visible inside container but not the other way around. <sup><a
+href="#Footnote1">[1]</a></sup></p>
+<p>To control mount propagation property of a volume one can use the
+[<strong>r</strong>]<strong>shared</strong>,
+[<strong>r</strong>]<strong>slave</strong>,
+[<strong>r</strong>]<strong>private</strong> or the
+[<strong>r</strong>]<strong>unbindable</strong> propagation flag. For
+mount propagation to work the source mount point (the mount point where
+source dir is mounted on) has to have the right propagation properties.
+For shared volumes, the source mount point has to be shared. And for
+slave volumes, the source mount point has to be either shared or slave.
+<sup><a href="#Footnote1">[1]</a></sup></p>
+<p>If you want to recursively mount a volume and all of its submounts
+into a container, then you can use the <code>rbind</code> option. By
+default the bind option is used, and submounts of the source directory
+will not be mounted into the container.</p>
+<p>Mounting the volume with the <code>nosuid</code> options means that
+SUID applications on the volume will not be able to change their
+privilege. By default volumes are mounted with <code>nosuid</code>.</p>
+<p>Mounting the volume with the noexec option means that no executables
+on the volume will be able to be executed within the container.</p>
+<p>Mounting the volume with the nodev option means that no devices on
+the volume will be able to be used by processes within the container. By
+default volumes are mounted with <code>nodev</code>.</p>
+<p>If the <code>&lt;source-dir&gt;</code> is a mount point, then "dev",
+"suid", and "exec" options are ignored by the kernel.</p>
+<p>Use <code>df &lt;source-dir&gt;</code> to figure out the source mount
+and then use
+<code>findmnt -o TARGET,PROPAGATION &lt;source-mount-dir&gt;</code> to
+figure out propagation properties of source mount. If
+<code>findmnt</code> utility is not available, then one can look at
+mount entry for source mount point in <code>/proc/self/mountinfo</code>.
+Look at <code>optional fields</code> and see if any propagation
+properties are specified. <code>shared:X</code> means mount is
+<code>shared</code>, <code>master:X</code> means mount is
+<code>slave</code> and if nothing is there that means mount is
+<code>private</code>. <sup><a href="#Footnote1">[1]</a></sup></p>
+<p>To change propagation properties of a mount point use
+<code>mount</code> command. For example, if one wants to bind mount
+source directory <code>/foo</code> one can do
+<code>mount --bind /foo /foo</code> and
+<code>mount --make-private --make-shared /foo</code>. This will convert
+/foo into a <code>shared</code> mount point. Alternatively one can
+directly change propagation properties of source mount. Say
+<code>/</code> is source mount for <code>/foo</code>, then use
+<code>mount --make-shared /</code> to convert <code>/</code> into a
+<code>shared</code> mount.</p>
+<p>Note: if the user only has access rights via a group, accessing the
+volume from inside a rootless container will fail. Use the
+<code>--group-add keep-groups</code> flag to pass the user's
+supplementary group access into the container.</p>
+<h4
+id="volumes-fromcontaineroptions"><strong>--volumes-from</strong>=<em>CONTAINER[:OPTIONS]]</em></h4>
+<p>Mount volumes from the specified container(s). Used to share volumes
+between containers. The <em>options</em> is a comma-separated list with
+the following available elements:</p>
+<ul>
+<li><strong>rw</strong>|<strong>ro</strong></li>
+<li><strong>z</strong></li>
+</ul>
+<p>Mounts already mounted volumes from a source container onto another
+container. You must supply the source's container-id or container-name.
+To share a volume, use the --volumes-from option when running the target
+container. You can share volumes even if the source container is not
+running.</p>
+<p>By default, Podman mounts the volumes in the same mode (read-write or
+read-only) as it is mounted in the source container. You can change this
+by adding a <code>ro</code> or <code>rw</code> <em>option</em>.</p>
+<p>Labeling systems like SELinux require that proper labels are placed
+on volume content mounted into a container. Without a label, the
+security system might prevent the processes running inside the container
+from using the content. By default, Podman does not change the labels
+set by the OS.</p>
+<p>To change a label in the container context, you can add
+<code>z</code> to the volume mount. This suffix tells Podman to relabel
+file objects on the shared volumes. The <code>z</code> option tells
+Podman that two containers share the volume content. As a result, Podman
+labels the content with a shared content label. Shared volume labels
+allow all containers to read/write content.</p>
+<p>If the location of the volume from the source container overlaps with
+data residing on a target container, then the volume hides that data on
+the target.</p>
+<h4 id="workdir--wdir"><strong>--workdir</strong>,
+<strong>-w</strong>=<em>dir</em></h4>
+<p>Working directory inside the container</p>
+<p>The default working directory for running binaries within a container
+is the root directory (/). The image developer can set a different
+default with the WORKDIR instruction. The operator can override the
+working directory by using the <strong>-w</strong> option.</p>
+<h2 id="examples">EXAMPLES</h2>
+<h3 id="create-a-container-using-a-local-image">Create a container using
+a local image</h3>
+<pre><code>$ podman create alpine ls</code></pre>
+<h3 id="create-a-container-using-a-local-image-and-annotate-it">Create a
+container using a local image and annotate it</h3>
+<pre><code>$ podman create --annotation HELLO=WORLD alpine ls</code></pre>
+<h3
+id="create-a-container-using-a-local-image-allocating-a-pseudo-tty-keeping-stdin-open-and-name-it-myctr">Create
+a container using a local image, allocating a pseudo-TTY, keeping stdin
+open and name it myctr</h3>
+<pre><code>  podman create -t -i --name myctr alpine ls</code></pre>
+<h3 id="set-uidgid-mapping-in-a-new-user-namespace">Set UID/GID mapping
+in a new user namespace</h3>
+<p>Running a container in a new user namespace requires a mapping of the
+uids and gids from the host.</p>
+<pre><code>$ podman create --uidmap 0:30000:7000 --gidmap 0:30000:7000 fedora echo hello</code></pre>
+<h3 id="setting-automatic-user-namespace-separated-containers">Setting
+automatic user namespace separated containers</h3>
+<pre><code># podman create --userns=auto:size=65536 ubi8-init</code></pre>
+<h3 id="configure-timezone-in-a-container">Configure timezone in a
+container</h3>
+<pre><code>$ podman create --tz=local alpine date
+$ podman create --tz=Asia/Shanghai alpine date
+$ podman create --tz=US/Eastern alpine date</code></pre>
+<h3 id="adding-dependency-containers">Adding dependency containers</h3>
+<p>Podman will make sure the first container, container1, is running
+before the second container (container2) is started.</p>
+<pre><code>$ podman create --name container1 -t -i fedora bash
+$ podman create --name container2 --requires container1 -t -i fedora bash
+$ podman start --attach container2</code></pre>
+<p>Multiple containers can be required.</p>
+<pre><code>$ podman create --name container1 -t -i fedora bash
+$ podman create --name container2 -t -i fedora bash
+$ podman create --name container3 --requires container1,container2 -t -i fedora bash
+$ podman start --attach container3</code></pre>
+<h3
+id="configure-keep-supplemental-groups-for-access-to-volume">Configure
+keep supplemental groups for access to volume</h3>
+<pre><code>$ podman create -v /var/lib/design:/var/lib/design --group-add keep-groups ubi8</code></pre>
+<h3
+id="configure-execution-domain-for-containers-using-personality-flag">Configure
+execution domain for containers using personality flag</h3>
+<pre><code>$ podman create --name container1 --personality=LINUX32 fedora bash</code></pre>
+<h3
+id="create-a-container-with-external-rootfs-mounted-as-an-overlay">Create
+a container with external rootfs mounted as an overlay</h3>
+<pre><code>$ podman create --name container1 --rootfs /path/to/rootfs:O bash</code></pre>
+<h3
+id="create-a-container-connected-to-two-networks-called-net1-and-net2-with-a-static-ip">Create
+a container connected to two networks (called net1 and net2) with a
+static ip</h3>
+<pre><code>$ podman create --network net1:ip=10.89.1.5 --network net2:ip=10.89.10.10 alpine ip addr</code></pre>
+<h3 id="rootless-containers">Rootless Containers</h3>
+<p>Podman runs as a non-root user on most systems. This feature requires
+that a new enough version of shadow-utils be installed. The shadow-utils
+package must include the newuidmap and newgidmap executables.</p>
+<p>In order for users to run rootless, there must be an entry for their
+username in /etc/subuid and /etc/subgid which lists the UIDs for their
+user namespace.</p>
+<p>Rootless Podman works better if the fuse-overlayfs and slirp4netns
+packages are installed. The fuse-overlayfs package provides a userspace
+overlay storage driver, otherwise users need to use the vfs storage
+driver, which is diskspace expensive and does not perform well.
+slirp4netns is required for VPN, without it containers need to be run
+with the --network=host flag.</p>
+<h2 id="environment">ENVIRONMENT</h2>
+<p>Environment variables within containers can be set using multiple
+different options: This section describes the precedence.</p>
+<p>Precedence order (later entries override earlier entries):</p>
+<ul>
+<li><strong>--env-host</strong> : Host environment of the process
+executing Podman is added.</li>
+<li><strong>--http-proxy</strong>: By default, several environment
+variables will be passed in from the host, such as
+<strong>http_proxy</strong> and <strong>no_proxy</strong>. See
+<strong>--http-proxy</strong> for details.</li>
+<li>Container image : Any environment variables specified in the
+container image.</li>
+<li><strong>--env-file</strong> : Any environment variables specified
+via env-files. If multiple files specified, then they override each
+other in order of entry.</li>
+<li><strong>--env</strong> : Any environment variables specified will
+override previous settings.</li>
+</ul>
+<p>Create containers and set the environment ending with a
+<strong><em><strong>. The trailing </strong></em></strong> glob
+functionality is only active when no value is specified:</p>
+<pre><code>$ export ENV1=a
+$ podman create --name ctr1 --env &#39;ENV*&#39; alpine env
+$ podman start --attach ctr1 | grep ENV
+ENV1=a
+$ podman create --name ctr2 --env &#39;ENV*=b&#39; alpine env
+$ podman start --attach ctr2 | grep ENV
+ENV*=b</code></pre>
+<h2 id="conmon">CONMON</h2>
+<p>When Podman starts a container it actually executes the conmon
+program, which then executes the OCI Runtime. Conmon is the container
+monitor. It is a small program whose job is to watch the primary process
+of the container, and if the container dies, save the exit code. It also
+holds open the tty of the container, so that it can be attached to
+later. This is what allows Podman to run in detached mode
+(backgrounded), so Podman can exit but conmon continues to run. Each
+container has their own instance of conmon. Conmon waits for the
+container to exit, gathers and saves the exit code, and then launches a
+Podman process to complete the container cleanup, by shutting down the
+network and storage. For more information on conmon, please reference
+the conmon(8) man page.</p>
+<h2 id="files">FILES</h2>
+<p><strong>/etc/subuid</strong> <strong>/etc/subgid</strong></p>
+<p>NOTE: Use the environment variable <code>TMPDIR</code> to change the
+temporary storage location of downloaded container images. Podman
+defaults to use <code>/var/tmp</code>.</p>
+<h2 id="see-also">SEE ALSO</h2>
+<p><strong><a href="podman.html">podman(1)</a></strong>, <strong><a
+href="podman-save.html">podman-save(1)</a></strong>, <strong><a
+href="podman-ps.html">podman-ps(1)</a></strong>, <strong><a
+href="podman-attach.html">podman-attach(1)</a></strong>, <strong><a
+href="podman-pod-create.html">podman-pod-create(1)</a></strong>,
+<strong><a href="podman-port.html">podman-port(1)</a></strong>,
+<strong><a href="podman-start.html">podman-start(1)</a></strong>,
+<strong><a href="podman-kill.html">podman-kill(1)</a></strong>,
+<strong><a href="podman-stop.html">podman-stop(1)</a></strong>,
+<strong><a
+href="podman-generate-systemd.html">podman-generate-systemd(1)</a></strong>,
+<strong><a href="podman-rm.html">podman-rm(1)</a></strong>, <strong><a
+href="https://www.unix.com/man-page/linux/5/subgid">subgid(5)</a></strong>,
+<strong><a
+href="https://www.unix.com/man-page/linux/5/subuid">subuid(5)</a></strong>,
+<strong><a
+href="https://github.com/containers/common/blob/main/docs/containers.conf.5.md">containers.conf(5)</a></strong>,
+<strong><a
+href="https://www.freedesktop.org/software/systemd/man/systemd.unit.html">systemd.unit(5)</a></strong>,
+<strong><a
+href="https://man7.org/linux/man-pages/man8/setsebool.8.html">setsebool(8)</a></strong>,
+<strong><a
+href="https://github.com/rootless-containers/slirp4netns/blob/master/slirp4netns.html">slirp4netns(1)</a></strong>,
+<strong><a
+href="https://github.com/containers/fuse-overlayfs/blob/main/fuse-overlayfs.html">fuse-overlayfs(1)</a></strong>,
+<strong>proc(5)</strong>, <strong><a
+href="https://github.com/containers/conmon/blob/main/docs/conmon.8.md">conmon(8)</a></strong>,
+<strong>personality(2)</strong></p>
+<h2 id="history">HISTORY</h2>
+<p>October 2017, converted from Docker documentation to Podman by Dan
+Walsh for Podman <code>&lt;dwalsh@redhat.com&gt;</code></p>
+<p>November 2014, updated by Sven Dowideit
+<code>&lt;SvenDowideit@home.org.au&gt;</code></p>
+<p>September 2014, updated by Sven Dowideit
+<code>&lt;SvenDowideit@home.org.au&gt;</code></p>
+<p>August 2014, updated by Sven Dowideit
+<code>&lt;SvenDowideit@home.org.au&gt;</code></p>
+<h2 id="footnotes">FOOTNOTES</h2>
+<p><a name="Footnote1">1</a>: The Podman project is committed to
+inclusivity, a core value of open source. The <code>master</code> and
+<code>slave</code> mount propagation terminology used here is
+problematic and divisive, and should be changed. However, these terms
+are currently used within the Linux kernel and must be used as-is at
+this time. When the kernel maintainers rectify this usage, Podman will
+follow suit immediately.</p>
+</body>
+</html>

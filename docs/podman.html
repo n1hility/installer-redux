@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>podman(1)</title>
+  <style>
+    html {
+      line-height: 1.5;
+      font-family: Georgia, serif;
+      font-size: 20px;
+      color: #1a1a1a;
+      background-color: #fdfdfd;
+    }
+    body {
+      margin: 0 auto;
+      max-width: 36em;
+      padding-left: 50px;
+      padding-right: 50px;
+      padding-top: 50px;
+      padding-bottom: 50px;
+      hyphens: auto;
+      overflow-wrap: break-word;
+      text-rendering: optimizeLegibility;
+      font-kerning: normal;
+    }
+    @media (max-width: 600px) {
+      body {
+        font-size: 0.9em;
+        padding: 1em;
+      }
+      h1 {
+        font-size: 1.8em;
+      }
+    }
+    @media print {
+      body {
+        background-color: transparent;
+        color: black;
+        font-size: 12pt;
+      }
+      p, h2, h3 {
+        orphans: 3;
+        widows: 3;
+      }
+      h2, h3, h4 {
+        page-break-after: avoid;
+      }
+    }
+    p {
+      margin: 1em 0;
+    }
+    a {
+      color: #1a1a1a;
+    }
+    a:visited {
+      color: #1a1a1a;
+    }
+    img {
+      max-width: 100%;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      margin-top: 1.4em;
+    }
+    h5, h6 {
+      font-size: 1em;
+      font-style: italic;
+    }
+    h6 {
+      font-weight: normal;
+    }
+    ol, ul {
+      padding-left: 1.7em;
+      margin-top: 1em;
+    }
+    li > ol, li > ul {
+      margin-top: 0;
+    }
+    blockquote {
+      margin: 1em 0 1em 1.7em;
+      padding-left: 1em;
+      border-left: 2px solid #e6e6e6;
+      color: #606060;
+    }
+    code {
+      font-family: Menlo, Monaco, 'Lucida Console', Consolas, monospace;
+      font-size: 85%;
+      margin: 0;
+    }
+    pre {
+      margin: 1em 0;
+      overflow: auto;
+    }
+    pre code {
+      padding: 0;
+      overflow: visible;
+      overflow-wrap: normal;
+    }
+    .sourceCode {
+     background-color: transparent;
+     overflow: visible;
+    }
+    hr {
+      background-color: #1a1a1a;
+      border: none;
+      height: 1px;
+      margin: 1em 0;
+    }
+    table {
+      margin: 1em 0;
+      border-collapse: collapse;
+      width: 100%;
+      overflow-x: auto;
+      display: block;
+      font-variant-numeric: lining-nums tabular-nums;
+    }
+    table caption {
+      margin-bottom: 0.75em;
+    }
+    tbody {
+      margin-top: 0.5em;
+      border-top: 1px solid #1a1a1a;
+      border-bottom: 1px solid #1a1a1a;
+    }
+    th {
+      border-top: 1px solid #1a1a1a;
+      padding: 0.25em 0.5em 0.25em 0.5em;
+    }
+    td {
+      padding: 0.125em 0.5em 0.25em 0.5em;
+    }
+    header {
+      margin-bottom: 4em;
+      text-align: center;
+    }
+    #TOC li {
+      list-style: none;
+    }
+    #TOC ul {
+      padding-left: 1.3em;
+    }
+    #TOC > ul {
+      padding-left: 0;
+    }
+    #TOC a:not(:hover) {
+      text-decoration: none;
+    }
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    span.underline{text-decoration: underline;}
+    div.column{display: inline-block; vertical-align: top; width: 50%;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    ul.task-list{list-style: none;}
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+  </style>
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<h2 id="name">NAME</h2>
+<p>podman - A Simple management tool for
+pods, containers and images.</p>
+<h2 id="synopsis">SYNOPSIS</h2>
+<p><strong>podman</strong> [<em>options</em>]
+<em>command</em></p>
+<h2 id="description">DESCRIPTION</h2>
+<p>Podman (Pod Manager) is a fully featured container engine that is a
+simple daemonless tool. Podman provides a Docker-CLI comparable command
+line that eases the transition from other container engines and allows
+the management of pods, containers and images. Simply put:
+<code>alias docker=podman</code>. Most Podman commands can be run as a
+regular user, without requiring additional privileges.</p>
+<p>Podman uses Buildah(1) internally to create container images. Both
+tools share image (not container) storage, hence each can use or
+manipulate images (but not containers) created by the other.</p>
+<p>Podman for Windows provides a local client interacting with a Podman
+backend node through a RESTful API tunneled through a ssh connection. In
+this context, a Podman node is a Linux system with Podman installed on
+it and the API service activated. Credentials for this session can be
+passed in using flags, environment variables, or in
+<code>containers.conf</code>.</p>
+<p>The <code>containers.conf</code> file should be placed under
+<code>$HOME/.config/containers/containers.conf</code> on Linux and Mac
+and <code>%APPDATA%\containers\containers.conf</code> on Windows.</p>
+<p><strong>podman <a href="#global-options">GLOBAL
+OPTIONS</a></strong></p>
+<h2 id="global-options">GLOBAL OPTIONS</h2>
+<h4 id="connectionname--c"><strong>--connection</strong>=<em>name</em>,
+<strong>-c</strong></h4>
+<p>Remote connection name</p>
+<p>Overrides environment variable <code>CONTAINER_CONNECTION</code> if
+set.</p>
+<h4 id="help--h"><strong>--help</strong>, <strong>-h</strong></h4>
+<p>Print usage statement</p>
+<h4 id="identitypath"><strong>--identity</strong>=<em>path</em></h4>
+<p>Path to ssh identity file. If the identity file has been encrypted,
+Podman prompts the user for the passphrase. If no identity file is
+provided and no user is given, Podman defaults to the user running the
+podman command. Podman prompts for the login password on the remote
+server.</p>
+<p>Identity value resolution precedence: - command line value -
+environment variable <code>CONTAINER_SSHKEY</code>, if
+<code>CONTAINER_HOST</code> is found - <code>containers.conf</code></p>
+<h4 id="log-levellevel"><strong>--log-level</strong>=<em>level</em></h4>
+<p>Log messages above specified level: debug, info, warn, error
+(default), fatal or panic</p>
+<h4 id="urlvalue"><strong>--url</strong>=<em>value</em></h4>
+<p>URL to access Podman service (default from
+<code>containers.conf</code>, rootless
+"unix://run/user/$UID/podman/podman.sock" or as root
+"unix://run/podman/podman.sock).</p>
+<ul>
+<li><code>CONTAINER_HOST</code> is of the format
+<code>&lt;schema&gt;://[&lt;user[:&lt;password&gt;]@]&lt;host&gt;[:&lt;port&gt;][&lt;path&gt;]</code></li>
+</ul>
+<p>Details: - <code>schema</code> is one of: * <code>ssh</code>
+(default): a local unix(7) socket on the named <code>host</code> and
+<code>port</code>, reachable via SSH * <code>tcp</code>: an unencrypted,
+unauthenticated TCP connection to the named <code>host</code> and
+<code>port</code> * <code>unix</code>: a local unix(7) socket at the
+specified <code>path</code>, or the default for the user -
+<code>user</code> will default to either <code>root</code> or the
+current running user (<code>ssh</code> only) - <code>password</code> has
+no default (<code>ssh</code> only) - <code>host</code> must be provided
+and is either the IP or name of the machine hosting the Podman service
+(<code>ssh</code> and <code>tcp</code>) - <code>port</code> defaults to
+22 (<code>ssh</code> and <code>tcp</code>) - <code>path</code> defaults
+to either <code>/run/podman/podman.sock</code>, or
+<code>/run/user/$UID/podman/podman.sock</code> if running rootless
+(<code>unix</code>), or must be explicitly specified
+(<code>ssh</code>)</p>
+<p>URL value resolution precedence: - command line value - environment
+variable <code>CONTAINER_HOST</code> - <code>containers.conf</code>
+<code>service_destinations</code> table -
+<code>unix://run/podman/podman.sock</code></p>
+<p>Remote connections use local containers.conf for default.</p>
+<p>Some example URL values in valid formats: -
+unix://run/podman/podman.sock - unix://run/user/<span
+class="math inline"><em>U</em><em>I</em><em>D</em>/<em>p</em><em>o</em><em>d</em><em>m</em><em>a</em><em>n</em>/<em>p</em><em>o</em><em>d</em><em>m</em><em>a</em><em>n</em>.<em>s</em><em>o</em><em>c</em><em>k</em>&#x2005;&#x2212;&#x2005;<em>s</em><em>s</em><em>h</em>&#x2004;:&#x2004;//<em>n</em><em>o</em><em>t</em><em>r</em><em>o</em><em>o</em><em>t</em>@<em>l</em><em>o</em><em>c</em><em>a</em><em>l</em><em>h</em><em>o</em><em>s</em><em>t</em>&#x2004;:&#x2004;22/<em>r</em><em>u</em><em>n</em>/<em>u</em><em>s</em><em>e</em><em>r</em>/</span>UID/podman/podman.sock
+- ssh://root@localhost:22/run/podman/podman.sock - tcp://localhost:34451
+- tcp://127.0.0.1:34451</p>
+<h4 id="version"><strong>--version</strong></h4>
+<p>Print the version</p>
+<h2 id="environment-variables">Environment Variables</h2>
+<p>Podman can set up environment variables from env of [engine] table in
+containers.conf. These variables can be overridden by passing
+environment variables before the <code>podman</code> commands.</p>
+<h4 id="containers_conf"><strong>CONTAINERS_CONF</strong></h4>
+<p>Set default locations of containers.conf file</p>
+<h4 id="container_connection"><strong>CONTAINER_CONNECTION</strong></h4>
+<p>Set default <code>--connection</code> value to access Podman
+service.</p>
+<h4 id="container_host"><strong>CONTAINER_HOST</strong></h4>
+<p>Set default <code>--url</code> value to access Podman service.</p>
+<h4 id="container_sshkey"><strong>CONTAINER_SSHKEY</strong></h4>
+<p>Set default <code>--identity</code> path to ssh key file value used
+to access Podman service.</p>
+<h2 id="exit-status">Exit Status</h2>
+<p>The exit code from <code>podman</code> gives information about why
+the container failed to run or why it exited. When <code>podman</code>
+commands exit with a non-zero code, the exit codes follow the
+<code>chroot</code> standard, see below:</p>
+<p><strong>125</strong> The error is with podman itself</p>
+<pre><code>$ podman run --foo busybox; echo $?
+Error: unknown flag: --foo
+125</code></pre>
+<p><strong>126</strong> Executing a <em>contained command</em> and the
+<em>command</em> cannot be invoked</p>
+<pre><code>$ podman run busybox /etc; echo $?
+Error: container_linux.go:346: starting container process caused &quot;exec: \&quot;/etc\&quot;: permission denied&quot;: OCI runtime error
+126</code></pre>
+<p><strong>127</strong> Executing a <em>contained command</em> and the
+<em>command</em> cannot be found $ podman run busybox foo; echo $?
+Error: container_linux.go:346: starting container process caused "exec:
+"foo": executable file not found in $PATH": OCI runtime error 127</p>
+<p><strong>Exit code</strong> <em>contained command</em> exit code</p>
+<pre><code>$ podman run busybox /bin/sh -c &#39;exit 3&#39;; echo $?
+3</code></pre>
+<h2 id="commands">COMMANDS</h2>
+<table>
+<colgroup>
+<col style="width: 39%" />
+<col style="width: 60%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Command</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><a href="podman-attach.html">podman-attach(1)</a></td>
+<td>Attach to a running container.</td>
+</tr>
+<tr class="even">
+<td><a href="podman-build.html">podman-build(1)</a></td>
+<td>Build a container image using a Dockerfile.</td>
+</tr>
+<tr class="odd">
+<td><a href="podman-commit.html">podman-commit(1)</a></td>
+<td>Create new image based on the changed container.</td>
+</tr>
+<tr class="even">
+<td><a href="podman-container.html">podman-container(1)</a></td>
+<td>Manage containers.</td>
+</tr>
+<tr class="odd">
+<td><a href="podman-cp.html">podman-cp(1)</a></td>
+<td>Copy files/folders between a container and the local
+filesystem.</td>
+</tr>
+<tr class="even">
+<td><a href="podman-create.html">podman-create(1)</a></td>
+<td>Create a new container.</td>
+</tr>
+<tr class="odd">
+<td><a href="podman-diff.html">podman-diff(1)</a></td>
+<td>Inspect changes on a container or image's filesystem.</td>
+</tr>
+<tr class="even">
+<td><a href="podman-events.html">podman-events(1)</a></td>
+<td>Monitor Podman events</td>
+</tr>
+<tr class="odd">
+<td><a href="podman-export.html">podman-export(1)</a></td>
+<td>Export a container's filesystem contents as a tar archive.</td>
+</tr>
+<tr class="even">
+<td><a href="podman-generate.html">podman-generate(1)</a></td>
+<td>Generate structured data based for a containers and pods.</td>
+</tr>
+<tr class="odd">
+<td><a href="podman-healthcheck.html">podman-healthcheck(1)</a></td>
+<td>Manage healthchecks for containers</td>
+</tr>
+<tr class="even">
+<td><a href="podman-history.html">podman-history(1)</a></td>
+<td>Show the history of an image.</td>
+</tr>
+<tr class="odd">
+<td><a href="podman-image.html">podman-image(1)</a></td>
+<td>Manage images.</td>
+</tr>
+<tr class="even">
+<td><a href="podman-images.html">podman-images(1)</a></td>
+<td>List images in local storage.</td>
+</tr>
+<tr class="odd">
+<td><a href="podman-import.html">podman-import(1)</a></td>
+<td>Import a tarball and save it as a filesystem image.</td>
+</tr>
+<tr class="even">
+<td><a href="podman-info.html">podman-info(1)</a></td>
+<td>Displays Podman related system information.</td>
+</tr>
+<tr class="odd">
+<td><a href="podman-init.html">podman-init(1)</a></td>
+<td>Initialize a container</td>
+</tr>
+<tr class="even">
+<td><a href="podman-inspect.html">podman-inspect(1)</a></td>
+<td>Display a container or image's configuration.</td>
+</tr>
+<tr class="odd">
+<td><a href="podman-kill.html">podman-kill(1)</a></td>
+<td>Kill the main process in one or more containers.</td>
+</tr>
+<tr class="even">
+<td><a href="podman-load.html">podman-load(1)</a></td>
+<td>Load an image from a container image archive into container
+storage.</td>
+</tr>
+<tr class="odd">
+<td><a href="podman-logs.html">podman-logs(1)</a></td>
+<td>Display the logs of a container.</td>
+</tr>
+<tr class="even">
+<td><a href="podman-pause.html">podman-pause(1)</a></td>
+<td>Pause one or more containers.</td>
+</tr>
+<tr class="odd">
+<td><a href="podman-pod.html">podman-pod(1)</a></td>
+<td>Management tool for groups of containers, called pods.</td>
+</tr>
+<tr class="even">
+<td><a href="podman-port.html">podman-port(1)</a></td>
+<td>List port mappings for a container.</td>
+</tr>
+<tr class="odd">
+<td><a href="podman-ps.html">podman-ps(1)</a></td>
+<td>Prints out information about containers.</td>
+</tr>
+<tr class="even">
+<td><a href="podman-pull.html">podman-pull(1)</a></td>
+<td>Pull an image from a registry.</td>
+</tr>
+<tr class="odd">
+<td><a href="podman-push.html">podman-push(1)</a></td>
+<td>Push an image from local storage to elsewhere.</td>
+</tr>
+<tr class="even">
+<td><a href="podman-restart.html">podman-restart(1)</a></td>
+<td>Restart one or more containers.</td>
+</tr>
+<tr class="odd">
+<td><a href="podman-rm.html">podman-rm(1)</a></td>
+<td>Remove one or more containers.</td>
+</tr>
+<tr class="even">
+<td><a href="podman-rmi.html">podman-rmi(1)</a></td>
+<td>Removes one or more locally stored images.</td>
+</tr>
+<tr class="odd">
+<td><a href="podman-run.html">podman-run(1)</a></td>
+<td>Run a command in a new container.</td>
+</tr>
+<tr class="even">
+<td><a href="podman-save.html">podman-save(1)</a></td>
+<td>Save an image to a container archive.</td>
+</tr>
+<tr class="odd">
+<td><a href="podman-start.html">podman-start(1)</a></td>
+<td>Start one or more containers.</td>
+</tr>
+<tr class="even">
+<td><a href="podman-stop.html">podman-stop(1)</a></td>
+<td>Stop one or more running containers.</td>
+</tr>
+<tr class="odd">
+<td><a href="podman-system.html">podman-system(1)</a></td>
+<td>Manage podman.</td>
+</tr>
+<tr class="even">
+<td><a href="podman-tag.html">podman-tag(1)</a></td>
+<td>Add an additional name to a local image.</td>
+</tr>
+<tr class="odd">
+<td><a href="podman-top.html">podman-top(1)</a></td>
+<td>Display the running processes of a container.</td>
+</tr>
+<tr class="even">
+<td><a href="podman-unpause.html">podman-unpause(1)</a></td>
+<td>Unpause one or more containers.</td>
+</tr>
+<tr class="odd">
+<td><a href="podman-version.html">podman-version(1)</a></td>
+<td>Display the Podman version information.</td>
+</tr>
+<tr class="even">
+<td><a href="podman-volume.html">podman-volume(1)</a></td>
+<td>Manage Volumes.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="files">FILES</h2>
+<p><strong>containers.conf</strong>
+(<code>$HOME/.config/containers/containers.conf</code>)</p>
+<p>Podman has builtin defaults for command line options. These defaults
+can be overridden using the containers.conf configuration files.</p>
+<p>Users can modify defaults by creating the
+<code>$HOME/.config/containers/containers.conf</code> file. Podman
+merges its builtin defaults with the specified fields from this file, if
+it exists. Fields specified in the users file override the built-in
+defaults.</p>
+<p>Podman uses builtin defaults if no containers.conf file is found.</p>
+<h2 id="see-also">SEE ALSO</h2>
+<p><strong><a href="podman.html">podman(1)</a></strong>, <strong><a
+href="podman-system-service.html">podman-system-service(1)</a></strong>,
+<strong><a
+href="https://github.com/containers/common/blob/main/docs/containers.conf.5.md">containers.conf(5)</a></strong></p>
+</body>
+</html>

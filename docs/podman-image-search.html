@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>podman-search(1)</title>
+  <style>
+    html {
+      line-height: 1.5;
+      font-family: Georgia, serif;
+      font-size: 20px;
+      color: #1a1a1a;
+      background-color: #fdfdfd;
+    }
+    body {
+      margin: 0 auto;
+      max-width: 36em;
+      padding-left: 50px;
+      padding-right: 50px;
+      padding-top: 50px;
+      padding-bottom: 50px;
+      hyphens: auto;
+      overflow-wrap: break-word;
+      text-rendering: optimizeLegibility;
+      font-kerning: normal;
+    }
+    @media (max-width: 600px) {
+      body {
+        font-size: 0.9em;
+        padding: 1em;
+      }
+      h1 {
+        font-size: 1.8em;
+      }
+    }
+    @media print {
+      body {
+        background-color: transparent;
+        color: black;
+        font-size: 12pt;
+      }
+      p, h2, h3 {
+        orphans: 3;
+        widows: 3;
+      }
+      h2, h3, h4 {
+        page-break-after: avoid;
+      }
+    }
+    p {
+      margin: 1em 0;
+    }
+    a {
+      color: #1a1a1a;
+    }
+    a:visited {
+      color: #1a1a1a;
+    }
+    img {
+      max-width: 100%;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      margin-top: 1.4em;
+    }
+    h5, h6 {
+      font-size: 1em;
+      font-style: italic;
+    }
+    h6 {
+      font-weight: normal;
+    }
+    ol, ul {
+      padding-left: 1.7em;
+      margin-top: 1em;
+    }
+    li > ol, li > ul {
+      margin-top: 0;
+    }
+    blockquote {
+      margin: 1em 0 1em 1.7em;
+      padding-left: 1em;
+      border-left: 2px solid #e6e6e6;
+      color: #606060;
+    }
+    code {
+      font-family: Menlo, Monaco, 'Lucida Console', Consolas, monospace;
+      font-size: 85%;
+      margin: 0;
+    }
+    pre {
+      margin: 1em 0;
+      overflow: auto;
+    }
+    pre code {
+      padding: 0;
+      overflow: visible;
+      overflow-wrap: normal;
+    }
+    .sourceCode {
+     background-color: transparent;
+     overflow: visible;
+    }
+    hr {
+      background-color: #1a1a1a;
+      border: none;
+      height: 1px;
+      margin: 1em 0;
+    }
+    table {
+      margin: 1em 0;
+      border-collapse: collapse;
+      width: 100%;
+      overflow-x: auto;
+      display: block;
+      font-variant-numeric: lining-nums tabular-nums;
+    }
+    table caption {
+      margin-bottom: 0.75em;
+    }
+    tbody {
+      margin-top: 0.5em;
+      border-top: 1px solid #1a1a1a;
+      border-bottom: 1px solid #1a1a1a;
+    }
+    th {
+      border-top: 1px solid #1a1a1a;
+      padding: 0.25em 0.5em 0.25em 0.5em;
+    }
+    td {
+      padding: 0.125em 0.5em 0.25em 0.5em;
+    }
+    header {
+      margin-bottom: 4em;
+      text-align: center;
+    }
+    #TOC li {
+      list-style: none;
+    }
+    #TOC ul {
+      padding-left: 1.3em;
+    }
+    #TOC > ul {
+      padding-left: 0;
+    }
+    #TOC a:not(:hover) {
+      text-decoration: none;
+    }
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    span.underline{text-decoration: underline;}
+    div.column{display: inline-block; vertical-align: top; width: 50%;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    ul.task-list{list-style: none;}
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+  </style>
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<h2 id="name">NAME</h2>
+<p>podman-search - Search a registry for an image</p>
+<h2 id="synopsis">SYNOPSIS</h2>
+<p><strong>podman search</strong> [<em>options</em>] <em>term</em></p>
+<h2 id="description">DESCRIPTION</h2>
+<p><strong>podman search</strong> searches a registry or a list of
+registries for a matching image. The user can specify which registry to
+search by prefixing the registry in the search term (e.g.,
+<strong>registry.fedoraproject.org/fedora</strong>). By default, all
+unqualified-search registries in
+<code>containers-registries.conf(5)</code> are used.</p>
+<p>The default number of results is 25. The number of results can be
+limited using the <strong>--limit</strong> flag. If more than one
+registry is being searched, the limit will be applied to each registry.
+The output can be filtered using the <strong>--filter</strong> flag. To
+get all available images in a registry without a specific search term,
+the user can just enter the registry name with a trailing "/" (example
+<strong>registry.fedoraproject.org/</strong>).</p>
+<p>Note that <strong>podman search</strong> is not a reliable way to
+determine the presence or existence of an image. The search behavior of
+the v1 and v2 Docker distribution API is specific to the implementation
+of each registry. Some registries may not support searching at all.
+Further note that searching without a search term will only work for
+registries that implement the v2 API.</p>
+<p><strong>podman [GLOBAL OPTIONS]</strong></p>
+<p><strong>podman search [GLOBAL OPTIONS]</strong></p>
+<p><strong>podman search <a href="#options">OPTIONS</a>
+TERM</strong></p>
+<h2 id="options">OPTIONS</h2>
+<h4 id="authfilepath"><strong>--authfile</strong>=<em>path</em></h4>
+<p>Path of the authentication file. Default is
+${XDG_RUNTIME_DIR}/containers/auth.json</p>
+<p>Note: You can also override the default path of the authentication
+file by setting the REGISTRY_AUTH_FILE environment variable.
+<code>export REGISTRY_AUTH_FILE=path</code></p>
+<h4 id="compatible"><strong>--compatible</strong></h4>
+<p>After the name and the description, also show the stars, official and
+automated descriptors as Docker does. Podman does not show these
+descriptors by default since they are not supported by most public
+container registries.</p>
+<h4 id="filter--ffilter"><strong>--filter</strong>,
+<strong>-f</strong>=<em>filter</em></h4>
+<p>Filter output based on conditions provided (default [])</p>
+<p>Supported filters are:</p>
+<ul>
+<li>stars (int - number of stars the image has)</li>
+<li>is-automated (boolean - true | false) - is the image automated or
+not</li>
+<li>is-official (boolean - true | false) - is the image official or
+not</li>
+</ul>
+<h4 id="formatformat"><strong>--format</strong>=<em>format</em></h4>
+<p>Change the output format to a Go template</p>
+<p>Valid placeholders for the Go template are listed below:</p>
+<table>
+<thead>
+<tr class="header">
+<th><strong>Placeholder</strong></th>
+<th><strong>Description</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>.Index</td>
+<td>Registry</td>
+</tr>
+<tr class="even">
+<td>.Name</td>
+<td>Image name</td>
+</tr>
+<tr class="odd">
+<td>.Description</td>
+<td>Image description</td>
+</tr>
+<tr class="even">
+<td>.Stars</td>
+<td>Star count of image</td>
+</tr>
+<tr class="odd">
+<td>.Official</td>
+<td>"[OK]" if image is official</td>
+</tr>
+<tr class="even">
+<td>.Automated</td>
+<td>"[OK]" if image is automated</td>
+</tr>
+<tr class="odd">
+<td>.Tag</td>
+<td>Repository tag</td>
+</tr>
+</tbody>
+</table>
+<p>Note: use .Tag only if the --list-tags is set.</p>
+<h4 id="help--h"><strong>--help</strong>, <strong>-h</strong></h4>
+<p>Print usage statement</p>
+<h4 id="limitlimit"><strong>--limit</strong>=<em>limit</em></h4>
+<p>Limit the number of results (default 25). Note: The results from each
+registry will be limited to this value. Example if limit is 10 and two
+registries are being searched, the total number of results will be 20,
+10 from each (if there are at least 10 matches in each). The order of
+the search results is the order in which the API endpoint returns the
+results.</p>
+<h4 id="list-tags"><strong>--list-tags</strong></h4>
+<p>List the available tags in the repository for the specified image.
+<strong>Note:</strong> --list-tags requires the search term to be a
+fully specified image name. The result contains the Image name and its
+tag, one line for every tag associated with the image.</p>
+<h4 id="no-trunc"><strong>--no-trunc</strong></h4>
+<p>Do not truncate the output (default <em>false</em>).</p>
+<h4 id="tls-verify"><strong>--tls-verify</strong></h4>
+<p>Require HTTPS and verify certificates when contacting registries
+(default: true). If explicitly set to true, then TLS verification will
+be used. If set to false, then TLS verification will not be used if
+needed. If not specified, default registries will be searched through
+(in /etc/containers/registries.conf), and TLS will be skipped if a
+default registry is listed in the insecure registries.</p>
+<h2 id="examples">EXAMPLES</h2>
+<pre><code>$ podman search --limit 3 fedora
+NAME                                     DESCRIPTION
+registry.centos.org/centos
+registry.centos.org/cdrage/mosh-centos7
+registry.centos.org/centos/bind
+docker.io/library/centos                 The official build of CentOS.
+docker.io/jdeathe/centos-ssh             OpenSSH / Supervisor / EPEL/IUS/SCL Repos - ...
+docker.io/ansible/centos7-ansible        Ansible on Centos7
+quay.io/centos/centos                    The official CentOS base containers.
+quay.io/ukhomeofficedigital/centos-base
+quay.io/quarkus/centos-quarkus-maven     Quarkus.io builder image for building Quarku...</code></pre>
+<p>Note that the Stars, Official and Automated descriptors are only
+available on Docker Hub and are hence not displayed by default.</p>
+<pre><code>$ podman search --format &quot;{{.Name}}\t{{.Stars}}\t{{.Official}}&quot; alpine --limit 3
+docker.io/library/alpine       7956        [OK]
+docker.io/alpine/git           192
+docker.io/anapsix/alpine-java  474
+quay.io/libpod/alpine          0
+quay.io/vqcomms/alpine-tools   0
+quay.io/wire/alpine-deps       0</code></pre>
+<pre><code>$ podman search --list-tags registry.access.redhat.com/ubi8 --limit 4
+NAME                             TAG
+registry.access.redhat.com/ubi8  8.4-211
+registry.access.redhat.com/ubi8  8.4-206.1626828523-source
+registry.access.redhat.com/ubi8  8.4-199
+registry.access.redhat.com/ubi8  8.4-211-source
+</code></pre>
+<p>Note: This works only with registries that implement the v2 API. If
+tried with a v1 registry an error will be returned.</p>
+<h2 id="files">FILES</h2>
+<p><strong>registries.conf</strong>
+(<code>/etc/containers/registries.conf</code>)</p>
+<p>registries.conf is the configuration file which specifies which
+container registries should be consulted when completing image names
+which do not include a registry or domain portion.</p>
+<h2 id="see-also">SEE ALSO</h2>
+<p><strong><a href="podman.html">podman(1)</a></strong>, <strong><a
+href="https://github.com/containers/image/blob/main/docs/containers-registries.5.md">containers-registries(5)</a></strong></p>
+<h2 id="history">HISTORY</h2>
+<p>January 2018, Originally compiled by Urvashi Mohnani <a
+href="mailto:umohnani@redhat.com"
+class="email">umohnani@redhat.com</a></p>
+</body>
+</html>

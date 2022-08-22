@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>podman-image-inspect(1)</title>
+  <style>
+    html {
+      line-height: 1.5;
+      font-family: Georgia, serif;
+      font-size: 20px;
+      color: #1a1a1a;
+      background-color: #fdfdfd;
+    }
+    body {
+      margin: 0 auto;
+      max-width: 36em;
+      padding-left: 50px;
+      padding-right: 50px;
+      padding-top: 50px;
+      padding-bottom: 50px;
+      hyphens: auto;
+      overflow-wrap: break-word;
+      text-rendering: optimizeLegibility;
+      font-kerning: normal;
+    }
+    @media (max-width: 600px) {
+      body {
+        font-size: 0.9em;
+        padding: 1em;
+      }
+      h1 {
+        font-size: 1.8em;
+      }
+    }
+    @media print {
+      body {
+        background-color: transparent;
+        color: black;
+        font-size: 12pt;
+      }
+      p, h2, h3 {
+        orphans: 3;
+        widows: 3;
+      }
+      h2, h3, h4 {
+        page-break-after: avoid;
+      }
+    }
+    p {
+      margin: 1em 0;
+    }
+    a {
+      color: #1a1a1a;
+    }
+    a:visited {
+      color: #1a1a1a;
+    }
+    img {
+      max-width: 100%;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      margin-top: 1.4em;
+    }
+    h5, h6 {
+      font-size: 1em;
+      font-style: italic;
+    }
+    h6 {
+      font-weight: normal;
+    }
+    ol, ul {
+      padding-left: 1.7em;
+      margin-top: 1em;
+    }
+    li > ol, li > ul {
+      margin-top: 0;
+    }
+    blockquote {
+      margin: 1em 0 1em 1.7em;
+      padding-left: 1em;
+      border-left: 2px solid #e6e6e6;
+      color: #606060;
+    }
+    code {
+      font-family: Menlo, Monaco, 'Lucida Console', Consolas, monospace;
+      font-size: 85%;
+      margin: 0;
+    }
+    pre {
+      margin: 1em 0;
+      overflow: auto;
+    }
+    pre code {
+      padding: 0;
+      overflow: visible;
+      overflow-wrap: normal;
+    }
+    .sourceCode {
+     background-color: transparent;
+     overflow: visible;
+    }
+    hr {
+      background-color: #1a1a1a;
+      border: none;
+      height: 1px;
+      margin: 1em 0;
+    }
+    table {
+      margin: 1em 0;
+      border-collapse: collapse;
+      width: 100%;
+      overflow-x: auto;
+      display: block;
+      font-variant-numeric: lining-nums tabular-nums;
+    }
+    table caption {
+      margin-bottom: 0.75em;
+    }
+    tbody {
+      margin-top: 0.5em;
+      border-top: 1px solid #1a1a1a;
+      border-bottom: 1px solid #1a1a1a;
+    }
+    th {
+      border-top: 1px solid #1a1a1a;
+      padding: 0.25em 0.5em 0.25em 0.5em;
+    }
+    td {
+      padding: 0.125em 0.5em 0.25em 0.5em;
+    }
+    header {
+      margin-bottom: 4em;
+      text-align: center;
+    }
+    #TOC li {
+      list-style: none;
+    }
+    #TOC ul {
+      padding-left: 1.3em;
+    }
+    #TOC > ul {
+      padding-left: 0;
+    }
+    #TOC a:not(:hover) {
+      text-decoration: none;
+    }
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    span.underline{text-decoration: underline;}
+    div.column{display: inline-block; vertical-align: top; width: 50%;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    ul.task-list{list-style: none;}
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+  </style>
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<h2 id="name">NAME</h2>
+<p>podman-image-inspect - Display an image's configuration</p>
+<h2 id="synopsis">SYNOPSIS</h2>
+<p><strong>podman image inspect</strong> [<em>options</em>]
+<em>image</em> [<em>image</em> ...]</p>
+<h2 id="description">DESCRIPTION</h2>
+<p>This displays the low-level information on images identified by name
+or ID. By default, this will render all results in a JSON array. If a
+format is specified, the given template will be executed for each
+result.</p>
+<h2 id="options">OPTIONS</h2>
+<h4 id="format--fformat"><strong>--format</strong>,
+<strong>-f</strong>=<em>format</em></h4>
+<p>Format the output using the given Go template. The keys of the
+returned JSON can be used as the values for the --format flag (see
+examples below).</p>
+<h2 id="example">EXAMPLE</h2>
+<pre><code>$ podman image inspect fedora
+[
+    {
+        &quot;Id&quot;: &quot;37e5619f4a8ca9dbc4d6c0ae7890625674a10dbcfb76201399e2aaddb40da17d&quot;,
+        &quot;Digest&quot;: &quot;sha256:1b0d4ddd99b1a8c8a80e885aafe6034c95f266da44ead992aab388e6aa91611a&quot;,
+        &quot;RepoTags&quot;: [
+            &quot;registry.fedoraproject.org/fedora:latest&quot;
+        ],
+        &quot;RepoDigests&quot;: [
+            &quot;registry.fedoraproject.org/fedora@sha256:1b0d4ddd99b1a8c8a80e885aafe6034c95f266da44ead992aab388e6aa91611a&quot;,
+            &quot;registry.fedoraproject.org/fedora@sha256:b5290db40008aae9272ad3a6bd8070ef7ecd547c3bef014b894c327960acc582&quot;
+        ],
+        &quot;Parent&quot;: &quot;&quot;,
+        &quot;Comment&quot;: &quot;Created by Image Factory&quot;,
+        &quot;Created&quot;: &quot;2021-08-09T05:48:47Z&quot;,
+        &quot;Config&quot;: {
+            &quot;Env&quot;: [
+                &quot;DISTTAG=f34container&quot;,
+                &quot;FGC=f34&quot;,
+                &quot;container=oci&quot;
+            ],
+            &quot;Cmd&quot;: [
+                &quot;/bin/bash&quot;
+            ],
+            &quot;Labels&quot;: {
+                &quot;license&quot;: &quot;MIT&quot;,
+                &quot;name&quot;: &quot;fedora&quot;,
+                &quot;vendor&quot;: &quot;Fedora Project&quot;,
+                &quot;version&quot;: &quot;34&quot;
+            }
+        },
+        &quot;Version&quot;: &quot;1.10.1&quot;,
+        &quot;Author&quot;: &quot;&quot;,
+        &quot;Architecture&quot;: &quot;amd64&quot;,
+        &quot;Os&quot;: &quot;linux&quot;,
+        &quot;Size&quot;: 183852302,
+        &quot;VirtualSize&quot;: 183852302,
+        &quot;GraphDriver&quot;: {
+            &quot;Name&quot;: &quot;overlay&quot;,
+            &quot;Data&quot;: {
+                &quot;UpperDir&quot;: &quot;/home/dwalsh/.local/share/containers/storage/overlay/0203e243f1ca4b6bb49371ecd21363212467ec6d7d3fa9f324cd4e78cc6b5fa2/diff&quot;,
+                &quot;WorkDir&quot;: &quot;/home/dwalsh/.local/share/containers/storage/overlay/0203e243f1ca4b6bb49371ecd21363212467ec6d7d3fa9f324cd4e78cc6b5fa2/work&quot;
+            }
+        },
+        &quot;RootFS&quot;: {
+            &quot;Type&quot;: &quot;layers&quot;,
+            &quot;Layers&quot;: [
+                &quot;sha256:0203e243f1ca4b6bb49371ecd21363212467ec6d7d3fa9f324cd4e78cc6b5fa2&quot;
+            ]
+        },
+        &quot;Labels&quot;: {
+            &quot;license&quot;: &quot;MIT&quot;,
+            &quot;name&quot;: &quot;fedora&quot;,
+            &quot;vendor&quot;: &quot;Fedora Project&quot;,
+            &quot;version&quot;: &quot;34&quot;
+        },
+        &quot;Annotations&quot;: {},
+        &quot;ManifestType&quot;: &quot;application/vnd.docker.distribution.manifest.v2+json&quot;,
+        &quot;User&quot;: &quot;&quot;,
+        &quot;History&quot;: [
+            {
+                &quot;created&quot;: &quot;2021-08-09T05:48:47Z&quot;,
+                &quot;comment&quot;: &quot;Created by Image Factory&quot;
+            }
+        ],
+        &quot;NamesHistory&quot;: [
+            &quot;registry.fedoraproject.org/fedora:latest&quot;
+        ]
+    }
+]</code></pre>
+<pre><code>$ podman image inspect --format &#39;{{ .Id }}&#39; fedora
+37e5619f4a8ca9dbc4d6c0ae7890625674a10dbcfb76201399e2aaddb40da17d</code></pre>
+<h2 id="see-also">SEE ALSO</h2>
+<p><strong><a href="podman.html">podman(1)</a></strong>, <strong><a
+href="podman-image.html">podman-image(1)</a></strong>, <strong><a
+href="podman-inspect.html">podman-inspect(1)</a></strong></p>
+<h2 id="history">HISTORY</h2>
+<p>Sep 2021, Originally compiled by Dan Walsh <a
+href="mailto:dwalsh@redhat.com" class="email">dwalsh@redhat.com</a></p>
+</body>
+</html>

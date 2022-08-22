@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>podman-pod-logs(1)</title>
+  <style>
+    html {
+      line-height: 1.5;
+      font-family: Georgia, serif;
+      font-size: 20px;
+      color: #1a1a1a;
+      background-color: #fdfdfd;
+    }
+    body {
+      margin: 0 auto;
+      max-width: 36em;
+      padding-left: 50px;
+      padding-right: 50px;
+      padding-top: 50px;
+      padding-bottom: 50px;
+      hyphens: auto;
+      overflow-wrap: break-word;
+      text-rendering: optimizeLegibility;
+      font-kerning: normal;
+    }
+    @media (max-width: 600px) {
+      body {
+        font-size: 0.9em;
+        padding: 1em;
+      }
+      h1 {
+        font-size: 1.8em;
+      }
+    }
+    @media print {
+      body {
+        background-color: transparent;
+        color: black;
+        font-size: 12pt;
+      }
+      p, h2, h3 {
+        orphans: 3;
+        widows: 3;
+      }
+      h2, h3, h4 {
+        page-break-after: avoid;
+      }
+    }
+    p {
+      margin: 1em 0;
+    }
+    a {
+      color: #1a1a1a;
+    }
+    a:visited {
+      color: #1a1a1a;
+    }
+    img {
+      max-width: 100%;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      margin-top: 1.4em;
+    }
+    h5, h6 {
+      font-size: 1em;
+      font-style: italic;
+    }
+    h6 {
+      font-weight: normal;
+    }
+    ol, ul {
+      padding-left: 1.7em;
+      margin-top: 1em;
+    }
+    li > ol, li > ul {
+      margin-top: 0;
+    }
+    blockquote {
+      margin: 1em 0 1em 1.7em;
+      padding-left: 1em;
+      border-left: 2px solid #e6e6e6;
+      color: #606060;
+    }
+    code {
+      font-family: Menlo, Monaco, 'Lucida Console', Consolas, monospace;
+      font-size: 85%;
+      margin: 0;
+    }
+    pre {
+      margin: 1em 0;
+      overflow: auto;
+    }
+    pre code {
+      padding: 0;
+      overflow: visible;
+      overflow-wrap: normal;
+    }
+    .sourceCode {
+     background-color: transparent;
+     overflow: visible;
+    }
+    hr {
+      background-color: #1a1a1a;
+      border: none;
+      height: 1px;
+      margin: 1em 0;
+    }
+    table {
+      margin: 1em 0;
+      border-collapse: collapse;
+      width: 100%;
+      overflow-x: auto;
+      display: block;
+      font-variant-numeric: lining-nums tabular-nums;
+    }
+    table caption {
+      margin-bottom: 0.75em;
+    }
+    tbody {
+      margin-top: 0.5em;
+      border-top: 1px solid #1a1a1a;
+      border-bottom: 1px solid #1a1a1a;
+    }
+    th {
+      border-top: 1px solid #1a1a1a;
+      padding: 0.25em 0.5em 0.25em 0.5em;
+    }
+    td {
+      padding: 0.125em 0.5em 0.25em 0.5em;
+    }
+    header {
+      margin-bottom: 4em;
+      text-align: center;
+    }
+    #TOC li {
+      list-style: none;
+    }
+    #TOC ul {
+      padding-left: 1.3em;
+    }
+    #TOC > ul {
+      padding-left: 0;
+    }
+    #TOC a:not(:hover) {
+      text-decoration: none;
+    }
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    span.underline{text-decoration: underline;}
+    div.column{display: inline-block; vertical-align: top; width: 50%;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    ul.task-list{list-style: none;}
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+  </style>
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<h2 id="name">NAME</h2>
+<p>podman-pod-logs - Displays logs for pod with one or more
+containers</p>
+<h2 id="synopsis">SYNOPSIS</h2>
+<p><strong>podman pod logs</strong> [<em>options</em>] <em>pod</em></p>
+<h2 id="description">DESCRIPTION</h2>
+<p>The podman pod logs command batch-retrieves whatever logs are present
+with all the containers of a pod. Pod logs can be filtered by container
+name or id using flag <strong>-c</strong> or
+<strong>--container</strong> if needed.</p>
+<p>Note: Long running command of <code>podman pod log</code> with a
+<code>-f</code> or <code>--follow</code> needs to be reinvoked if new
+container is added to the pod dynamically otherwise logs of newly added
+containers would not be visible in log stream.</p>
+<h2 id="options">OPTIONS</h2>
+<h4 id="color"><strong>--color</strong></h4>
+<p>Output the containers with different colors in the log.</p>
+<h4 id="container--c"><strong>--container</strong>,
+<strong>-c</strong></h4>
+<p>By default <code>podman pod logs</code> retrieves logs for all the
+containers available within the pod differentiate by field
+<code>container</code>. However there are use-cases where user would
+want to limit the log stream only to a particular container of a pod for
+such cases <code>-c</code> can be used like
+<code>podman pod logs -c ctrNameorID podname</code>.</p>
+<h4 id="follow--f"><strong>--follow</strong>, <strong>-f</strong></h4>
+<p>Follow log output. Default is false.</p>
+<p>Note: If you are following a pod which is removed
+<code>podman pod rm</code>, then there is a chance that the log file
+will be removed before <code>podman pod logs</code> reads the final
+content.</p>
+<h4 id="latest--l"><strong>--latest</strong>, <strong>-l</strong></h4>
+<p>Instead of providing the pod name or id, get logs of the last created
+pod. (This option is not available with the remote Podman client,
+including Mac and Windows (excluding WSL2) machines)</p>
+<h4 id="names--n"><strong>--names</strong>, <strong>-n</strong></h4>
+<p>Output the container names instead of the container IDs in the
+log.</p>
+<h4 id="sincetimestamp"><strong>--since</strong>=<em>TIMESTAMP</em></h4>
+<p>Show logs since TIMESTAMP. The --since option can be Unix timestamps,
+date formatted timestamps, or Go duration strings (e.g. 10m, 1h30m)
+computed relative to the client machine's time. Supported formats for
+date formatted time stamps include RFC3339Nano, RFC3339,
+2006-01-02T15:04:05, 2006-01-02T15:04:05.999999999, 2006-01-02Z07:00,
+and 2006-01-02.</p>
+<h4 id="taillines"><strong>--tail</strong>=<em>LINES</em></h4>
+<p>Output the specified number of LINES at the end of the logs. LINES
+must be an integer. Defaults to -1, which prints all lines</p>
+<h4 id="timestamps--t"><strong>--timestamps</strong>,
+<strong>-t</strong></h4>
+<p>Show timestamps in the log outputs. The default is false</p>
+<h4 id="untiltimestamp"><strong>--until</strong>=<em>TIMESTAMP</em></h4>
+<p>Show logs until TIMESTAMP. The --until option can be Unix timestamps,
+date formatted timestamps, or Go duration strings (e.g. 10m, 1h30m)
+computed relative to the client machine's time. Supported formats for
+date formatted time stamps include RFC3339Nano, RFC3339,
+2006-01-02T15:04:05, 2006-01-02T15:04:05.999999999, 2006-01-02Z07:00,
+and 2006-01-02.</p>
+<h2 id="example">EXAMPLE</h2>
+<p>To view a pod's logs:</p>
+<pre><code>podman pod logs -t podIdorName</code></pre>
+<p>To view logs of a specific container on the pod</p>
+<pre><code>podman pod logs -c ctrIdOrName podIdOrName</code></pre>
+<p>To view all pod logs:</p>
+<pre><code>podman pod logs -t --since 0 myserver-pod-1</code></pre>
+<p>To view a pod's logs since a certain time:</p>
+<pre><code>podman pod logs -t --since 2017-08-07T10:10:09.055837383-04:00 myserver-pod-1</code></pre>
+<p>To view a pod's logs generated in the last 10 minutes:</p>
+<pre><code>podman pod logs --since 10m myserver-pod-1</code></pre>
+<p>To view a pod's logs until 30 minutes ago:</p>
+<pre><code>podman pod logs --until 30m myserver-pod-1</code></pre>
+<h2 id="see-also">SEE ALSO</h2>
+<p><strong><a href="podman.html">podman(1)</a></strong>, <strong><a
+href="podman-pod.html">podman-pod(1)</a></strong>, <strong><a
+href="podman-pod-rm.html">podman-pod-rm(1)</a></strong>, <strong><a
+href="podman-logs.html">podman-logs(1)</a></strong></p>
+</body>
+</html>
