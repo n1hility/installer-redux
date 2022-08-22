@@ -43,9 +43,6 @@
    
     <CustomAction Id="OpenGuide" BinaryKey="WixCA" DllEntry="WixShellExec" Impersonate="yes" />
     <CustomAction Id="CheckWSL" BinaryKey="PodmanHooks" Execute="immediate" DllEntry="CheckWSL" />
-    <!--
-    <CustomAction Id="InstallWSLKernel" BinaryKey="PodmanHooks" Impersonate="no" Execute="immediate" DllEntry="InstallWSLKernel" />
-    -->
     <CustomActionRef Id="WixBroadcastEnvironmentChange" />
     <ComponentGroup Id="WSLFeature" Directory="INSTALLDIR">
       <Component>
@@ -81,9 +78,6 @@
     <InstallExecuteSequence>
       <Custom Action="CheckWSL" Before="AppSearch">WSL_INSTALL = 1</Custom>
       <ForceReboot Before="StopServices">(NOT Installed) AND WSL_INSTALL = 1 AND NOT AFTERREBOOT</ForceReboot>
-      <!--
-      <Custom Action="InstallWSLKernel" After="InstallFinalize">(NOT Installed) AND WSL_INSTALL = 1 AND AFTERREBOOT</Custom>
-      -->
     </InstallExecuteSequence>
     <Binary Id="PodmanHooks" SourceFile="artifacts/podman-msihooks.dll" />
   </Product>
