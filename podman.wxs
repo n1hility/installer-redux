@@ -13,7 +13,7 @@
     <Media Id="1" Cabinet="Podman.cab" EmbedCab="yes"/>
     <MajorUpgrade AllowDowngrades="yes"/>
     <Property Id="DiskPrompt" Value="Red Hat's Podman $(var.VERSION) Installation"/>
-    <SetProperty Id="WSL_INSTALL" After="AppSearch" Value="1" Sequence="first">NOT (WITH_WSL = 0)</SetProperty> 
+    <SetProperty Id="WSL_INSTALL" Before="AppSearch" Value="1" Sequence="first">NOT (WITH_WSL = 0)</SetProperty> 
     <Directory Id="TARGETDIR" Name="SourceDir">
       <Directory Id="ProgramFiles64Folder" Name="PFiles">
         <Directory Id="RedHatPFiles" Name="RedHat">
@@ -76,8 +76,8 @@
     </UI>
 
     <InstallExecuteSequence>
-      <Custom Action="CheckWSL" Before="AppSearch">WSL_INSTALL = 1</Custom>
-      <ForceReboot Before="StopServices">(NOT Installed) AND WSL_INSTALL = 1 AND NOT AFTERREBOOT</ForceReboot>
+      <Custom Action="CheckWSL" After="SetWSL_INSTALL">WSL_INSTALL = 1</Custom>
+      <ForceReboot Before="StopServices">(NOT Installed) AND WSL_INSTALL = 1 AND HAS_WSLFEATURE = 0 AND NOT AFTERREBOOT</ForceReboot>
     </InstallExecuteSequence>
     <Binary Id="PodmanHooks" SourceFile="artifacts/podman-msihooks.dll" />
   </Product>

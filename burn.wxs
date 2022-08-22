@@ -32,7 +32,7 @@
               Vital="yes">
         <MsiProperty Name="WITH_WSL" Value="[WSLCheckbox]"/>
       </MsiPackage>
-      <ExePackage Id="other" SourceFile="artifacts\podman-kerninst.exe"/>
+      <ExePackage DisplayName="WSL Kernel Install" InstallCondition="WSLCheckbox" SourceFile="artifacts\podman-kerninst.exe"/>
     </Chain>
   </Bundle>
 </Wix>
