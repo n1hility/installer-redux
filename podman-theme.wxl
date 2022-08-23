@@ -5,7 +5,7 @@
 <WixLocalization Culture="en-us" Language="1033" xmlns="http://schemas.microsoft.com/wix/2006/localization">
   <String Id="Caption">[WixBundleName] [VERSION] Setup</String>
   <String Id="Title">[WixBundleName] [VERSION]</String>
-  <String Id="InstallHeader">Welcome</String>
+  <String Id="InstallHeader">Welcome to [WixBundleName] Setup</String>
   <String Id="InstallMessage">Welcome to the [WixBundleName] [VERSION] setup wizard. This will install [WixBundleName] on your computer. 
   
 Additionally, you have the option to also install WSL (required by podman) if it is not already enabled. This operation requires a reboot during the installation process. Alternatively, you can deselect the WSL checkbox, and install WSL manually using the wsl --install command.
@@ -46,7 +46,7 @@ Finally, click install to continue, or Close to abort the installation.</String>
   <String Id="SuccessUninstallHeader">Uninstall Successfully Completed</String>
   <String Id="SuccessInstallHeader">Installation Successfully Completed</String> 
   <String Id="SuccessHeader">Setup Successful</String>	
-  <String Id="SuccessLaunchButton">&amp;Launch</String>
+  <String Id="SuccessLaunchButton">&amp;Open Guide &amp;&amp; Close</String>
   <String Id="SuccessRestartText">You must restart your computer before you can use the software.</String>
   <String Id="SuccessRestartButton">&amp;Restart</String>
   <String Id="SuccessCloseButton">&amp;Close</String>

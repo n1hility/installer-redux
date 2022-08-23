@@ -40,15 +40,13 @@ func setupLogging(name string) (*eventlog.Log, error) {
 }
 
 func installWslKernel() error {
-	logrus.Info("Installing WSL Kernel Update")
+	logrus.Info("Installing WSL Kernel update")
 	var (
 		err error
 	)
 	backoff := 500 * time.Millisecond
 	for i := 1; i < 6; i++ {
 		err = wsl.SilentExec("wsl", "--update")
-
-		err = fmt.Errorf("oh no!")
 		if err == nil {
 			break
 		}
@@ -88,6 +86,7 @@ func main() {
 	setupLogging(path.Base(args[0]))
 	if wsl.IsWSLInstalled() {
 		// nothing to do
+		logrus.Info("WSL Kernel already installed")
 		return
 	}
 
@@ -97,5 +96,5 @@ func main() {
 		_ = warn("Podman Setup", KernelWarning)
 	}
 
-	logrus.Info("WSL Kernel Update successful")
+	logrus.Info("WSL Kernel update successful")
 }

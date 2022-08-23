@@ -4,7 +4,8 @@
      <?error VERSION must be defined via command line argument?>
   <?endif?>
   <Bundle Name="Podman" Version="$(var.VERSION)" Manufacturer="Red Hat"
-          UpgradeCode="f3e1f40a-a791-49b7-9bc6-050975293353" IconSourceFile="resources\podman-logo.ico">
+          UpgradeCode="f3e1f40a-a791-49b7-9bc6-050975293353" IconSourceFile="resources\podman-logo.ico"
+          Compressed="yes">
     <BootstrapperApplicationRef Id="WixStandardBootstrapperApplication.HyperlinkSidebarLicense">
       <bal:WixStandardBootstrapperApplication LicenseUrl=""
                                               ThemeFile="podman-theme.xml"
@@ -14,8 +15,11 @@
                                               SuppressOptionsUI="yes"
                                               ShowVersion="yes"/>
     </BootstrapperApplicationRef>
+    <Variable Name='InstallFolder' Type='string' Value='[ProgramFiles64Folder]RedHat\Podman'/>
     <Variable Name="VERSION" Value="$(var.VERSION)"/>
     <Variable Name="WSLCheckbox" Type="numeric" Value="1"/>
+    <Variable Name="LaunchTarget" Value="explorer.exe"/>
+    <Variable Name="LaunchArguments" Value="&quot;[InstallFolder]\podman-for-windows.html&quot;"/>
 
     <util:RegistrySearch Id="PreviousInstallFolderSearch" Root="HKLM" Key="Software\[WixBundleManufacturer]\[WixBundleName]" Value="InstallDir" Variable="PreviousInstallFolder" />
     <util:RegistrySearch Id="CurrentBuild" Variable="CBNumber" Result="value" Root="HKLM" Key="SOFTWARE\Microsoft\Windows NT\CurrentVersion" Value="CurrentBuildNumber"/>
@@ -25,11 +29,8 @@
     </bal:Condition>
 
     <Chain>
-      <MsiPackage
-              Id="Setup"
-              Compressed="yes"
-              SourceFile="podman.msi"
-              Vital="yes">
+      <MsiPackage Id="Setup" SourceFile="podman.msi" Vital="yes">
+        <MsiProperty Name="INSTALLDIR" Value="[InstallFolder]" />
         <MsiProperty Name="WITH_WSL" Value="[WSLCheckbox]"/>
       </MsiPackage>
       <ExePackage DisplayName="WSL Kernel Install" InstallCondition="WSLCheckbox" SourceFile="artifacts\podman-kerninst.exe"/>
