@@ -1,5 +1,5 @@
 function ExitOnError() {
-    if ($LASTEXITCODE -gt 0) {
+    if ($LASTEXITCODE -ne 0) {
         Exit 1
     }
 }
