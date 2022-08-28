@@ -22,6 +22,6 @@ jobs:
           echo "VAULT_ID=${{secrets.VAULT_ID}}" | Out-File -FilePath $env:GITHUB_ENV -Append
           echo "APP_ID=${{secrets.APP_ID}}" | Out-File -FilePath $env:GITHUB_ENV -Append
           echo "TENANT_ID=${{secrets.TENANT_ID}}" | Out-File -FilePath $env:GITHUB_ENV -Append
-          echo "CLIENT_SECRET=${{secrets.TENANT_ID}}" | Out-File -FilePath $env:GITHUB_ENV -Append
+          echo "CLIENT_SECRET=${{secrets.CLIENT_SECRET}}" | Out-File -FilePath $env:GITHUB_ENV -Append
     - name: Build
       run: .\build.ps1 4.2.0
