@@ -111,3 +111,6 @@ SignItem("engine.exe")
 
 insignia -ab engine.exe podman-setup.exe -o podman-$ENV:INSTVER$suffix-setup.exe; ExitOnError
 SignItem("podman-$ENV:INSTVER$suffix-setup.exe")
+
+Write-Host "Complete" 
+dir "podman-$ENV:INSTVER$suffix-setup.exe"
