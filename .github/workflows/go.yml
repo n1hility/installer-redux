@@ -13,7 +13,7 @@ jobs:
     - name: Test
     - uses: actions/checkout@v3
     - name: Check
-       run: |
+      run: |
         .\check.ps1 ${{github.event.release.tag_name}}
         $code = $LASTEXITCODE
         if ($code -eq 2) {
