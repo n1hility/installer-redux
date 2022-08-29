@@ -32,26 +32,6 @@ function DownloadOrSkip {
     }
 }
 
-function SkipExists {
-    param(
-        [Parameter(Mandatory)]
-        [string]$url
-    )
-    try {
-        Invoke-WebRequest -Method HEAD -UseBasicParsing -ErrorAction Stop -Uri $url
-        Write-Host "Installer already uploaded, skipping"
-        Exit 2
-    } Catch {
-        if ($_.Exception.Response.StatusCode -eq 404) {
-            Write-Host "Installer does not exist,  continuing..."
-            Return
-        }
-
-        throw $_.Exception
-    }
-}
-
-
 if ($args.Count -lt 1) {
     Write-Host "Usage: " $MyInvocation.MyCommand.Name "<version>"
     Exit 1
@@ -73,10 +53,6 @@ $Env:INSTVER=$Matches[1]
 
 if ($version[0] -ne 'v') {
     $version = 'v' + $version
-}
-
-if ($args.Count -gt 1 -and $args[1] -eq "check") {
-    SkipExists "$base_url/releases/download/$version/podman-$version-setup.exe"
 }
 
 $restore = 0

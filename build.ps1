@@ -93,12 +93,9 @@ if ($version[0] -eq "v") {
 $suffix = "-dev"
 if ($args.Count -gt 1 -and $args[1] -eq "prod") {
     $suffix = ""
-    if ($args.Count -gt 2 -and $args[2] -eq "check") {
-        $check = "check"
-    }
 }
 
-.\process-release.ps1 $version $check
+.\process-release.ps1 $version 
 if ($LASTEXITCODE -eq 2) {
     Write-Host "Skip signaled, relaying skip"
     Exit 2
