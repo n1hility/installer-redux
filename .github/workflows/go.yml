@@ -10,7 +10,6 @@ jobs:
     env:
         FETCH_BASE_URL: ${{ github.server_url }}/${{ github.repository }}
     steps:
-    - name: Test
     - uses: actions/checkout@v3
     - name: Check
       run: |
