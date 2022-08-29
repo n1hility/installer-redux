@@ -28,5 +28,10 @@ if ($release[0] -eq "v") {
     $version = $release.Substring(1)
 }
 
+$base_url = "$ENV:FETCH_BASE_URL"
+if ($base_url.Length -le 0) {
+    $base_url = "https://github.com/containers/podman"
+}
+
 $ENV:UPLOAD_ASSET_NAME = "$base_url/releases/download/$release/podman-$version-setup.exe"
 SkipExists "$base_url/releases/download/$release/podman-$version-setup.exe"
