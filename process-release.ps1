@@ -11,10 +11,55 @@ function Copy-Artifact {
     Copy-Item -Path $file -Destination "..\artifacts\$filename" -ErrorAction Stop
 }
 
+function DownloadOrSkip {
+    param(
+        [Parameter(Mandatory)]
+        [string]$url,
+        [Parameter(Mandatory)]
+        [string]$file
+    )
+    $ProgressPreference = 'SilentlyContinue';
+    try {
+        Invoke-WebRequest -UseBasicParsing -ErrorAction Stop -Uri $url -OutFile $file
+    } Catch {
+        if ($_.Exception.Response.StatusCode -eq 404) {
+            Write-Host "URL not availahble, signaling skip:"
+            Write-Host "URL: $url"
+            Exit 2
+        }
+
+        throw $_.Exception
+    }
+}
+
+function SkipExists {
+    param(
+        [Parameter(Mandatory)]
+        [string]$url
+    )
+    try {
+        Invoke-WebRequest -Method HEAD -UseBasicParsing -ErrorAction Stop -Uri $url
+        Write-Host "Installer already uploaded, skipping"
+        Exit 2
+    } Catch {
+        if ($_.Exception.Response.StatusCode -eq 404) {
+            Write-Host "Installer does not exist,  continuing..."
+            Return
+        }
+
+        throw $_.Exception
+    }
+}
+
 
 if ($args.Count -lt 1) {
     Write-Host "Usage: " $MyInvocation.MyCommand.Name "<version>"
     Exit 1
+}
+
+$base_url = "$ENV:FETCH_BASE_URL"
+if ($base_url.Length -le 0) {
+    $base_url = "https://github.com/containers/podman"
 }
 
 $version = $args[0]
@@ -28,6 +73,10 @@ $Env:INSTVER=$Matches[1]
 
 if ($version[0] -ne 'v') {
     $version = 'v' + $version
+}
+
+if ($args.Count -gt 1 -and $args[1] -eq "check") {
+    SkipExists "$base_url/releases/download/$version/podman-$version-setup.exe"
 }
 
 $restore = 0
@@ -47,12 +96,12 @@ try {
     Push-Location fetch -ErrorAction Stop
     $restore = 1
     $ProgressPreference = 'SilentlyContinue';
-    Invoke-WebRequest -UseBasicParsing -Uri "https://github.com/containers/podman/releases/download/$version/podman-remote-release-windows_amd64.zip" -OutFile release.zip
+    DownloadOrSkip "$base_url/releases/download/$version/podman-remote-release-windows_amd64.zip"  "release.zip"
     Expand-Archive -Path release.zip
     $loc = Get-ChildItem -Recurse -Path . -Name win-sshproxy.exe
     if (!$loc) {
         Write-Host "Old release, zip does not include win-sshproxy.exe, fetching via msi"
-        Invoke-WebRequest -UseBasicParsing -Uri https://github.com/containers/podman/releases/download/$version/podman-$version.msi -OutFile podman.msi
+        DownloadOrSkip "$base_url/releases/download/$version/podman-$version.msi" "podman.msi"
         dark -x expand ./podman.msi
         if (!$?) {
             throw "Dark command failed"
@@ -92,9 +141,3 @@ finally {
 }
 
 exit $exitCode
-
-
-
-
-
-

@@ -11,7 +11,7 @@ function FetchPanel() {
 
     $ProgressPreference = 'SilentlyContinue'
     Invoke-WebRequest -UseBasicParsing -OutFile nuget.exe -ErrorAction Stop `
-        -Uri https://dist.nuget.org/win-x86-commandline/latest/nuget.exe 
+        -Uri https://dist.nuget.org/win-x86-commandline/latest/nuget.exe
 
     .\nuget.exe install PanelSwWixExtension
     $code = $LASTEXITCODE
@@ -41,6 +41,7 @@ function SignItem() {
         }
     }
 
+    CheckCommand AzureSignTool.ex
     AzureSignTool.exe sign -du "https://github.com/containers/podman" `
         -kvu "https://$ENV:VAULT_ID.vault.azure.net" `
         -kvi $ENV:APP_ID `
@@ -48,7 +49,7 @@ function SignItem() {
         -kvs $ENV:CLIENT_SECRET `
         -kvc $ENV:CERT_NAME `
         -tr http://timestamp.digicert.com $fileNames
-    
+
     ExitOnError
 }
 
@@ -74,8 +75,8 @@ function CheckRequirements() {
 }
 
 
-if ($args.Count -lt 1) {
-    Write-Host "Usage: " $MyInvocation.MyCommand.Name "<version>"
+if ($args.Count -lt 1 -or $args[0].Length -lt 1) {
+    Write-Host "Usage: " $MyInvocation.MyCommand.Name "<version> [dev | (prod [check])]"
     Exit 1
 }
 
@@ -83,12 +84,25 @@ $Env:Path="$Env:Path;C:\Program Files (x86)\WiX Toolset v3.11\bin"
 
 CheckRequirements
 
+$version = $args[0]
+
+if ($version[0] -eq "v") {
+    $version = $version.Substring(1)
+}
+
 $suffix = "-dev"
 if ($args.Count -gt 1 -and $args[1] -eq "prod") {
     $suffix = ""
+    if ($args.Count -gt 2 -and $args[2] -eq "check") {
+        $check = "check"
+    }
 }
 
-.\process-release.ps1 $args[0]; ExitOnError
+.\process-release.ps1 $version $check
+if ($LASTEXITCODE -eq 2) {
+    Write-Host "Skip signaled, relaying skip"
+    Exit 2
+}
 if ($ENV:INSTVER -eq "") {
     Write-Host "process-release did not define an install version!"
     Exit 1
@@ -97,7 +111,7 @@ if ($ENV:INSTVER -eq "") {
 FetchPanel
 
 .\build-hooks.bat; ExitOnError
-SignItem("artifacts/win-sshproxy.exe", 
+SignItem("artifacts/win-sshproxy.exe",
           "artifacts/podman.exe",
           "artifacts/podman-msihooks.dll",
           "artifacts/podman-kerninst.exe")
@@ -109,8 +123,8 @@ SignItem("podman.msi")
 insignia -ib podman-setup.exe -o engine.exe; ExitOnError
 SignItem("engine.exe")
 
-insignia -ab engine.exe podman-setup.exe -o podman-$ENV:INSTVER$suffix-setup.exe; ExitOnError
-SignItem("podman-$ENV:INSTVER$suffix-setup.exe")
+insignia -ab engine.exe podman-setup.exe -o podman-$version$suffix-setup.exe; ExitOnError
+SignItem("podman-$version$suffix-setup.exe")
 
-Write-Host "Complete" 
-dir "podman-$ENV:INSTVER$suffix-setup.exe"
+Write-Host "Complete"
+Get-ChildItem "podman-$version$suffix-setup.exe"

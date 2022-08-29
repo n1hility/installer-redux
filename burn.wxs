@@ -21,13 +21,15 @@
     <Variable Name="LaunchTarget" Value="explorer.exe"/>
     <Variable Name="LaunchArguments" Value="&quot;[InstallFolder]\podman-for-windows.html&quot;"/>
 
-    <util:RegistrySearch Id="PreviousInstallFolderSearch" Root="HKLM" Key="Software\[WixBundleManufacturer]\[WixBundleName]" Value="InstallDir" Variable="PreviousInstallFolder" />
+    <util:RegistrySearch Id="PreviousVersionSearch" Variable="PreviousVersion"  Result="value" Root="HKLM"  Key="SOFTWARE\Red Hat\Podman" Value="Version" Win64="yes"/>
+    <util:RegistrySearch Id="PreviousInstallFolderSearch" Root="HKLM" Key="SOFTWARE\[WixBundleManufacturer]\[WixBundleName]" Value="InstallDir" Variable="PreviousInstallFolder" Win64="yes"/>
     <util:RegistrySearch Id="CurrentBuild" Variable="CBNumber" Result="value" Root="HKLM" Key="SOFTWARE\Microsoft\Windows NT\CurrentVersion" Value="CurrentBuildNumber"/>
-
     <bal:Condition Message="Windows 10 Anniversary Update (14393) or later is required to run this application.">
       <![CDATA[VersionNT < v10.0 OR CBNumber >= 14393]]>
     </bal:Condition>
-
+    <bal:Condition Message="You have an installed development, pre-release version, or alternative build identifying as the same version of this installer. You must uninstall the existing version of Podman first, before proceeding.">
+       <![CDATA[WixBundleInstalled OR PreviousVersion <> VERSION]]>
+    </bal:Condition>
     <Chain>
       <MsiPackage Id="Setup" SourceFile="podman.msi" Vital="yes">
         <MsiProperty Name="INSTALLDIR" Value="[InstallFolder]" />
