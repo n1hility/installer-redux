@@ -7,9 +7,12 @@ on:
 jobs:
   build:
     runs-on: windows-latest
+    env:
+        FETCH_BASE_URL: ${{ github.server_url }}/${{ github.repository}}
     steps:
     - uses: actions/checkout@v3
     - name: Check
+     
       run:
         .\check.ps1 ${{github.event.release.tag_name}}
         $code = $LASTEXITCODE
@@ -34,11 +37,11 @@ jobs:
           echo "CLIENT_SECRET=${{secrets.CLIENT_SECRET}}" | Out-File -FilePath $env:GITHUB_ENV -Append
     - name: Build
       if: steps.Check.outputs.already-exists != 'true'
-      run: .\build.ps1 4.2.0
+      run: .\build.ps1 ${{github.event.release.tag_name}} prod
     - name: Upload
       if: steps.Check.outputs.already-exists != 'true'
       env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
-        gh release ${{github.event.release.tag_name}} upload $ENV:UPLOAD_ASSET_NAME
+        gh release upload ${{github.event.release.tag_name}} $ENV:UPLOAD_ASSET_NAME
 
