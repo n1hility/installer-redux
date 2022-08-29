@@ -2,7 +2,7 @@ name: Go
 
 on:
   release:
-    types: [created, edited]
+    types: [created, published, edited, prereleased, released]
 
 
 jobs:
@@ -12,6 +12,7 @@ jobs:
     steps:
       - name: Check
         run: | 
+           echo ${{ github.event.action }}
            echo ${{ github.event.release.tag_name }}
            echo ${{ github.event.release.name }}
 
