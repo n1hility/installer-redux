@@ -1,27 +1,35 @@
 name: Go
 
 on:
-  push:
-    branches: [ "main" ]
+  release:
+    types: [created, edited]
+
 
 jobs:
 
   build:
     runs-on: windows-latest
     steps:
-    - uses: actions/checkout@v3
+      - name: Check
+        run: | 
+           echo ${{ github.event.release.tag_name }}
+           echo ${{ github.event.release.name }}
 
-    - name: Set up Go
-      uses: actions/setup-go@v3
-      with:
-        go-version: 1.18
-    - name: Setup Signature Tooling
-      run: |
-          dotnet tool install --global AzureSignTool --version 3.0.0
-          echo "CERT_NAME=${{secrets.CERT_NAME}}" | Out-File -FilePath $env:GITHUB_ENV -Append
-          echo "VAULT_ID=${{secrets.VAULT_ID}}" | Out-File -FilePath $env:GITHUB_ENV -Append
-          echo "APP_ID=${{secrets.APP_ID}}" | Out-File -FilePath $env:GITHUB_ENV -Append
-          echo "TENANT_ID=${{secrets.TENANT_ID}}" | Out-File -FilePath $env:GITHUB_ENV -Append
-          echo "CLIENT_SECRET=${{secrets.CLIENT_SECRET}}" | Out-File -FilePath $env:GITHUB_ENV -Append
-    - name: Build
-      run: .\build.ps1 4.2.0
+    # runs-on: windows-latest
+    # steps:
+    # - uses: actions/checkout@v3
+
+    # - name: Set up Go
+    #   uses: actions/setup-go@v3
+    #   with:
+    #     go-version: 1.18
+    # - name: Setup Signature Tooling
+    #   run: |
+    #       dotnet tool install --global AzureSignTool --version 3.0.0
+    #       echo "CERT_NAME=${{secrets.CERT_NAME}}" | Out-File -FilePath $env:GITHUB_ENV -Append
+    #       echo "VAULT_ID=${{secrets.VAULT_ID}}" | Out-File -FilePath $env:GITHUB_ENV -Append
+    #       echo "APP_ID=${{secrets.APP_ID}}" | Out-File -FilePath $env:GITHUB_ENV -Append
+    #       echo "TENANT_ID=${{secrets.TENANT_ID}}" | Out-File -FilePath $env:GITHUB_ENV -Append
+    #       echo "CLIENT_SECRET=${{secrets.CLIENT_SECRET}}" | Out-File -FilePath $env:GITHUB_ENV -Append
+    # - name: Build
+    #   run: .\build.ps1 4.2.0
