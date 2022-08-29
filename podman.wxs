@@ -38,12 +38,6 @@
           <CreateFolder />
           <Environment Id='UpdatePath' Name='PATH' Action='set' Permanent='no' System='yes' Part='last' Value='[INSTALLDIR]' />
         </Component>
-        <Component Id="RegistryEntries">
-          <CreateFolder />
-          <RegistryKey Root="HKLM" Key="Software\Red Hat\Podman">
-            <RegistryValue Type="string" Name="Version" Value="$(var.VERSION)"/>
-          </RegistryKey>
-        </Component>
       </Directory>     
     </Directory>
    
@@ -61,7 +55,6 @@
     <Feature Id="Complete" Level="1">
       <ComponentRef Id="INSTALLDIR_Component"/>
       <ComponentRef Id="EnvEntriesComponent"/>
-      <ComponentRef Id="RegistryEntries"/>
       <ComponentRef Id="MainExecutable"/>
       <ComponentRef Id="WinSshProxyExecutable"/>
       <ComponentRef Id="GuideHTMLComponent"/>
