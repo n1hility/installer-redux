@@ -11,20 +11,20 @@ jobs:
     - uses: actions/checkout@v3
     - name: Check
       run:
-        .\check.ps1 ${{event.release.tag_name}}
+        .\check.ps1 ${{github.event.release.tag_name}}
         $code = $LASTEXITCODE
         if ($code -eq 2) {
           Write-Host "::set-output name=already-exists::true"
         } 
-        Write-Output "UPLOAD_ASSET_NAME=$env:UPLOAD_ASSET_NAME" | Out-File -FilePath $env:GITHUB_ENV -Append 
+        Write-Output "UPLOAD_ASSET_NAME=$env:UPLOAD_ASSET_NAME" | Out-File -FilePath $env:GITHUB_ENV -Append; 
         Exit $code
     - name: Set up Go
       uses: actions/setup-go@v3
-      if: steps.Check.outputs.already-exists != `true`
+      if: steps.Check.outputs.already-exists != 'true'
       with:
         go-version: 1.18
     - name: Setup Signature Tooling
-      if: steps.Check.outputs.already-exists != `true`
+      if: steps.Check.outputs.already-exists != 'true'
       run: |
           dotnet tool install --global AzureSignTool --version 3.0.0
           echo "CERT_NAME=${{secrets.CERT_NAME}}" | Out-File -FilePath $env:GITHUB_ENV -Append
@@ -33,12 +33,12 @@ jobs:
           echo "TENANT_ID=${{secrets.TENANT_ID}}" | Out-File -FilePath $env:GITHUB_ENV -Append
           echo "CLIENT_SECRET=${{secrets.CLIENT_SECRET}}" | Out-File -FilePath $env:GITHUB_ENV -Append
     - name: Build
-      if: steps.Check.outputs.already-exists != `true`
+      if: steps.Check.outputs.already-exists != 'true'
       run: .\build.ps1 4.2.0
     - name: Upload
-      if: steps.Check.outputs.already-exists != `true`
+      if: steps.Check.outputs.already-exists != 'true'
       env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
-        gh release ${{event.release.tag_name}} upload $ENV:UPLOAD_ASSET_NAME
+        gh release ${{github.event.release.tag_name}} upload $ENV:UPLOAD_ASSET_NAME
 
