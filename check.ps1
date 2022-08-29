@@ -33,5 +33,5 @@ if ($base_url.Length -le 0) {
     $base_url = "https://github.com/containers/podman"
 }
 
-$ENV:UPLOAD_ASSET_NAME = "$base_url/releases/download/$release/podman-$version-setup.exe"
+$ENV:UPLOAD_ASSET_NAME = "podman-$version-setup.exe"
 SkipExists "$base_url/releases/download/$release/podman-$version-setup.exe"
