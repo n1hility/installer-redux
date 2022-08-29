@@ -53,4 +53,11 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
         gh release upload ${{github.event.release.tag_name}} $ENV:UPLOAD_ASSET_NAME
-
+        if ($LASTEXITCODE -ne 0) {
+          .\check.ps1 ${{github.event.release.tag_name}}
+          if ($LASTEXITCODE -eq 2) {
+            Write-Host "Another job uploaded before us, skipping"
+            Exit 0
+          }
+          Exit 1
+        }
