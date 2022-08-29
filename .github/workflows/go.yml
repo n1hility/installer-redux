@@ -8,7 +8,7 @@ jobs:
   build:
     runs-on: windows-latest
     env:
-        FETCH_BASE_URL: ${{ github.server_url }}/${{ github.repository}}
+        FETCH_BASE_URL: ${{ github.server_url }}/${{ github.repository }}
     steps:
     - uses: actions/checkout@v3
     - name: Check
@@ -37,9 +37,13 @@ jobs:
           echo "CLIENT_SECRET=${{secrets.CLIENT_SECRET}}" | Out-File -FilePath $env:GITHUB_ENV -Append
     - name: Build
       if: steps.Check.outputs.already-exists != 'true'
-      run: .\build.ps1 ${{github.event.release.tag_name}} prod
+      run: |
+        .\build.ps1 ${{github.event.release.tag_name}} prod
+        if ($LASTEXITCODE -eq) 2 {
+          Write-Host "::set-output name=artifact-missing::true"
+        }
     - name: Upload
-      if: steps.Check.outputs.already-exists != 'true'
+      if: steps.Check.outputs.already-exists != 'true' && steps.Check.outputs.artifact-missing != 'true'
       env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
