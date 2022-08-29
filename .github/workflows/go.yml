@@ -16,8 +16,8 @@ jobs:
       run:
         .\check.ps1 ${{github.event.release.tag_name}}
         $code = $LASTEXITCODE
-        if ($code -eq 2) {
-          Write-Host "::set-output name=already-exists::true"
+        if (1 -eq 1)
+          Write-Output "::set-output name=already-exists::true"
           Exit 0
         } 
         Write-Output "UPLOAD_ASSET_NAME=$env:UPLOAD_ASSET_NAME" | Out-File -FilePath $env:GITHUB_ENV -Append; 
@@ -42,7 +42,7 @@ jobs:
         .\build.ps1 ${{github.event.release.tag_name}} prod
         $code = $LASTEXITCODE
         if ($code -eq 2) {
-          Write-Host "::set-output name=artifact-missing::true"
+          Write-Output "::set-output name=artifact-missing::true"
           Exit 0
         }
         Exit $code
