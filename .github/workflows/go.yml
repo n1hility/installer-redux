@@ -16,7 +16,8 @@ jobs:
       run:
         .\check.ps1 ${{github.event.release.tag_name}}
         $code = $LASTEXITCODE
-        if (1 -eq 1) {
+        if ($code -eq 2) {
+          Write-Output "Writing"
           Write-Output "::set-output name=already-exists::true"
           Exit 0
         } 
