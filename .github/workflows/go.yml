@@ -12,6 +12,7 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     - name: Check
+      id: check
       run: |
         .\check.ps1 ${{github.event.release.tag_name}}
         $code = $LASTEXITCODE
@@ -36,18 +37,18 @@ jobs:
           echo "TENANT_ID=${{secrets.TENANT_ID}}" | Out-File -FilePath $env:GITHUB_ENV -Append
           echo "CLIENT_SECRET=${{secrets.CLIENT_SECRET}}" | Out-File -FilePath $env:GITHUB_ENV -Append
     - name: Build
-      if: steps.Check.outputs.already-exists != 'true'
+      id: build
+      if: steps.check.outputs.already-exists != 'true'
       run: |
         .\build.ps1 ${{github.event.release.tag_name}} prod
         $code = $LASTEXITCODE
         if ($code -eq 2) {
-          Write-Host DOIT
           Write-Output "::set-output name=artifact-missing::true"
           Exit 0
         }
         Exit $code
     - name: Upload
-      if: steps.Check.outputs.already-exists != 'true' && steps.Build.outputs.artifact-missing != 'true'
+      if: steps.check.outputs.already-exists != 'true' && steps.build.outputs.artifact-missing != 'true'
       env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
