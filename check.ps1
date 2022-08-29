@@ -17,7 +17,7 @@ function SkipExists {
     }
 }
 
-iif ($args.Count -lt 1 -or $args[0].Length -lt 2) {
+if ($args.Count -lt 1 -or $args[0].Length -lt 2) {
     Write-Host "Usage: " $MyInvocation.MyCommand.Name "<version>"
     Exit 1
 }
