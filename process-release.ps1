@@ -98,7 +98,8 @@ try {
     $loc = Get-ChildItem -Recurse -Path . -Name podman-for-windows.html
     if (!$loc) {
         Write-Host "Old release did not include welcome page, using podman-machine instead"
-        $loc = Get-ChildItem -Recurse -Path . -Name podman-machine.html ..\docs\podman-for-windows.html
+        $loc = Get-ChildItem -Recurse -Path . -Name podman-machine.html
+        Copy-Item -Path $loc -Destination ..\docs\podman-for-windows.html
     }
 
     Write-Host "Copying docs"
