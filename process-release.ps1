@@ -3,7 +3,7 @@ function Copy-Artifact {
         [Parameter(Mandatory)]
         [string]$fileName
     )
-    $file = Get-ChildItem -Recurse -Path . -Name $fileName 
+    $file = Get-ChildItem -Recurse -Path . -Name $fileName
     if (!$file) {
         throw "Could not find $filename"
     }
@@ -81,8 +81,8 @@ try {
         dark -x expand ./podman.msi
         if (!$?) {
             throw "Dark command failed"
-        } 
-        $loc = Get-ChildItem -Recurse -Path expand -Name 4A2AD125-34E7-4BD8-BE28-B2A9A5EDBEB5 
+        }
+        $loc = Get-ChildItem -Recurse -Path expand -Name 4A2AD125-34E7-4BD8-BE28-B2A9A5EDBEB5
         if (!$loc) {
             throw "Could not obtain win-sshproxy.exe"
         }
@@ -102,7 +102,7 @@ try {
     }
 
     Write-Host "Copying docs"
-    $loc = Get-ChildItem -Path . -Name docs -Recurse 
+    $loc = Get-ChildItem -Path . -Name docs -Recurse
 
     Copy-Item -Recurse -Path $loc -Destination ..\docs -ErrorAction Stop
     Write-Host "Done!"
@@ -112,8 +112,8 @@ try {
     }
 }
 catch {
-    Write-Host $_ 
-    
+    Write-Host $_
+
     $exitCode = 1
 }
 finally {

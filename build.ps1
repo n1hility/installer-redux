@@ -58,6 +58,7 @@ function CheckCommand() {
     param(
         [Parameter(Mandatory)]
         [string] $cmd,
+        [Parameter(Mandatory)]
         [string] $description
     )
 
@@ -95,7 +96,7 @@ if ($args.Count -gt 1 -and $args[1] -eq "prod") {
     $suffix = ""
 }
 
-.\process-release.ps1 $version 
+.\process-release.ps1 $version
 if ($LASTEXITCODE -eq 2) {
     Write-Host "Skip signaled, relaying skip"
     Exit 2
