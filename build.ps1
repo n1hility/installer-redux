@@ -28,7 +28,7 @@ function FetchPanel() {
     Copy-Item -Path fetch/$loc -Destination artifacts/PanelSwWixExtension.dll -ErrorAction Stop
 }
 
-function AZSignItem() {
+function SignItem() {
     param(
         [Parameter(Mandatory)]
         [string[]]$fileNames
@@ -41,7 +41,8 @@ function AZSignItem() {
         }
     }
 
-    CheckCommand AzureSignTool.ex
+    CheckCommand AzureSignTool.exe "AzureSignTool"
+
     AzureSignTool.exe sign -du "https://github.com/containers/podman" `
         -kvu "https://$ENV:VAULT_ID.vault.azure.net" `
         -kvi $ENV:APP_ID `
@@ -110,20 +111,20 @@ if ($ENV:INSTVER -eq "") {
 FetchPanel
 
 .\build-hooks.bat; ExitOnError
-AZSignItem @("artifacts/win-sshproxy.exe",
+SignItem @("artifacts/win-sshproxy.exe",
           "artifacts/podman.exe",
           "artifacts/podman-msihooks.dll",
           "artifacts/podman-kerninst.exe")
 
 .\build-msi.bat $ENV:INSTVER; ExitOnError
-AZSignItem @("podman.msi")
+SignItem @("podman.msi")
 
 .\build-burn.bat $ENV:INSTVER; ExitOnError
 insignia -ib podman-setup.exe -o engine.exe; ExitOnError
-AZSignItem @("engine.exe")
+SignItem @("engine.exe")
 
 insignia -ab engine.exe podman-setup.exe -o podman-$version$suffix-setup.exe; ExitOnError
-AZSignItem @("podman-$version$suffix-setup.exe")
+SignItem @("podman-$version$suffix-setup.exe")
 
 Write-Host "Complete"
 Get-ChildItem "podman-$version$suffix-setup.exe"
